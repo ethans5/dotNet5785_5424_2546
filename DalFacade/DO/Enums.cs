@@ -2,7 +2,7 @@
 public enum jobType
 {
     Volunteer,
-    Employee
+    Director
 }
 public enum distanceType
 {
@@ -12,7 +12,15 @@ public enum distanceType
 }   
 public enum callType
 {
-  type1,
+    type1,
     type2,
     type3
+}
+
+public enum typeOfEndTreatment
+{
+    treated,
+    selfCancellation,
+    directorCancellation,
+    Expired
 }
