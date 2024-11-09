@@ -8,7 +8,7 @@ public class ConfigImplementation : IConfig
     public int NextAssignmentId => Config.NextAssignmentId;
 
     public DateTime Clock { get => Config.Clock; set => Config.Clock=value; }
-    public TimeSpan RiskRange { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public TimeSpan RiskRange { get => Config.RiskRange; set => Config.RiskRange = value; }
 
     public void Reset()
     {
