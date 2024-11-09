@@ -8,7 +8,7 @@ public class VolunteerImplementation : IVolunteer
     public void Create(Volunteer volunteer)
     {
         if (DataSource.Volunteers.Exists(v => v.Id == volunteer.Id))
-            throw new InvalidOperationException($"Volunteer with the ID : {volunteer.Id} already exists...");
+            throw new Exception($"Volunteer with the ID : {volunteer.Id} already exists...");
         else
             DataSource.Volunteers.Add(volunteer);
     }
@@ -18,7 +18,7 @@ public class VolunteerImplementation : IVolunteer
         if (DataSource.Volunteers.Exists(v => v.Id == id))
             return DataSource.Volunteers.Find(v => v.Id == id);
         else
-            throw new InvalidOperationException($"Volunteer with the ID : {id} does not exist...");
+            throw new Exception($"Volunteer with the ID : {id} does not exist...");
     }
 
 
@@ -32,7 +32,7 @@ public class VolunteerImplementation : IVolunteer
     {
         int index = DataSource.Volunteers.FindIndex(v => v.Id == volunteer.Id);
         if (index == -1)
-            throw new InvalidOperationException($"Volunteer with the ID : {volunteer.Id} does not exist...");
+            throw new Exception($"Volunteer with the ID : {volunteer.Id} does not exist...");
         else
             DataSource.Volunteers[index] = volunteer;
     }
@@ -43,7 +43,7 @@ public class VolunteerImplementation : IVolunteer
         if (DataSource.Volunteers.Exists(v => v.Id == id))
             DataSource.Volunteers.RemoveAll(v => v.Id == id);
         else
-            throw new InvalidOperationException($"Volunteer with the ID : {id} does not exist...");
+            throw new Exception($"Volunteer with the ID : {id} does not exist...");
     }
  
 

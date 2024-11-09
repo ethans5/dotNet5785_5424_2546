@@ -8,7 +8,7 @@ public class CallImplementation : ICall
     public void Create(Call call)
     {
         if (DataSource.Calls.Exists(c => c.Id == call.Id))
-            throw new InvalidOperationException($"Call with the ID : {call.Id} already exists...");
+            throw new Exception($"Call with the ID : {call.Id} already exists...");
         DataSource.Calls.Add(call);
     }
 
@@ -18,7 +18,7 @@ public class CallImplementation : ICall
         if (DataSource.Calls.Exists(c => c.Id == id))
             return DataSource.Calls.Find(c => c.Id == id);
         else
-            throw new InvalidOperationException($"Call with the ID : {id} does not exist...");
+            throw new Exception($"Call with the ID : {id} does not exist...");
     }
     public List<Call> ReadAll()
     {
@@ -30,7 +30,7 @@ public class CallImplementation : ICall
     {
         int index = DataSource.Calls.FindIndex(c => c.Id == call.Id);
         if (index == -1)
-            throw new InvalidOperationException($"Call with the ID : {call.Id} does not exist...");
+            throw new Exception($"Call with the ID : {call.Id} does not exist...");
         DataSource.Calls[index] = call;
     }
 
@@ -39,7 +39,7 @@ public class CallImplementation : ICall
         if(DataSource.Calls.Any(c => c.Id == id)!)
             DataSource.Calls.RemoveAll(c => c.Id == id);
         else
-            throw new InvalidOperationException($"Call with the ID : {id} deos not exist...");
+            throw new Exception($"Call with the ID : {id} deos not exist...");
 
     }
   
