@@ -19,7 +19,7 @@ public enum callType
 
 public enum typeOfEndTreatment
 {
-    treated,
+    treated = 1,
     selfCancellation,
     directorCancellation,
     Expired

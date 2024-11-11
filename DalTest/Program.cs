@@ -28,7 +28,7 @@ namespace DalTest
 
         }
 
-        /* Volunteer option */
+/***************************************************************** Volunteer Functions **********************************************************************************/
 
         private static void printVolunteer(Volunteer myVolunteer)
         {
@@ -56,7 +56,7 @@ namespace DalTest
             Console.Write("Please enter your full Name : ");
             string name = Console.ReadLine()!;
 
-            Console.WriteLine("Please enter your phone number : ");
+            Console.Write("Please enter your phone number : ");
             string phone = Console.ReadLine()!;
 
             Console.Write("Please enter your email : ");
@@ -65,19 +65,19 @@ namespace DalTest
             Console.Write("Please enter your address : ");
             string address = Console.ReadLine()!;
 
-            Console.WriteLine("Please enter the longitude and the latitude of your address : \n");
-            Console.WriteLine("Longitude : ");
+            Console.WriteLine("Please enter the longitude and the latitude of your address :");
+            Console.Write("Longitude : ");
             double longitude = Convert.ToDouble(Console.ReadLine());
-            Console.WriteLine("Latitude : ");
+            Console.Write("Latitude : ");
             double latitude = Convert.ToDouble(Console.ReadLine());
 
             Console.WriteLine("Please enter the maximal distance you could volunteer : ");
             int distance = Convert.ToInt32(Console.ReadLine());
 
-            Console.WriteLine("which type of distance ? \n");
-            Console.WriteLine("1 - Aerial \n");
-            Console.WriteLine("2 - Walking \n");
-            Console.WriteLine("3 - Driving \n");
+            Console.WriteLine("which type of distance ?");
+            Console.WriteLine("1 - Aerial");
+            Console.WriteLine("2 - Walking");
+            Console.WriteLine("3 - Driving");
             int option = 0;
             while (option < 1 || option > 3)
             {
@@ -113,10 +113,17 @@ namespace DalTest
         private static void readAllVolunteer()
         {
             List<Volunteer> volunteers = s_dalVolunteer!.ReadAll();
-            foreach (Volunteer volunteer in volunteers)
+            if(volunteers != null && volunteers.Any())
             {
-                printVolunteer(volunteer);
+                foreach (Volunteer volunteer in volunteers)
+                {
+                    printVolunteer(volunteer);
+                }
             }
+            else
+                Console.WriteLine("\nThere are no Volunteers\n");
+          
+
         }
 
         private static void updateVolunteer()
@@ -174,7 +181,12 @@ namespace DalTest
             }
             distanceType distanceType = (distanceType)option;
 
-            s_dalVolunteer!.Update(new Volunteer { Id = id, Name = name, Phone = phone, Email = email, JobType = jobType.Volunteer, isActive = true, distanceType = distanceType, Address = address, Longitude = longitude, Latitude = latitude, MaxDistance = distance });
+            DO.Volunteer myVolunteer = new Volunteer(id, name, phone, email, jobType.Volunteer, true, distanceType, distance,null, address, longitude, latitude);
+
+            s_dalVolunteer!.Update(myVolunteer);
+
+            Console.WriteLine(" ");
+            printVolunteer(myVolunteer);
         }
 
         private static void deleteVolunteer()
@@ -229,7 +241,9 @@ namespace DalTest
 
 
         }
-        /* Call option */
+
+
+/********************************************************************* Call Functions ***********************************************************************************/
         private static void printCall(Call myCall)
         {
             Console.WriteLine("ID: " + myCall.Id);
@@ -296,10 +310,16 @@ namespace DalTest
         private static void readAllCalls()
         {
             List<Call> calls = s_dalCall!.ReadAll();
-            foreach (Call call in calls)
+            if(calls != null && calls.Any())
             {
-                printCall(call);
+                foreach (Call call in calls)
+                {
+                    printCall(call);
+                }
             }
+            else
+                Console.WriteLine("\nThere are no Calls\n");
+         
         }
 
         private static void updateCall()
@@ -345,17 +365,12 @@ namespace DalTest
             string? maxTimeInput = Console.ReadLine();
             DateTime? maxTime = string.IsNullOrEmpty(maxTimeInput) ? call!.MaxTime : DateTime.Parse(maxTimeInput);
 
-            s_dalCall!.Update(new Call
-            {
-                Id = id,
-                CallType = call!.CallType,
-                Address = address,
-                Latitude = latitude!,
-                Longitude = longitude!,
-                CallTime = callTime,
-                Description = description,
-                MaxTime = maxTime
-            });
+            DO.Call myCall = new Call(id, call!.CallType, address, latitude, longitude, callTime, description, maxTime);
+
+            s_dalCall!.Update(myCall);
+
+            Console.WriteLine(" ");
+            printCall(myCall);
         }
 
         private static void deleteCall()
@@ -401,7 +416,7 @@ namespace DalTest
             } while (option != 0);
         }
 
-        /* Assignment option */
+/********************************************************************** Assignment Functions ****************************************************************************/
         private static void printAssignment(Assignment assignment)
         {
             Console.WriteLine("ID: " + assignment.Id);
@@ -415,7 +430,6 @@ namespace DalTest
 
         private static void createAssignment()
         {
-            
             Console.Write("Please enter the Call ID: ");
             int callId = Convert.ToInt32(Console.ReadLine());
             if (s_dalCall!.Read(callId) == null)
@@ -437,11 +451,17 @@ namespace DalTest
 
             Console.Write("Please enter the end treatment time (yyyy-MM-dd HH:mm:ss, optional): ");
             string? endTreatmentInput = Console.ReadLine();
-            DateTime? endTreatment = DateTime.Parse(endTreatmentInput!);
+            DateTime? endTreatment = null;
 
-            Console.WriteLine("Please enter the type of end treatment (1 - Success, 2 - Failure, 3 - Cancelled): ");
+            // Utilisation de TryParse pour éviter les exceptions si l'entrée est vide
+            if (!string.IsNullOrEmpty(endTreatmentInput) && DateTime.TryParse(endTreatmentInput, out DateTime parsedEndTreatment))
+            {
+                endTreatment = parsedEndTreatment;
+            }
+
+            Console.WriteLine("Please enter the type of end treatment (1 - Treated, 2 - Self Cancellation, 3 - Director Cancellation, 4 - Expired): ");
             int typeOption = 0;
-            while (typeOption < 1 || typeOption > 3)
+            while (typeOption < 1 || typeOption > 4)
             {
                 typeOption = Convert.ToInt32(Console.ReadLine());
             }
@@ -458,6 +478,7 @@ namespace DalTest
             });
         }
 
+
         private static void readAssignment()
         {
             Console.WriteLine("Please enter the ID of the assignment you want to read: ");
@@ -469,10 +490,16 @@ namespace DalTest
         private static void readAllAssignments()
         {
             List<Assignment> assignments = s_dalAssignment!.ReadAll();
-            foreach (Assignment assignment in assignments)
+            if(assignments != null && assignments.Any())
             {
-                printAssignment(assignment);
+                foreach (Assignment assignment in assignments)
+                {
+                    printAssignment(assignment);
+                }
             }
+            else
+                Console.WriteLine("\nThere are no Assignments \n");
+         
         }
 
         private static void updateAssignment()
@@ -480,41 +507,67 @@ namespace DalTest
             Console.WriteLine("Please enter the ID of the assignment you want to update: ");
             int id = Convert.ToInt32(Console.ReadLine());
             Assignment? assignment = s_dalAssignment!.Read(id);
+
             printAssignment(assignment!);
 
-            Console.WriteLine("Please enter the new Call ID (or press enter to keep the current one): ");
+            // Mise à jour du Call ID
+            Console.Write("Please enter the new Call ID (or press enter to keep the current one): ");
             string? callIdInput = Console.ReadLine();
             int callId = string.IsNullOrEmpty(callIdInput) ? assignment!.CallId : Convert.ToInt32(callIdInput);
+            if (string.IsNullOrEmpty(callIdInput))
+                Console.WriteLine($"{assignment!.CallId}");
 
-            Console.WriteLine("Please enter the new Volunteer ID (or press enter to keep the current one): ");
+            // Mise à jour du Volunteer ID
+            Console.Write("Please enter the new Volunteer ID (or press enter to keep the current one): ");
             string? volunteerIdInput = Console.ReadLine();
             int volunteerId = string.IsNullOrEmpty(volunteerIdInput) ? assignment!.VolunteerId : Convert.ToInt32(volunteerIdInput);
+            if (string.IsNullOrEmpty(volunteerIdInput))
+                Console.WriteLine($"{assignment!.VolunteerId}");
 
-            Console.WriteLine("Please enter the new start treatment time (yyyy-MM-dd HH:mm:ss, or press enter to keep the current one): ");
+            // Mise à jour du Start Treatment
+            Console.Write("Please enter the new start treatment time (yyyy-MM-dd HH:mm:ss, or press enter to keep the current one): ");
             string? startTreatmentInput = Console.ReadLine();
             DateTime startTreatment = string.IsNullOrEmpty(startTreatmentInput) ? assignment!.StartTreatment : DateTime.Parse(startTreatmentInput);
+            if (string.IsNullOrEmpty(startTreatmentInput))
+                Console.WriteLine($"{assignment!.StartTreatment}");
 
-            Console.WriteLine("Please enter the new end treatment time (yyyy-MM-dd HH:mm:ss, or press enter to keep the current one): ");
+            // Mise à jour du End Treatment
+            Console.Write("Please enter the new end treatment time (yyyy-MM-dd HH:mm:ss, or press enter to keep the current one): ");
             string? endTreatmentInput = Console.ReadLine();
             DateTime? endTreatment = string.IsNullOrEmpty(endTreatmentInput) ? assignment!.endTreatment : DateTime.Parse(endTreatmentInput);
+            if (string.IsNullOrEmpty(endTreatmentInput))
+                Console.WriteLine($"{assignment!.endTreatment}");
 
-            Console.WriteLine("Please enter the new type of end treatment (1 - Success, 2 - Failure, 3 - Cancelled): ");
-            int typeOption = 0;
-            while (typeOption < 1 || typeOption > 3)
+            // Mise à jour du Type of End Treatment
+            Console.WriteLine("Please enter the type of end treatment (1 - Treated, 2 - Self Cancellation, 3 - Director Cancellation, 4 - Expired) :");
+            string? typeOptionInput = Console.ReadLine();
+            typeOfEndTreatment typeOfEnd;
+
+            if (string.IsNullOrEmpty(typeOptionInput))
             {
-                typeOption = Convert.ToInt32(Console.ReadLine());
+                Console.WriteLine($"{assignment!.typeOfEnd}");
+                
+                typeOfEnd = (typeOfEndTreatment)assignment.typeOfEnd!;
             }
-            typeOfEndTreatment typeOfEnd = (typeOfEndTreatment)typeOption;
-
-            s_dalAssignment!.Update(new Assignment
+            else
             {
-                Id = id,
-                CallId = callId,
-                VolunteerId = volunteerId,
-                StartTreatment = startTreatment,
-                endTreatment = endTreatment,
-                typeOfEnd = typeOfEnd
-            });
+                int typeOption = Convert.ToInt32(typeOptionInput);
+                while (typeOption < 1 || typeOption > 4)
+                {
+                    Console.WriteLine("Invalid input. Please enter a number between 1 and 4:");
+                    typeOption = Convert.ToInt32(Console.ReadLine());
+                }
+                typeOfEnd = (typeOfEndTreatment)typeOption;
+            }
+
+            // Création du nouvel Assignment avec les informations mises à jour
+            Assignment updatedAssignment = new Assignment(id, callId, volunteerId, startTreatment, endTreatment, typeOfEnd);
+
+            // Mise à jour de l'Assignment dans la base de données
+            s_dalAssignment!.Update(updatedAssignment);
+
+            Console.WriteLine("\nUpdated Assignment:");
+            printAssignment(updatedAssignment);
         }
 
         private static void deleteAssignment()
@@ -566,16 +619,38 @@ namespace DalTest
             Initialization.Do(s_dalAssignment,s_dalCall!,s_dalVolunteer!,s_dalConfig!);
         }
 
+        /****************************************************************************** All data *******************************************************************************/
+
+        private static void printAllData()
+        {
+            Console.WriteLine("Volunteers :");
+            readAllVolunteer();
+            Console.WriteLine("Calls :");
+            readAllCalls();
+            Console.WriteLine("Assignments :");
+            readAllAssignments() ;
+        }
+
+        private static void deleteAllData()
+        {
+            s_dalVolunteer!.DeleteAll();
+            s_dalCall!.DeleteAll();
+            s_dalAssignment!.DeleteAll();
+
+            Console.WriteLine("All the data has been deleted \n");
+        }
+
+/************************************************************************ MAIN CODE ************************************************************************************/
         static void Main(string[] args)
         {
             try
             {
-                /*main code*/
+                
                 int menu;
                 do
                 {
                     Console.WriteLine
-                  (" Which menu do you want to access ? :  \n" +
+                  ("Which menu do you want to access ? :  \n" +
                    " 0 - Exit the menu \n" +
                    " 1 - Volunteers.\n" +
                    " 2 - Calls. \n" +
@@ -604,6 +679,19 @@ namespace DalTest
                         case 4:
                             funcInitialization();
                             break;
+
+                        case 5:
+                            printAllData();
+                            break;
+
+                        case 6:
+
+                            break;
+
+                        case 7:
+                            deleteAllData();
+                            break;
+
                         default:
                             {
                                 Console.WriteLine(" the input is incorrect please try again ");
