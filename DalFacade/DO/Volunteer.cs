@@ -11,12 +11,12 @@ string Email,
 jobType JobType,
 Boolean isActive,
 distanceType distanceType,
-double? distance = null,
+double? MaxDistance = null,
 string? Password = null,
 string? Address = null,
 double? Latitude = null,
 double? Longitude = null
 )
 {
-    public Volunteer() : this(0, "", "", "", jobType.Volunteer, false, distanceType.aerial) { }
+    public Volunteer() : this(0, "", "", "", jobType.Volunteer, true, distanceType.aerial) { }
 }

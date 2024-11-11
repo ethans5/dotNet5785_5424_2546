@@ -13,7 +13,7 @@ public class VolunteerImplementation : IVolunteer
             DataSource.Volunteers.Add(volunteer);
     }
 
-    public Volunteer? Read(int id) 
+    public Volunteer? Read(int id)
     {
         if (DataSource.Volunteers.Exists(v => v.Id == id))
             return DataSource.Volunteers.Find(v => v.Id == id);
@@ -22,13 +22,13 @@ public class VolunteerImplementation : IVolunteer
     }
 
 
-    public List<Volunteer> ReadAll() 
+    public List<Volunteer> ReadAll()
     {
         return DataSource.Volunteers;
     }
 
 
-    public void Update(Volunteer volunteer) 
+    public void Update(Volunteer volunteer)
     {
         int index = DataSource.Volunteers.FindIndex(v => v.Id == volunteer.Id);
         if (index == -1)
@@ -38,14 +38,14 @@ public class VolunteerImplementation : IVolunteer
     }
 
 
-    public void Delete(int id) 
+    public void Delete(int id)
     {
         if (DataSource.Volunteers.Exists(v => v.Id == id))
             DataSource.Volunteers.RemoveAll(v => v.Id == id);
         else
             throw new Exception($"Volunteer with the ID : {id} does not exist...");
     }
- 
+
 
     public void DeleteAll()
     {
@@ -53,6 +53,6 @@ public class VolunteerImplementation : IVolunteer
     }
 
 
- 
+
 
 }

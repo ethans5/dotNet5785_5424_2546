@@ -11,7 +11,9 @@ public static class Initialization
     private static IConfig? s_dalConfig; //stage 1
     private static readonly Random s_rand = new();
 
-
+    /// <summary>
+    /// 
+    /// </summary>
     private static void createCall()
     {
         string[] addresses = new string[]
@@ -224,7 +226,7 @@ public static class Initialization
                 JobType = type,
                 isActive = isActive,
                 distanceType = distanceType,
-                distance = distance,
+                MaxDistance = distance,
                 Password = password,
                 Address = addresses[i],
                 Latitude = latitudes[i],
@@ -237,38 +239,44 @@ public static class Initialization
         for (int i = 0; i < 50; i++)
         {
             int id = s_dalConfig!.NextAssignmentId;
-            var list = s_dalCall!.ReadAll();
-            int callId = list[s_rand.Next(list.Count)].Id;
-            DateTime callStartTime = list.First(c => c.Id == callId).CallTime;
-            DateTime? maxEndTime = list.First(c => c.Id == callId).MaxTime;
-            var list1 = s_dalVolunteer!.ReadAll();
-            int volunteerId = list1[s_rand.Next(list1.Count)].Id;
-            double startOffset = s_rand.NextDouble() * (maxEndTime.Value).Subtract(callStartTime).TotalMinutes;
-            DateTime time = callStartTime.AddMinutes(startOffset);
-            typeOfEndTreatment typeOfEnd = typeOfEndTreatment.treated;
-            DateTime? endTime=null;
-            if (s_rand.NextDouble() < 0.5)
+            var callList = s_dalCall!.ReadAll();
+            int myCallId = callList[s_rand.Next(callList.Count)].Id;
+
+            var assignmentList = s_dalAssignment!.ReadAll();
+            if (assignmentList.Exists(c => myCallId == c.CallId))
             {
-                double endOffset = s_rand.Next(10, (int)(maxEndTime.Value.Subtract(time).TotalMinutes));
-                endTime = time.AddMinutes(endOffset);
-                if (endTime <= maxEndTime)
-                {
-                    typeOfEnd = typeOfEndTreatment.treated;
-                }
-                else
-                {
-                    typeOfEnd = s_rand.Next(2) == 0 ? typeOfEndTreatment.selfCancellation : typeOfEndTreatment.directorCancellation;
-                }
-
+                continue;
             }
-            else if (s_dalConfig!.Clock > maxEndTime)
+            else
             {
-                typeOfEnd = typeOfEndTreatment.Expired;
+                DateTime callStartTime = callList.First(c => c.Id == myCallId).CallTime;
+                DateTime? maxEndTime = callList.First(c => c.Id == myCallId).MaxTime;
+                var volunteerList = s_dalVolunteer!.ReadAll();
+                int volunteerId = volunteerList[s_rand.Next(volunteerList.Count)].Id;
+                double startOffset = s_rand.NextDouble() * (maxEndTime!.Value).Subtract(callStartTime).TotalMinutes;
+                DateTime time = callStartTime.AddMinutes(startOffset);
+                typeOfEndTreatment? typeOfEnd = null;
+                DateTime? endTime = null;
+                if (s_rand.NextDouble() < 0.5)
+                {
+                    double endOffset = s_rand.Next(10, (int)(maxEndTime.Value.Subtract(time).TotalMinutes));
+                    endTime = time.AddMinutes(endOffset);
+                    if (endTime <= maxEndTime)
+                    {
+                        typeOfEnd = typeOfEndTreatment.treated;
+                    }
+                    else
+                    {
+                        typeOfEnd = s_rand.Next(2) == 0 ? typeOfEndTreatment.selfCancellation : typeOfEndTreatment.directorCancellation;
+                    }
+
+                }
+                else if (s_dalConfig!.Clock > maxEndTime)
+                {
+                    typeOfEnd = typeOfEndTreatment.Expired;
+                }
+                s_dalAssignment!.Create(new Assignment { Id = id, CallId = myCallId, VolunteerId = volunteerId, StartTreatment = time, endTreatment = endTime, typeOfEnd = typeOfEnd });
             }
-            s_dalAssignment!.Create(new Assignment { Id = id, CallId = callId, VolunteerId = volunteerId, StartTreatment = time, endTreatment = endTime, typeOfEnd = typeOfEnd });
-
-
-
         }
     }
     public static void Do(IAssignment? dalAssignment, ICall dalCall, IVolunteer dalVolunteer, IConfig dalConfig)
@@ -289,6 +297,6 @@ public static class Initialization
         createVolunteer();
         Console.WriteLine("Initializing assignment list");
         createAssignment();
-        
+
     }
 }
