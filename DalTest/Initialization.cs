@@ -94,6 +94,11 @@ public static class Initialization
     }
     private static void createVolunteer()
     {
+        int[] ids = {
+    218114920, 339762723, 358113614, 340485311, 206371723,
+    224008181, 263061435, 339366513, 342943374, 360309029,
+    232357019, 353009284, 374360423, 392492475, 255402454
+};
         string[] names =
         {
             "Bensimon Ruben",
@@ -134,6 +139,8 @@ public static class Initialization
 
         string[] phones =
         {
+            "0534703587",
+            "0584741216",
             "0501234567",
             "0549876543",
             "0522345678",
@@ -205,10 +212,10 @@ public static class Initialization
             31.7775, // Latitude pour 15 Derech Hevron Street, Jerusalem
             31.7790  // Latitude pour 78 Hapalmah Street, Jerusalem
         };
+      
 
         for (int i = 0; i < 15; i++)
         {
-            int id = s_rand.Next(200000000, 400000001);
 
             Array values = Enum.GetValues(typeof(jobType));
             jobType type = (jobType)values.GetValue(s_rand.Next(values.Length))!;
@@ -219,7 +226,7 @@ public static class Initialization
             string password = "password" + s_rand.Next(1000);
             s_dalVolunteer!.Create(new Volunteer
             {
-                Id = id,
+                Id = ids[i],
                 Name = names[i],
                 Phone = phones[i],
                 Email = mails[i],
@@ -253,13 +260,24 @@ public static class Initialization
                 DateTime? maxEndTime = callList.First(c => c.Id == myCallId).MaxTime;
                 var volunteerList = s_dalVolunteer!.ReadAll();
                 int volunteerId = volunteerList[s_rand.Next(volunteerList.Count)].Id;
-                double startOffset = s_rand.NextDouble() * (maxEndTime!.Value).Subtract(callStartTime).TotalMinutes;
-                DateTime time = callStartTime.AddMinutes(startOffset);
+                DateTime time;
                 typeOfEndTreatment? typeOfEnd = null;
                 DateTime? endTime = null;
+                double endOffset;
+                if (maxEndTime == null)
+                {
+                    time = callStartTime.AddMinutes(s_rand.Next(10, 60));
+                    endOffset = s_rand.Next(10, 600);
+                }
+                else
+                {
+                    double startOffset = s_rand.NextDouble() * (maxEndTime!.Value).Subtract(callStartTime).TotalMinutes;
+                    time = callStartTime.AddMinutes(startOffset);
+                    endOffset= s_rand.Next(10, (int)(maxEndTime.Value.Subtract(time).TotalMinutes));
+
+                }
                 if (s_rand.NextDouble() < 0.5)
                 {
-                    double endOffset = s_rand.Next(10, (int)(maxEndTime.Value.Subtract(time).TotalMinutes));
                     endTime = time.AddMinutes(endOffset);
                     if (endTime <= maxEndTime)
                     {
