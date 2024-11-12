@@ -1,4 +1,4 @@
-﻿namespace Dal;
+﻿namespace s_dal;
 using DalApi;
 using DO;
 using System.Collections.Generic;

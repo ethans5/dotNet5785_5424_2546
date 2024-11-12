@@ -1,4 +1,4 @@
-﻿namespace Dal;
+﻿namespace s_dal;
 
 internal static class DataSource
 {

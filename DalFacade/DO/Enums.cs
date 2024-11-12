@@ -6,7 +6,7 @@ public enum jobType
 }
 public enum distanceType
 {
-    aerial,
+    aerial = 1,
     walking,
     driving
 }   

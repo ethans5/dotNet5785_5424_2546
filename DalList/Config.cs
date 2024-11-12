@@ -1,4 +1,4 @@
-﻿namespace Dal;
+﻿namespace s_dal;
 
 internal static class Config
 {
@@ -19,6 +19,8 @@ internal static class Config
         nextCallId = startCallId;
         nextAssignmentId = startAssignmentId;
         Clock = DateTime.Now;
-        
+        RiskRange = new TimeSpan(0, 30, 0);
+
+
     }
 }

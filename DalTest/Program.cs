@@ -1,4 +1,4 @@
-﻿using Dal;
+﻿using s_dal;
 using DalApi;
 using DO;
 using Microsoft.VisualBasic;
@@ -32,16 +32,18 @@ namespace DalTest
 
         private static void printVolunteer(Volunteer myVolunteer)
         {
-            Console.WriteLine("ID :" + myVolunteer.Id);
-            Console.WriteLine("Name :" + myVolunteer.Name);
-            Console.WriteLine("Phone :" + myVolunteer.Phone);
-            Console.WriteLine("Email :" + myVolunteer.Email);
-            Console.WriteLine("Job Type :" + myVolunteer.JobType);
-            Console.WriteLine("Is Active :" + myVolunteer.isActive);
-            Console.WriteLine("Address :" + myVolunteer.Address);
-            Console.WriteLine("Longitude :" + myVolunteer.Longitude);
-            Console.WriteLine("Latitude :" + myVolunteer.Latitude);
-            Console.WriteLine("Max Distance :" + myVolunteer.MaxDistance);
+            Console.WriteLine("ID : " + myVolunteer.Id);
+            Console.WriteLine("Name : " + myVolunteer.Name);
+            Console.WriteLine("Phone : " + myVolunteer.Phone);
+            Console.WriteLine("Email : " + myVolunteer.Email);
+            Console.WriteLine("Password : " + myVolunteer.Password);
+            Console.WriteLine("Job Type : " + myVolunteer.JobType);
+            Console.WriteLine("Is Active : " + myVolunteer.isActive);
+            Console.WriteLine("Address : " + myVolunteer.Address);
+            Console.WriteLine("Longitude : " + myVolunteer.Longitude);
+            Console.WriteLine("Latitude : " + myVolunteer.Latitude);
+            Console.WriteLine("Max Distance : " + myVolunteer.MaxDistance);
+            Console.WriteLine("Type of Distance : " + myVolunteer.distanceType);
 
             Console.WriteLine(" ");
 
@@ -67,9 +69,11 @@ namespace DalTest
 
             Console.WriteLine("Please enter the longitude and the latitude of your address :");
             Console.Write("Longitude : ");
-            double longitude = Convert.ToDouble(Console.ReadLine());
+            string temp1 = Console.ReadLine()!;
+            double longitude = double.Parse(temp1);   
             Console.Write("Latitude : ");
-            double latitude = Convert.ToDouble(Console.ReadLine());
+            string temp2 = Console.ReadLine()!;
+            double latitude = double.Parse(temp2);
 
             Console.WriteLine("Please enter the maximal distance you could volunteer : ");
             int distance = Convert.ToInt32(Console.ReadLine());
@@ -128,60 +132,84 @@ namespace DalTest
 
         private static void updateVolunteer()
         {
-            Console.WriteLine("Please enter the id of the volunteer you want to update : ");
+            Console.Write("Please enter the id of the volunteer you want to update :\t");
             int id = Convert.ToInt32(Console.ReadLine());
             Volunteer? volunteer = s_dalVolunteer!.Read(id);
             printVolunteer(volunteer!);
 
-            Console.WriteLine("Please enter the new name : ");
+            Console.Write("Please enter the new name :\t");
             string name = Console.ReadLine()!;
             if (string.IsNullOrEmpty(name))
             {
                 name = volunteer!.Name;
             }
-            Console.WriteLine("Please enter the new phone number : ");
+            Console.Write("Please enter the new phone number :\t");
             string phone = Console.ReadLine()!;
             if (string.IsNullOrEmpty(phone))
             {
                 phone = volunteer!.Phone;
             }
-            Console.WriteLine("Please enter the new email : ");
+            Console.Write("Please enter the new email :\t");
             string email = Console.ReadLine()!;
             if (string.IsNullOrEmpty(email))
             {
                 email = volunteer!.Email;
             }
-            Console.WriteLine("Please enter the new address : ");
+
+            Console.Write("Please enter a new Password :\t");
+            string password = Console.ReadLine()!;
+            if (string.IsNullOrEmpty(password))
+            {
+                password = volunteer!.Password!;
+            }
+
+            Console.Write("Please enter the new address :\t");
             string address = Console.ReadLine()!;
             if (string.IsNullOrEmpty(address))
             {
                 address = volunteer!.Address!;
             }
-            Console.WriteLine("Please enter the new longitude : ");
+            Console.Write("Please enter the new longitude :\t");
             string longitudeInput = Console.ReadLine()!;
             double? longitude = !string.IsNullOrEmpty(longitudeInput) ? Convert.ToDouble(longitudeInput) : volunteer!.Longitude;
 
-            Console.WriteLine("Please enter the new latitude : ");
+            Console.Write("Please enter the new latitude :\t");
             string latitudeInput = Console.ReadLine()!;
             double? latitude = !string.IsNullOrEmpty(latitudeInput) ? Convert.ToDouble(latitudeInput) : volunteer!.Latitude;
 
             
-            Console.WriteLine("Please enter the new maximal distance : ");
+            Console.Write("Please enter the new maximal distance :\t");
             string distanceInput = Console.ReadLine()!;
             double distance = !string.IsNullOrEmpty(distanceInput) ? Convert.ToInt32(distanceInput) : volunteer!.MaxDistance!.Value;
 
-            Console.WriteLine("Please enter the new distance type : ");
-            Console.WriteLine("1 - Aerial \n");
-            Console.WriteLine("2 - Walking \n");
-            Console.WriteLine("3 - Driving \n");
-            int option = 0;
-            while (option < 1 || option > 3)
-            {
-                option = Convert.ToInt32(Console.ReadLine());
-            }
-            distanceType distanceType = (distanceType)option;
+            Console.Write("Please enter the new distance type :\n");
+            Console.WriteLine("1 - Aerial ");
+            Console.WriteLine("2 - Walking ");
+            Console.WriteLine("3 - Driving ");
 
-            DO.Volunteer myVolunteer = new Volunteer(id, name, phone, email, jobType.Volunteer, true, distanceType, distance,null, address, longitude, latitude);
+            string? distanceTypeInput = Console.ReadLine();
+            distanceType distanceType;
+
+            if(string.IsNullOrEmpty(distanceTypeInput))
+            {
+                distanceType = volunteer!.distanceType ;
+            }
+            else
+            {
+                int option = Convert.ToInt32(distanceTypeInput);
+
+                while (option < 1 || option > 3)
+                {
+                    Console.WriteLine("please enter a digit between 1 and 3 :");
+                    option = Convert.ToInt32(Console.ReadLine());
+                }
+
+                distanceType = (distanceType)option;
+            }
+          
+          
+
+            DO.Volunteer myVolunteer = new Volunteer(id, name, phone, email, jobType.Volunteer, true, distanceType, distance,password, address, longitude, latitude);
 
             s_dalVolunteer!.Update(myVolunteer);
 
@@ -613,15 +641,158 @@ namespace DalTest
             } while (option != 0);
         }
 
-        /* Initialization option */
+/**************************************************************************** Initialization option *********************************************************************/
         private static void funcInitialization()
         {
             Initialization.Do(s_dalAssignment,s_dalCall!,s_dalVolunteer!,s_dalConfig!);
         }
 
-        /****************************************************************************** All data *******************************************************************************/
+/************************************************************************************* Config ***************************************************************************/
 
-        private static void printAllData()
+        private static void configOptions()
+        {
+            int option;
+            do
+            {
+                Console.WriteLine("\n--- Configuration Sub-Menu ---");
+                Console.WriteLine("0. Exit the sub-menu");
+                Console.WriteLine("1. Advance the system clock by one minute");
+                Console.WriteLine("2. Advance the system clock by one hour");
+                Console.WriteLine("3. Advance the system clock by one day");
+                Console.WriteLine("4. Advance the system clock by one month");
+                Console.WriteLine("5. Advance the system clock by one year");
+                Console.WriteLine("6. Display the current value of the system clock");
+                Console.WriteLine("7. Set a new value for a configuration variable");
+                Console.WriteLine("8. Display the current value of a configuration variable");
+                Console.WriteLine("9. Reset all configuration variables to default values");
+                Console.Write("Enter your choice: ");
+                option = Convert.ToInt32(Console.ReadLine());
+                Console.WriteLine("");
+                switch (option)
+                {
+                    case 0:
+                        break;
+
+                    case 1:
+                        s_dalConfig!.Clock = s_dalConfig.Clock.AddMinutes(1);
+                        break;
+                    case 2:
+                        s_dalConfig!.Clock = s_dalConfig.Clock.AddHours(1);
+                        break;
+                    case 3:
+                        s_dalConfig!.Clock = s_dalConfig.Clock.AddDays(1);
+                        break;
+                    case 4:
+                        s_dalConfig!.Clock = s_dalConfig.Clock.AddMonths(1);
+                        break;
+                    case 5:
+                        s_dalConfig!.Clock = s_dalConfig.Clock.AddYears(1);
+                        break;
+                    case 6:
+                        Console.WriteLine($"The current time is {s_dalConfig!.Clock}");
+                        break;
+                    case 7:
+                        SetNewConfigValue();
+                        break;
+
+                    case 8:
+                        ShowConfigValue();
+                        break;
+
+                    case 9:
+                        s_dalConfig!.Reset();
+                        Console.WriteLine("All configuration variables have been reset to their default values.");
+                        break;
+                    default:
+                        Console.WriteLine("Please enter a digit between 0-5: ");
+                        break;
+                }
+            } while (option!=0);
+        }
+        private static void SetNewConfigValue()
+        {
+            Console.WriteLine("Which configuration variable would you like to change?");
+            Console.WriteLine("1. System Clock");
+            Console.WriteLine("2. Risk Range (in minutes)");
+
+            if (!int.TryParse(Console.ReadLine(), out int option))
+            {
+                Console.WriteLine("Invalid input.");
+                return;
+            }
+
+            
+                switch (option)
+                {
+                    case 1:
+                        Console.Write("Enter the new system clock value (format: YYYY-MM-DD HH:mm): ");
+                        if (DateTime.TryParse(Console.ReadLine(), out DateTime newClock))
+                        {
+                            s_dalConfig!.Clock = newClock;
+                            Console.WriteLine($"New system clock set to: {s_dalConfig!.Clock}");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Invalid date format.");
+                        }
+                        break;
+
+                    case 2:
+                        Console.Write("Enter the new Risk Range (in minutes): ");
+                        if (int.TryParse(Console.ReadLine(), out int minutes))
+                        {
+                            s_dalConfig!.RiskRange = TimeSpan.FromMinutes(minutes);
+                            Console.WriteLine($"New Risk Range set to: {s_dalConfig!.RiskRange}");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Please enter a valid number.");
+                        }
+                        break;
+
+                    default:
+                        Console.WriteLine("Invalid option.");
+                        break;
+                }
+           
+
+
+        }
+        private static void ShowConfigValue()
+        {
+            Console.WriteLine("Which configuration variable would you like to display?");
+            Console.WriteLine("1. System Clock");
+            Console.WriteLine("2. Risk Range");
+         
+
+            if (!int.TryParse(Console.ReadLine(), out int option))
+            {
+                Console.WriteLine("Invalid input.");
+                return;
+            }
+
+            
+                switch (option)
+                {
+                    case 1:
+                        Console.WriteLine($"System Clock: {s_dalConfig!.Clock}");
+                        break;
+
+                    case 2:
+                        Console.WriteLine($"Risk Range: {s_dalConfig!.RiskRange}");
+                        break;
+
+                    default:
+                        Console.WriteLine("Invalid option.");
+                        break;
+                }
+           
+
+        }
+
+            /****************************************************************************** All data *******************************************************************************/
+
+            private static void printAllData()
         {
             Console.WriteLine("Volunteers :");
             readAllVolunteer();
@@ -685,7 +856,7 @@ namespace DalTest
                             break;
 
                         case 6:
-
+                            configOptions();
                             break;
 
                         case 7:
