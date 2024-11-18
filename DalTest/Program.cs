@@ -1,4 +1,4 @@
-﻿using s_dal;
+﻿using Dal;
 using DalApi;
 using DO;
 using Microsoft.VisualBasic;
@@ -7,11 +7,11 @@ namespace DalTest
 {
     internal class Program
     {
-        private static ICall? s_dalCall = new CallImplementation();
-        private static IAssignment? s_dalAssignment = new AssignmentImplementation();
-        private static IVolunteer? s_dalVolunteer = new VolunteerImplementation();
-        private static IConfig? s_dalConfig = new ConfigImplementation();
-
+        //private static ICall? s_dalCall = new CallImplementation();
+        //private static IAssignment? s_dalAssignment = new AssignmentImplementation();
+        //private static IVolunteer? s_dalVolunteer = new VolunteerImplementation();
+        //private static IConfig? s_dalConfig = new ConfigImplementation();
+        static readonly IDal s_dal = new DalList();
         // fucntion to print the menu of each type of object
         private static void printMenu(string typeOfMenu)
         {
@@ -89,7 +89,7 @@ namespace DalTest
             }
             distanceType distanceType = (distanceType)option;
 
-            s_dalVolunteer!.Create(new Volunteer
+            s_dal.Volunteer.Create(new Volunteer
             {
                 Id = id,
                 Name = name,
@@ -110,13 +110,13 @@ namespace DalTest
         {
             Console.WriteLine("Please enter the id of the volunteer you want to read : ");
             int id = Convert.ToInt32(Console.ReadLine());
-            Volunteer? volunteer = s_dalVolunteer!.Read(id);
+            Volunteer? volunteer = s_dal.Volunteer.Read(id);
             printVolunteer(volunteer!);
         }
 
         private static void readAllVolunteer()
         {
-            List<Volunteer> volunteers = s_dalVolunteer!.ReadAll();
+            IEnumerable<Volunteer> volunteers = s_dal.Volunteer.ReadAll();
             if(volunteers != null && volunteers.Any())
             {
                 foreach (Volunteer volunteer in volunteers)
@@ -134,7 +134,7 @@ namespace DalTest
         {
             Console.Write("Please enter the id of the volunteer you want to update :\t");
             int id = Convert.ToInt32(Console.ReadLine());
-            Volunteer? volunteer = s_dalVolunteer!.Read(id);
+            Volunteer? volunteer = s_dal.Volunteer.Read(id);
             printVolunteer(volunteer!);
 
             Console.Write("Please enter the new name :\t");
@@ -211,7 +211,7 @@ namespace DalTest
 
             DO.Volunteer myVolunteer = new Volunteer(id, name, phone, email, jobType.Volunteer, true, distanceType, distance,password, address, longitude, latitude);
 
-            s_dalVolunteer!.Update(myVolunteer);
+            s_dal.Volunteer.Update(myVolunteer);
 
             Console.WriteLine(" ");
             printVolunteer(myVolunteer);
@@ -221,7 +221,7 @@ namespace DalTest
         {
             Console.WriteLine("Please enter the id of the volunteer you want to delete : ");
             int id = Convert.ToInt32(Console.ReadLine());
-            s_dalVolunteer!.Delete(id);
+            s_dal.Volunteer.Delete(id);
         }
 
         private static void volunteersOptions()
@@ -256,7 +256,7 @@ namespace DalTest
                         break;
 
                     case 6:
-                        s_dalVolunteer!.DeleteAll();
+                        s_dal.Volunteer.DeleteAll();
                         break;
 
                     default:
@@ -314,9 +314,9 @@ namespace DalTest
             Console.Write("Please enter the maximum time for the call (yyyy-MM-dd HH:mm:ss): ");
             DateTime? maxTime = DateTime.Parse(Console.ReadLine()!);
 
-            s_dalCall!.Create(new Call
+            s_dal.Call.Create(new Call
             {
-                Id = s_dalConfig!.NextCallId,
+                Id = s_dal.Config.NextCallId,
                 CallType = callType,
                 Address = address,
                 Latitude = latitude,
@@ -331,13 +331,13 @@ namespace DalTest
         {
             Console.WriteLine("Please enter the id of the call you want to read: ");
             int id = Convert.ToInt32(Console.ReadLine());
-            Call? call = s_dalCall!.Read(id);
+            Call? call = s_dal.Call.Read(id);
             printCall(call!);
         }
 
         private static void readAllCalls()
         {
-            List<Call> calls = s_dalCall!.ReadAll();
+            IEnumerable<Call> calls = s_dal.Call.ReadAll();
             if(calls != null && calls.Any())
             {
                 foreach (Call call in calls)
@@ -354,7 +354,7 @@ namespace DalTest
         {
             Console.WriteLine("Please enter the id of the call you want to update: ");
             int id = Convert.ToInt32(Console.ReadLine());
-            Call? call = s_dalCall!.Read(id);
+            Call? call = s_dal.Call.Read(id);
             printCall(call!);
 
             Console.WriteLine("Please enter the new address (or press enter to keep the current one): ");
@@ -395,7 +395,7 @@ namespace DalTest
 
             DO.Call myCall = new Call(id, call!.CallType, address, latitude, longitude, callTime, description, maxTime);
 
-            s_dalCall!.Update(myCall);
+            s_dal.Call.Update(myCall);
 
             Console.WriteLine(" ");
             printCall(myCall);
@@ -405,7 +405,7 @@ namespace DalTest
         {
             Console.WriteLine("Please enter the id of the call you want to delete: ");
             int id = Convert.ToInt32(Console.ReadLine());
-            s_dalCall!.Delete(id);
+            s_dal.Call.Delete(id);
         }
 
         private static void callsOptions()
@@ -435,7 +435,7 @@ namespace DalTest
                         deleteCall();
                         break;
                     case 6:
-                        s_dalCall!.DeleteAll();
+                        s_dal.Call.DeleteAll();
                         break;
                     default:
                         Console.WriteLine("Please enter a digit between 0-6: ");
@@ -460,7 +460,7 @@ namespace DalTest
         {
             Console.Write("Please enter the Call ID: ");
             int callId = Convert.ToInt32(Console.ReadLine());
-            if (s_dalCall!.Read(callId) == null)
+            if (s_dal.Call.Read(callId) == null)
             {
                 Console.WriteLine("The call ID does not exist.");
                 return;
@@ -468,7 +468,7 @@ namespace DalTest
 
             Console.Write("Please enter the Volunteer ID: ");
             int volunteerId = Convert.ToInt32(Console.ReadLine());
-            if (s_dalVolunteer!.Read(volunteerId) == null)
+            if (s_dal.Volunteer.Read(volunteerId) == null)
             {
                 Console.WriteLine("The volunteer ID does not exist.");
                 return;
@@ -495,9 +495,9 @@ namespace DalTest
             }
             typeOfEndTreatment typeOfEnd = (typeOfEndTreatment)typeOption;
 
-            s_dalAssignment!.Create(new Assignment
+            s_dal.Assignment.Create(new Assignment
             {
-                Id = s_dalConfig!.NextAssignmentId,
+                Id = s_dal.Config.NextAssignmentId,
                 CallId = callId,
                 VolunteerId = volunteerId,
                 StartTreatment = startTreatment,
@@ -511,13 +511,13 @@ namespace DalTest
         {
             Console.WriteLine("Please enter the ID of the assignment you want to read: ");
             int id = Convert.ToInt32(Console.ReadLine());
-            Assignment? assignment = s_dalAssignment!.Read(id);
+            Assignment? assignment = s_dal.Assignment.Read(id);
             printAssignment(assignment!);
         }
 
         private static void readAllAssignments()
         {
-            List<Assignment> assignments = s_dalAssignment!.ReadAll();
+            IEnumerable<Assignment> assignments = s_dal.Assignment.ReadAll();
             if(assignments != null && assignments.Any())
             {
                 foreach (Assignment assignment in assignments)
@@ -534,7 +534,7 @@ namespace DalTest
         {
             Console.WriteLine("Please enter the ID of the assignment you want to update: ");
             int id = Convert.ToInt32(Console.ReadLine());
-            Assignment? assignment = s_dalAssignment!.Read(id);
+            Assignment? assignment = s_dal.Assignment.Read(id);
 
             printAssignment(assignment!);
 
@@ -592,7 +592,7 @@ namespace DalTest
             Assignment updatedAssignment = new Assignment(id, callId, volunteerId, startTreatment, endTreatment, typeOfEnd);
 
             // Mise à jour de l'Assignment dans la base de données
-            s_dalAssignment!.Update(updatedAssignment);
+            s_dal.Assignment.Update(updatedAssignment);
 
             Console.WriteLine("\nUpdated Assignment:");
             printAssignment(updatedAssignment);
@@ -602,7 +602,7 @@ namespace DalTest
         {
             Console.WriteLine("Please enter the ID of the assignment you want to delete: ");
             int id = Convert.ToInt32(Console.ReadLine());
-            s_dalAssignment!.Delete(id);
+            s_dal.Assignment.Delete(id);
         }
 
         private static void assignmentsOptions()
@@ -632,7 +632,7 @@ namespace DalTest
                         deleteAssignment();
                         break;
                     case 6:
-                        s_dalAssignment!.DeleteAll();
+                        s_dal.Assignment.DeleteAll();
                         break;
                     default:
                         Console.WriteLine("Please enter a digit between 0-6: ");
@@ -644,7 +644,7 @@ namespace DalTest
 /**************************************************************************** Initialization option *********************************************************************/
         private static void funcInitialization()
         {
-            Initialization.Do(s_dalAssignment,s_dalCall!,s_dalVolunteer!,s_dalConfig!);
+            Initialization.Do(s_dal);
         }
 
 /************************************************************************************* Config ***************************************************************************/
@@ -674,22 +674,22 @@ namespace DalTest
                         break;
 
                     case 1:
-                        s_dalConfig!.Clock = s_dalConfig.Clock.AddMinutes(1);
+                        s_dal.Config.Clock = s_dal.Config.Clock.AddMinutes(1);
                         break;
                     case 2:
-                        s_dalConfig!.Clock = s_dalConfig.Clock.AddHours(1);
+                        s_dal.Config.Clock = s_dal.Config.Clock.AddHours(1);
                         break;
                     case 3:
-                        s_dalConfig!.Clock = s_dalConfig.Clock.AddDays(1);
+                        s_dal.Config.Clock = s_dal.Config.Clock.AddDays(1);
                         break;
                     case 4:
-                        s_dalConfig!.Clock = s_dalConfig.Clock.AddMonths(1);
+                        s_dal.Config.Clock = s_dal.Config.Clock.AddMonths(1);
                         break;
                     case 5:
-                        s_dalConfig!.Clock = s_dalConfig.Clock.AddYears(1);
+                        s_dal.Config.Clock = s_dal.Config.Clock.AddYears(1);
                         break;
                     case 6:
-                        Console.WriteLine($"The current time is {s_dalConfig!.Clock}");
+                        Console.WriteLine($"The current time is {s_dal.Config.Clock}");
                         break;
                     case 7:
                         SetNewConfigValue();
@@ -700,7 +700,7 @@ namespace DalTest
                         break;
 
                     case 9:
-                        s_dalConfig!.Reset();
+                        s_dal.Config.Reset();
                         Console.WriteLine("All configuration variables have been reset to their default values.");
                         break;
                     default:
@@ -728,8 +728,8 @@ namespace DalTest
                         Console.Write("Enter the new system clock value (format: YYYY-MM-DD HH:mm): ");
                         if (DateTime.TryParse(Console.ReadLine(), out DateTime newClock))
                         {
-                            s_dalConfig!.Clock = newClock;
-                            Console.WriteLine($"New system clock set to: {s_dalConfig!.Clock}");
+                            s_dal.Config.Clock = newClock;
+                            Console.WriteLine($"New system clock set to: {s_dal.Config.Clock}");
                         }
                         else
                         {
@@ -741,8 +741,8 @@ namespace DalTest
                         Console.Write("Enter the new Risk Range (in minutes): ");
                         if (int.TryParse(Console.ReadLine(), out int minutes))
                         {
-                            s_dalConfig!.RiskRange = TimeSpan.FromMinutes(minutes);
-                            Console.WriteLine($"New Risk Range set to: {s_dalConfig!.RiskRange}");
+                            s_dal.Config.RiskRange = TimeSpan.FromMinutes(minutes);
+                            Console.WriteLine($"New Risk Range set to: {s_dal.Config.RiskRange}");
                         }
                         else
                         {
@@ -775,11 +775,11 @@ namespace DalTest
                 switch (option)
                 {
                     case 1:
-                        Console.WriteLine($"System Clock: {s_dalConfig!.Clock}");
+                        Console.WriteLine($"System Clock: {s_dal.Config.Clock}");
                         break;
 
                     case 2:
-                        Console.WriteLine($"Risk Range: {s_dalConfig!.RiskRange}");
+                        Console.WriteLine($"Risk Range: {s_dal.Config.RiskRange}");
                         break;
 
                     default:
@@ -804,9 +804,9 @@ namespace DalTest
 
         private static void deleteAllData()
         {
-            s_dalVolunteer!.DeleteAll();
-            s_dalCall!.DeleteAll();
-            s_dalAssignment!.DeleteAll();
+            s_dal.Volunteer.DeleteAll();
+            s_dal.Call.DeleteAll();
+            s_dal.Assignment.DeleteAll();
 
             Console.WriteLine("All the data has been deleted \n");
         }

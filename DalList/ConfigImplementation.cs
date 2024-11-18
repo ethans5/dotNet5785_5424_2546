@@ -1,7 +1,7 @@
 ﻿using DalApi;
 
 namespace s_dal;
-public class ConfigImplementation : IConfig
+internal class ConfigImplementation : IConfig
 {
     public int NextCallId => Config.NextCallId;
 

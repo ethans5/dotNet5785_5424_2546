@@ -2,7 +2,7 @@
 using DO;
 using DalApi;
 
-public class AssignmentImplementation : IAssignment
+internal class AssignmentImplementation : IAssignment
 {
     public void Create(Assignment assignment)
     {
@@ -15,14 +15,23 @@ public class AssignmentImplementation : IAssignment
     public Assignment? Read(int id)
     {
         if (DataSource.Assignments.Exists(a => a.Id == id))
-            return DataSource.Assignments.Find(a => a.Id == id);
+            return DataSource.Assignments.FirstOrDefault(a => a.Id == id);
         else
             throw new Exception($"Assignment with the ID : {id} does not exist...");
     }
-
-    public List<Assignment> ReadAll()
+    public Assignment? Read(Func<Assignment, bool> filter)
     {
-        return DataSource.Assignments;
+        return DataSource.Assignments.FirstOrDefault(filter);
+    }
+    //public List<Assignment> ReadAll()
+    //{
+    //    return DataSource.Assignments;
+    //}
+    public IEnumerable<Assignment> ReadAll(Func<Assignment,bool>?filter=null)
+    {
+       return filter == null 
+            ? DataSource.Assignments.Select(item => item) 
+            : DataSource.Assignments.Where(filter);
     }
 
     public void Update(Assignment assignment)
@@ -48,5 +57,5 @@ public class AssignmentImplementation : IAssignment
         DataSource.Assignments.Clear();
     }
 
- 
+    
 }

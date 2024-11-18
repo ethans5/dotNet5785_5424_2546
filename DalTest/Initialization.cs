@@ -5,10 +5,11 @@ using System.Threading;
 
 public static class Initialization
 {
-    private static IAssignment? s_dalAssignment; //stage 1
-    private static ICall? s_dalCall; //stage 1
-    private static IVolunteer? s_dalVolunteer; //stage 1
-    private static IConfig? s_dalConfig; //stage 1
+    //private static IAssignment? s_dalAssignment; //stage 1
+    //private static ICall? s_dalCall; //stage 1
+    //private static IVolunteer? s_dalVolunteer; //stage 1
+    //private static IConfig? s_dalConfig; //stage 1
+    private static IDal? s_dal; //stage 2
     private static readonly Random s_rand = new();
 
     /// <summary>
@@ -59,14 +60,14 @@ public static class Initialization
 
         for (int i = 0; i < 50; i++)
         {
-            int id = s_dalConfig!.NextCallId;
+            int id = s_dal!.Config.NextCallId;
             Array values = Enum.GetValues(typeof(callType));
             callType type = (callType)values.GetValue(s_rand.Next(values.Length))!;
             string address = "address" + s_rand.Next(1000);
             double latitude = s_rand.NextDouble() * 180 - 90;
             double longitude = s_rand.NextDouble() * 360 - 180;
-            DateTime start = new DateTime(s_dalConfig.Clock.Year - 2, 1, 1); //stage 1
-            int range = (s_dalConfig.Clock - start).Days; //stage 1
+            DateTime start = new DateTime(s_dal.Config.Clock.Year - 2, 1, 1); //stage 1
+            int range = (s_dal.Config.Clock - start).Days; //stage 1
             DateTime time = start.AddDays(s_rand.Next(range));
             Boolean datelimite = s_rand.Next(2) == 0;
             DateTime? limite = null;
@@ -74,11 +75,11 @@ public static class Initialization
             {
                 int range1 = 60;
                 int randomDays = s_rand.Next(range1);
-                limite = s_dalConfig.Clock.AddDays(randomDays);
+                limite = s_dal.Config.Clock.AddDays(randomDays);
             }
 
 
-            s_dalCall!.Create(new Call
+            s_dal.Call!.Create(new Call
             {
                 Id = id,
                 CallType = type,
@@ -224,7 +225,7 @@ public static class Initialization
             distanceType distanceType = (distanceType)values.GetValue(s_rand.Next(values.Length))!;
             double? distance = s_rand.NextDouble() * 1000;
             string password = "password" + s_rand.Next(1000);
-            s_dalVolunteer!.Create(new Volunteer
+            s_dal!.Volunteer!.Create(new Volunteer
             {
                 Id = ids[i],
                 Name = names[i],
@@ -245,12 +246,12 @@ public static class Initialization
     {
         for (int i = 0; i < 50; i++)
         {
-            int id = s_dalConfig!.NextAssignmentId;
-            var callList = s_dalCall!.ReadAll();
+            int id = s_dal!.Config!.NextAssignmentId;
+            var callList = s_dal!.Call!.ReadAll().ToList();
             int myCallId = callList[s_rand.Next(callList.Count)].Id;
 
-            var assignmentList = s_dalAssignment!.ReadAll();
-            if (assignmentList.Exists(c => myCallId == c.CallId))
+            var assignmentList = s_dal!.Assignment!.ReadAll();
+            if (assignmentList.Any(c => myCallId == c.CallId))
             {
                 continue;
             }
@@ -258,7 +259,7 @@ public static class Initialization
             {
                 DateTime callStartTime = callList.First(c => c.Id == myCallId).CallTime;
                 DateTime? maxEndTime = callList.First(c => c.Id == myCallId).MaxTime;
-                var volunteerList = s_dalVolunteer!.ReadAll();
+                var volunteerList = s_dal.Volunteer!.ReadAll().ToList();
                 int volunteerId = volunteerList[s_rand.Next(volunteerList.Count)].Id;
                 DateTime time;
                 typeOfEndTreatment? typeOfEnd = null;
@@ -289,26 +290,24 @@ public static class Initialization
                     }
 
                 }
-                else if (s_dalConfig!.Clock > maxEndTime)
+                else if (s_dal.Config!.Clock > maxEndTime)
                 {
                     typeOfEnd = typeOfEndTreatment.Expired;
                 }
-                s_dalAssignment!.Create(new Assignment { Id = id, CallId = myCallId, VolunteerId = volunteerId, StartTreatment = time, endTreatment = endTime, typeOfEnd = typeOfEnd });
+                s_dal.Assignment!.Create(new Assignment { Id = id, CallId = myCallId, VolunteerId = volunteerId, StartTreatment = time, endTreatment = endTime, typeOfEnd = typeOfEnd });
             }
         }
     }
-    public static void Do(IAssignment? dalAssignment, ICall dalCall, IVolunteer dalVolunteer, IConfig dalConfig)
+    public static void Do(IDal dal)
     {
-        s_dalCall = dalCall ?? throw new NullReferenceException("DAL object can not be null!");
-        s_dalVolunteer = dalVolunteer ?? throw new NullReferenceException("DAL object can not be null!");
-        s_dalAssignment = dalAssignment ?? throw new NullReferenceException("DAL object can not be null!");
-        s_dalConfig = dalConfig ?? throw new NullReferenceException("DAL object can not be null!");
+        //s_dalCall = dalCall ?? throw new NullReferenceException("DAL object can not be null!");
+        //s_dalVolunteer = dalVolunteer ?? throw new NullReferenceException("DAL object can not be null!");
+        //s_dalAssignment = dalAssignment ?? throw new NullReferenceException("DAL object can not be null!");
+        //s_dalConfig = dalConfig ?? throw new NullReferenceException("DAL object can not be null!");
+        s_dal = dal ?? throw new NullReferenceException("DAL object can not be null!");
 
         Console.WriteLine("Reset Configuration values and List values");
-        s_dalConfig.Reset();
-        s_dalCall.DeleteAll();
-        s_dalVolunteer.DeleteAll();
-        s_dalAssignment.DeleteAll();
+        s_dal.ResetDB();
         Console.WriteLine("Initializing call list");
         createCall();
         Console.WriteLine("Initializing volunteer list");

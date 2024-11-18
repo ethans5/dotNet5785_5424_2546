@@ -3,7 +3,7 @@ using DO;
 using DalApi;
 using System.Collections.Generic;
 
-public class CallImplementation : ICall
+internal class CallImplementation : ICall
 {
     public void Create(Call call)
     {
@@ -16,16 +16,25 @@ public class CallImplementation : ICall
     public Call? Read(int id)
     {
         if (DataSource.Calls.Exists(c => c.Id == id))
-            return DataSource.Calls.Find(c => c.Id == id);
+            return DataSource.Calls.FirstOrDefault(c => c.Id == id);
         else
             throw new Exception($"Call with the ID : {id} does not exist...");
     }
-    public List<Call> ReadAll()
+    public Call? Read(Func<Call, bool> filter)
     {
-        return DataSource.Calls;
+        return DataSource.Calls.FirstOrDefault(filter);
     }
+    //public List<Call> ReadAll()
+    //{
+    //    return DataSource.Calls;
+    //}
 
-
+    public IEnumerable<Call> ReadAll(Func<Call, bool>? filter = null)
+    {
+       return filter == null
+            ? DataSource.Calls.Select(item => item)
+            : DataSource.Calls.Where(filter);
+    }
     public void Update(Call call)
     {
         int index = DataSource.Calls.FindIndex(c => c.Id == call.Id);
@@ -48,10 +57,5 @@ public class CallImplementation : ICall
         DataSource.Calls.Clear();
     }
 
-
-
-
- 
- 
-
+    
 }

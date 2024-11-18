@@ -3,7 +3,7 @@ using DalApi;
 using DO;
 using System.Collections.Generic;
 
-public class VolunteerImplementation : IVolunteer
+internal class VolunteerImplementation : IVolunteer
 {
     public void Create(Volunteer volunteer)
     {
@@ -16,18 +16,27 @@ public class VolunteerImplementation : IVolunteer
     public Volunteer? Read(int id)
     {
         if (DataSource.Volunteers.Exists(v => v.Id == id))
-            return DataSource.Volunteers.Find(v => v.Id == id);
+            return DataSource.Volunteers.FirstOrDefault(v => v.Id == id);
         else
             throw new Exception($"Volunteer with the ID : {id} does not exist...");
     }
-
-
-    public List<Volunteer> ReadAll()
+    public Volunteer? Read(Func<Volunteer, bool> filter)
     {
-        return DataSource.Volunteers;
+        return DataSource.Volunteers.FirstOrDefault(filter);
     }
 
 
+    //public List<Volunteer> ReadAll()
+    //{
+    //    return DataSource.Volunteers;
+    //}
+
+    public IEnumerable<Volunteer> ReadAll(Func<Volunteer, bool>? filter = null)
+    {
+        return filter == null
+             ? DataSource.Volunteers.Select(item => item)
+             : DataSource.Volunteers.Where(filter);
+    }
     public void Update(Volunteer volunteer)
     {
         int index = DataSource.Volunteers.FindIndex(v => v.Id == volunteer.Id);
@@ -52,7 +61,5 @@ public class VolunteerImplementation : IVolunteer
         DataSource.Volunteers.Clear();
     }
 
-
-
-
+    
 }

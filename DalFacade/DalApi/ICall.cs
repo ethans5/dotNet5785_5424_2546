@@ -2,12 +2,12 @@
 using DO;
 
 
-public interface ICall
+public interface ICall: ICrud<Call>
 {
-    void Create(DO.Call call);
-    DO.Call? Read(int id);
-    List<DO.Call> ReadAll();
-    void Update(DO.Call call);
-    void Delete(int id);
-    void DeleteAll();
+    //void Create(DO.Call call);
+    //DO.Call? Read(int id);
+    //List<DO.Call> ReadAll();
+    //void Update(DO.Call call);
+    //void Delete(int id);
+    //void DeleteAll();
 }
