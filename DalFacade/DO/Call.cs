@@ -16,5 +16,5 @@ public record Call
 
 )
 {
-    public Call() : this(0, callType.type1, "", 0, 0, DateTime.Now, "") { }
+    public Call() : this(0, callType.BuyingFood, "", 0, 0, DateTime.Now, "") { }
 }

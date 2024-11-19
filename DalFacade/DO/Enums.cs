@@ -12,9 +12,16 @@ public enum distanceType
 }   
 public enum callType
 {
-    type1,
-    type2,
-    type3
+    BuyingFood = 1,
+    BuyingMedicine,
+    BuyingClothes,
+    BuyingCartoons,
+    PackingFood,
+    PackingMedicine,
+    PackingClothes,
+    PackingCartoonsInTheTruck,
+    Delivries,
+    DelivriesToTheDoor,
 }
 
 public enum typeOfEndTreatment

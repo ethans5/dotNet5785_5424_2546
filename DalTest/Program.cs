@@ -61,6 +61,8 @@ namespace DalTest
             Console.Write("Please enter your phone number : ");
             string phone = Console.ReadLine()!;
 
+            string password = name + $"{id}";
+
             Console.Write("Please enter your email : ");
             string email = Console.ReadLine()!;
 
@@ -95,6 +97,7 @@ namespace DalTest
                 Name = name,
                 Phone = phone,
                 Email = email,
+                Password = password,
                 JobType = jobType.Volunteer,
                 isActive = true,
                 distanceType = distanceType,
@@ -289,8 +292,14 @@ namespace DalTest
         {
         
             Console.WriteLine("Please enter the type of call: ");
+
+            foreach (var item in Enum.GetValues(typeof(callType)))
+            {
+                Console.WriteLine($"{(int)item}. {item}");
+            }
+
             int callTypeOption = 0;
-            while (callTypeOption < 1 || callTypeOption > 3)
+            while (callTypeOption < 1 || callTypeOption > 10)
             {
                 callTypeOption = Convert.ToInt32(Console.ReadLine());
             }
@@ -357,6 +366,18 @@ namespace DalTest
             Call? call = s_dal.Call.Read(id);
             printCall(call!);
 
+            Console.WriteLine("Please enter the new call's type (or press enter to keep the current one):");
+            foreach (var item in Enum.GetValues(typeof(callType)))
+            {
+                Console.WriteLine($"{(int)item}. {item}");
+            }
+            string callTypeInput = Console.ReadLine()!;
+            if(string.IsNullOrEmpty(callTypeInput))
+            {
+                callTypeInput = call!.CallType.ToString();
+            }
+            callType callType = (callType)Enum.Parse(typeof(callType), callTypeInput);
+
             Console.WriteLine("Please enter the new address (or press enter to keep the current one): ");
             string address = Console.ReadLine()!;
             if (string.IsNullOrEmpty(address))
@@ -365,18 +386,13 @@ namespace DalTest
             }
 
             Console.WriteLine("Please enter the new longitude (or press enter to keep the current one): ");
-            double longitude = Convert.ToDouble(Console.ReadLine());
-            if (longitude == 0)
-            {
-                longitude = call!.Longitude;
-            }
+            string longitudeInput = Console.ReadLine()!;
+            double longitude = string.IsNullOrWhiteSpace(longitudeInput) ? call!.Longitude : Convert.ToDouble(longitudeInput);
 
             Console.WriteLine("Please enter the new latitude (or press enter to keep the current one): ");
-            double latitude = Convert.ToDouble(Console.ReadLine());
-            if (latitude == 0)
-            {
-                latitude = call!.Latitude;
-            }
+            string latitudeInput = Console.ReadLine()!;
+            double latitude = string.IsNullOrWhiteSpace(latitudeInput) ? call!.Latitude : Convert.ToDouble(latitudeInput);
+
 
             Console.WriteLine("Please enter the new call time (yyyy-MM-dd HH:mm:ss) (or press enter to keep the current one): ");
             string? callTimeInput = Console.ReadLine();
@@ -393,7 +409,7 @@ namespace DalTest
             string? maxTimeInput = Console.ReadLine();
             DateTime? maxTime = string.IsNullOrEmpty(maxTimeInput) ? call!.MaxTime : DateTime.Parse(maxTimeInput);
 
-            DO.Call myCall = new Call(id, call!.CallType, address, latitude, longitude, callTime, description, maxTime);
+            DO.Call myCall = new Call(id, callType, address, latitude, longitude, callTime, description, maxTime);
 
             s_dal.Call.Update(myCall);
 
