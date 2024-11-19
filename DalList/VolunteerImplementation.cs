@@ -3,8 +3,15 @@ using DalApi;
 using DO;
 using System.Collections.Generic;
 
+/// <summary>
+/// Implements the IVolunteer interface to manage Volunteer entities in the data source.
+/// Provides CRUD operations and supports filtering.
+/// </summary>
 internal class VolunteerImplementation : IVolunteer
 {
+    /// <summary>
+    /// Adds a new Volunteer to the data source.
+    /// </summary>
     public void Create(Volunteer volunteer)
     {
         if (DataSource.Volunteers.Exists(v => v.Id == volunteer.Id))
@@ -13,6 +20,9 @@ internal class VolunteerImplementation : IVolunteer
             DataSource.Volunteers.Add(volunteer);
     }
 
+    /// <summary>
+    /// Retrieves a Volunteer by its unique ID.
+    /// </summary>
     public Volunteer? Read(int id)
     {
         if (DataSource.Volunteers.Exists(v => v.Id == id))
@@ -20,23 +30,28 @@ internal class VolunteerImplementation : IVolunteer
         else
             throw new DalDoesNotExistException($"Volunteer with the ID : {id} does not exist...");
     }
+
+    /// <summary>
+    /// Retrieves the first Volunteer that matches a given condition.
+    /// </summary>
     public Volunteer? Read(Func<Volunteer, bool> filter)
     {
         return DataSource.Volunteers.FirstOrDefault(filter);
     }
 
-
-    //public List<Volunteer> ReadAll()
-    //{
-    //    return DataSource.Volunteers;
-    //}
-
+    /// <summary>
+    /// Retrieves all Volunteers, optionally filtering them based on a condition.
+    /// </summary>
     public IEnumerable<Volunteer> ReadAll(Func<Volunteer, bool>? filter = null)
     {
         return filter == null
              ? DataSource.Volunteers.Select(item => item)
              : DataSource.Volunteers.Where(filter);
     }
+
+    /// <summary>
+    /// Updates an existing Volunteer in the data source.
+    /// </summary>
     public void Update(Volunteer volunteer)
     {
         int index = DataSource.Volunteers.FindIndex(v => v.Id == volunteer.Id);
@@ -46,7 +61,9 @@ internal class VolunteerImplementation : IVolunteer
             DataSource.Volunteers[index] = volunteer;
     }
 
-
+    /// <summary>
+    /// Deletes a Volunteer by its unique ID.
+    /// </summary>
     public void Delete(int id)
     {
         if (DataSource.Volunteers.Exists(v => v.Id == id))
@@ -55,11 +72,11 @@ internal class VolunteerImplementation : IVolunteer
             throw new DalDoesNotExistException($"Volunteer with the ID : {id} does not exist...");
     }
 
-
+    /// <summary>
+    /// Deletes all Volunteers from the data source.
+    /// </summary>
     public void DeleteAll()
     {
         DataSource.Volunteers.Clear();
     }
-
-    
 }

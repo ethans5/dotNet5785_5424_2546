@@ -28,8 +28,9 @@ namespace DalTest
 
         }
 
-/***************************************************************** Volunteer Functions **********************************************************************************/
-
+        /***************************************************************** Volunteer Functions **********************************************************************************/
+       
+        // Prints the details of a single Volunteer object to the console.
         private static void printVolunteer(Volunteer myVolunteer)
         {
             Console.WriteLine("ID : " + myVolunteer.Id);
@@ -49,7 +50,7 @@ namespace DalTest
 
 
         }
-
+        // Allows the user to create a new Volunteer object by providing details interactively.
         private static void createVolunteer()
         {
             Console.Write("Please enter your Id (digits only): ");
@@ -90,6 +91,7 @@ namespace DalTest
                 option = Convert.ToInt32(Console.ReadLine());
             }
             distanceType distanceType = (distanceType)option;
+            // Save the new Volunteer object using a data access layer (DAL).
 
             s_dal.Volunteer.Create(new Volunteer
             {
@@ -108,7 +110,7 @@ namespace DalTest
             });
 
         }
-
+        // Reads and prints the details of a Volunteer by their ID.
         private static void readVolunteer()
         {
             Console.WriteLine("Please enter the id of the volunteer you want to read : ");
@@ -116,7 +118,7 @@ namespace DalTest
             Volunteer? volunteer = s_dal.Volunteer.Read(id);
             printVolunteer(volunteer!);
         }
-
+        // Prints the details of all Volunteers if they exist.
         private static void readAllVolunteer()
         {
             IEnumerable<Volunteer> volunteers = s_dal.Volunteer.ReadAll();
@@ -133,6 +135,7 @@ namespace DalTest
 
         }
 
+        // Updates the details of an existing Volunteer by ID.
         private static void updateVolunteer()
         {
             Console.Write("Please enter the id of the volunteer you want to update :\t");
@@ -213,19 +216,21 @@ namespace DalTest
           
 
             DO.Volunteer myVolunteer = new Volunteer(id, name, phone, email, jobType.Volunteer, true, distanceType, distance,password, address, longitude, latitude);
+            // Update the Volunteer object in the data store.
 
             s_dal.Volunteer.Update(myVolunteer);
 
             Console.WriteLine(" ");
             printVolunteer(myVolunteer);
         }
-
+        // Deletes a Volunteer by their ID.
         private static void deleteVolunteer()
         {
             Console.WriteLine("Please enter the id of the volunteer you want to delete : ");
             int id = Convert.ToInt32(Console.ReadLine());
             s_dal.Volunteer.Delete(id);
         }
+        // Provides a menu-driven interface for managing volunteers.
 
         private static void volunteersOptions()
         {
@@ -237,29 +242,29 @@ namespace DalTest
                 option = Convert.ToInt32(Console.ReadLine());
                 switch (option)
                 {
-                    case 0: break;
+                    case 0: break;// Exit
                     case 1:
-                        createVolunteer();
+                        createVolunteer();// Create a new volunteer
                         break;
 
                     case 2:
-                        readVolunteer();
+                        readVolunteer();// Read volunteer details by ID
                         break;
 
                     case 3:
-                        readAllVolunteer();
+                        readAllVolunteer();// Read all volunteers
                         break;
 
                     case 4:
-                        updateVolunteer();
+                        updateVolunteer();// Update a volunteer
                         break;
 
                     case 5:
-                        deleteVolunteer();
+                        deleteVolunteer();// Delete a volunteer
                         break;
 
                     case 6:
-                        s_dal.Volunteer.DeleteAll();
+                        s_dal.Volunteer.DeleteAll();// Delete all volunteers
                         break;
 
                     default:
@@ -274,7 +279,8 @@ namespace DalTest
         }
 
 
-/********************************************************************* Call Functions ***********************************************************************************/
+        /********************************************************************* Call Functions ***********************************************************************************/
+        // Prints the details of a single Call object to the console.
         private static void printCall(Call myCall)
         {
             Console.WriteLine("ID: " + myCall.Id);
@@ -288,6 +294,7 @@ namespace DalTest
             Console.WriteLine(" ");
         }
 
+        // Allows the user to create a new Call object by providing input interactively.
         private static void createCall()
         {
         
@@ -323,6 +330,7 @@ namespace DalTest
             Console.Write("Please enter the maximum time for the call (yyyy-MM-dd HH:mm:ss): ");
             DateTime? maxTime = DateTime.Parse(Console.ReadLine()!);
 
+            // Creates a new Call object and stores it using the data access layer.
             s_dal.Call.Create(new Call
             {
                 
@@ -336,6 +344,7 @@ namespace DalTest
             });
         }
 
+        // Reads and prints the details of a specific Call object by its ID.
         private static void readCall()
         {
             Console.WriteLine("Please enter the id of the call you want to read: ");
@@ -344,10 +353,11 @@ namespace DalTest
             printCall(call!);
         }
 
+        // Prints the details of all Call objects if they exist.
         private static void readAllCalls()
         {
-            IEnumerable<Call> calls = s_dal.Call.ReadAll();
-            if(calls != null && calls.Any())
+            IEnumerable<Call> calls = s_dal.Call.ReadAll();// Retrieves all calls from the data store.
+            if (calls != null && calls.Any())
             {
                 foreach (Call call in calls)
                 {
@@ -359,6 +369,7 @@ namespace DalTest
          
         }
 
+        // Allows the user to update an existing Call object by its ID.
         private static void updateCall()
         {
             Console.WriteLine("Please enter the id of the call you want to update: ");
@@ -408,15 +419,17 @@ namespace DalTest
             Console.WriteLine("Please enter the new maximum time (yyyy-MM-dd HH:mm:ss) (or press enter to keep the current one): ");
             string? maxTimeInput = Console.ReadLine();
             DateTime? maxTime = string.IsNullOrEmpty(maxTimeInput) ? call!.MaxTime : DateTime.Parse(maxTimeInput);
+            // Creates a new Call object with the updated details.
 
             DO.Call myCall = new Call(id, callType, address, latitude, longitude, callTime, description, maxTime);
-
+            // Updates the Call object in the data store.
             s_dal.Call.Update(myCall);
 
             Console.WriteLine(" ");
             printCall(myCall);
         }
 
+        // Deletes a Call object by its ID.
         private static void deleteCall()
         {
             Console.WriteLine("Please enter the id of the call you want to delete: ");
@@ -460,7 +473,8 @@ namespace DalTest
             } while (option != 0);
         }
 
-/********************************************************************** Assignment Functions ****************************************************************************/
+        /********************************************************************** Assignment Functions ****************************************************************************/
+        // Print details of an assignment
         private static void printAssignment(Assignment assignment)
         {
             Console.WriteLine("ID: " + assignment.Id);
@@ -472,11 +486,12 @@ namespace DalTest
             Console.WriteLine(" ");
         }
 
+        // Create a new assignment
         private static void createAssignment()
         {
             Console.Write("Please enter the Call ID: ");
             int callId = Convert.ToInt32(Console.ReadLine());
-            if (s_dal.Call.Read(callId) == null)
+            if (s_dal.Call.Read(callId) == null)// Check if the provided Call ID exists
             {
                 Console.WriteLine("The call ID does not exist.");
                 return;
@@ -484,7 +499,7 @@ namespace DalTest
 
             Console.Write("Please enter the Volunteer ID: ");
             int volunteerId = Convert.ToInt32(Console.ReadLine());
-            if (s_dal.Volunteer.Read(volunteerId) == null)
+            if (s_dal.Volunteer.Read(volunteerId) == null)// Check if the Volunteer ID exists
             {
                 Console.WriteLine("The volunteer ID does not exist.");
                 return;
@@ -510,6 +525,7 @@ namespace DalTest
                 typeOption = Convert.ToInt32(Console.ReadLine());
             }
             typeOfEndTreatment typeOfEnd = (typeOfEndTreatment)typeOption;
+            // Create the new assignment and store it in the database
 
             s_dal.Assignment.Create(new Assignment
             {
@@ -522,6 +538,7 @@ namespace DalTest
             });
         }
 
+        // Read and display details of a specific assignment
 
         private static void readAssignment()
         {
@@ -531,6 +548,7 @@ namespace DalTest
             printAssignment(assignment!);
         }
 
+        // Read and display details of all assignments
         private static void readAllAssignments()
         {
             IEnumerable<Assignment> assignments = s_dal.Assignment.ReadAll();
@@ -546,6 +564,7 @@ namespace DalTest
          
         }
 
+        // Update an existing assignment by modifying its details
         private static void updateAssignment()
         {
             Console.WriteLine("Please enter the ID of the assignment you want to update: ");
@@ -663,8 +682,9 @@ namespace DalTest
             Initialization.Do(s_dal);
         }
 
-/************************************************************************************* Config ***************************************************************************/
+        /************************************************************************************* Config ***************************************************************************/
 
+        // Configuration sub-menu that offers multiple options to modify system settings
         private static void configOptions()
         {
             int option;
@@ -684,39 +704,41 @@ namespace DalTest
                 Console.Write("Enter your choice: ");
                 option = Convert.ToInt32(Console.ReadLine());
                 Console.WriteLine("");
+                // Switch case to handle the option selected by the user
                 switch (option)
                 {
                     case 0:
                         break;
 
                     case 1:
-                        s_dal.Config.Clock = s_dal.Config.Clock.AddMinutes(1);
+                        s_dal.Config.Clock = s_dal.Config.Clock.AddMinutes(1);// Advance by 1 minute
                         break;
                     case 2:
-                        s_dal.Config.Clock = s_dal.Config.Clock.AddHours(1);
+                        s_dal.Config.Clock = s_dal.Config.Clock.AddHours(1);// Advance by 1 hour
                         break;
                     case 3:
-                        s_dal.Config.Clock = s_dal.Config.Clock.AddDays(1);
+                        s_dal.Config.Clock = s_dal.Config.Clock.AddDays(1);// Advance by 1 day
                         break;
                     case 4:
-                        s_dal.Config.Clock = s_dal.Config.Clock.AddMonths(1);
+                        s_dal.Config.Clock = s_dal.Config.Clock.AddMonths(1);// Advance by 1 month
                         break;
                     case 5:
-                        s_dal.Config.Clock = s_dal.Config.Clock.AddYears(1);
+                        s_dal.Config.Clock = s_dal.Config.Clock.AddYears(1);// Advance by 1 year
                         break;
                     case 6:
-                        Console.WriteLine($"The current time is {s_dal.Config.Clock}");
+                        Console.WriteLine($"The current time is {s_dal.Config.Clock}");// Display current system time
                         break;
                     case 7:
-                        SetNewConfigValue();
+                        SetNewConfigValue(); // Call method to set a new configuration value
+                        break;
                         break;
 
                     case 8:
-                        ShowConfigValue();
+                        ShowConfigValue();// Call method to show the current configuration value
                         break;
 
                     case 9:
-                        s_dal.Config.Reset();
+                        s_dal.Config.Reset();// Reset configuration variables to defaults
                         Console.WriteLine("All configuration variables have been reset to their default values.");
                         break;
                     default:
@@ -725,6 +747,7 @@ namespace DalTest
                 }
             } while (option!=0);
         }
+        // Function to change a specific configuration variable value
         private static void SetNewConfigValue()
         {
             Console.WriteLine("Which configuration variable would you like to change?");
@@ -742,7 +765,8 @@ namespace DalTest
                 {
                     case 1:
                         Console.Write("Enter the new system clock value (format: YYYY-MM-DD HH:mm): ");
-                        if (DateTime.TryParse(Console.ReadLine(), out DateTime newClock))
+                    // Prompt user to enter a new system clock value
+                    if (DateTime.TryParse(Console.ReadLine(), out DateTime newClock))
                         {
                             s_dal.Config.Clock = newClock;
                             Console.WriteLine($"New system clock set to: {s_dal.Config.Clock}");
@@ -754,11 +778,12 @@ namespace DalTest
                         break;
 
                     case 2:
-                        Console.Write("Enter the new Risk Range (in minutes): ");
+                    // Prompt user to enter a new Risk Range in minutes\
+                    Console.Write("Enter the new Risk Range (in minutes): ");
                         if (int.TryParse(Console.ReadLine(), out int minutes))
                         {
-                            s_dal.Config.RiskRange = TimeSpan.FromMinutes(minutes);
-                            Console.WriteLine($"New Risk Range set to: {s_dal.Config.RiskRange}");
+                            s_dal.Config.RiskRange = TimeSpan.FromMinutes(minutes);// Update the Risk Range as a TimeSpan
+                        Console.WriteLine($"New Risk Range set to: {s_dal.Config.RiskRange}");
                         }
                         else
                         {
@@ -774,6 +799,7 @@ namespace DalTest
 
 
         }
+        // Function to display the current value of a configuration variable
         private static void ShowConfigValue()
         {
             Console.WriteLine("Which configuration variable would you like to display?");
@@ -787,8 +813,9 @@ namespace DalTest
                 return;
             }
 
-            
-                switch (option)
+            // Switch case to display the value of the selected configuration variable
+
+            switch (option)
                 {
                     case 1:
                         Console.WriteLine($"System Clock: {s_dal.Config.Clock}");
