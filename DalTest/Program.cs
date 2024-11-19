@@ -316,7 +316,7 @@ namespace DalTest
 
             s_dal.Call.Create(new Call
             {
-                Id = s_dal.Config.NextCallId,
+                
                 CallType = callType,
                 Address = address,
                 Latitude = latitude,
@@ -497,7 +497,7 @@ namespace DalTest
 
             s_dal.Assignment.Create(new Assignment
             {
-                Id = s_dal.Config.NextAssignmentId,
+               
                 CallId = callId,
                 VolunteerId = volunteerId,
                 StartTreatment = startTreatment,

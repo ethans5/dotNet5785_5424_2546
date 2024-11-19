@@ -81,7 +81,7 @@ public static class Initialization
 
             s_dal.Call!.Create(new Call
             {
-                Id = id,
+                
                 CallType = type,
                 Address = address,
                 Latitude = latitude,
@@ -294,7 +294,7 @@ public static class Initialization
                 {
                     typeOfEnd = typeOfEndTreatment.Expired;
                 }
-                s_dal.Assignment!.Create(new Assignment { Id = id, CallId = myCallId, VolunteerId = volunteerId, StartTreatment = time, endTreatment = endTime, typeOfEnd = typeOfEnd });
+                s_dal.Assignment!.Create(new Assignment { CallId = myCallId, VolunteerId = volunteerId, StartTreatment = time, endTreatment = endTime, typeOfEnd = typeOfEnd });
             }
         }
     }

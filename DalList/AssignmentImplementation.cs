@@ -6,10 +6,9 @@ internal class AssignmentImplementation : IAssignment
 {
     public void Create(Assignment assignment)
     {
-        if (DataSource.Assignments.FirstOrDefault(a => a.Id == assignment.Id) != null)
-            throw new Exception($"Assignment with the ID : {assignment.Id} already exists.");
-        else
-            DataSource.Assignments.Add(assignment);
+        int id = Config.NextAssignmentId;
+        Assignment copy= assignment with { Id = id };
+        DataSource.Assignments.Add(copy);
     }
 
     public Assignment? Read(int id)
@@ -17,7 +16,7 @@ internal class AssignmentImplementation : IAssignment
         if (DataSource.Assignments.Exists(a => a.Id == id))
             return DataSource.Assignments.FirstOrDefault(a => a.Id == id);
         else
-            throw new Exception($"Assignment with the ID : {id} does not exist...");
+            throw new DalDoesNotExistException($"Assignment with the ID : {id} does not exist...");
     }
     public Assignment? Read(Func<Assignment, bool> filter)
     {
@@ -38,7 +37,7 @@ internal class AssignmentImplementation : IAssignment
     {
         int index = DataSource.Assignments.FindIndex(a => a.Id == assignment.Id);
         if (index == -1)
-            throw new Exception($"Assignment with the ID : {assignment.Id} does not exist...");
+            throw new DalDoesNotExistException($"Assignment with the ID : {assignment.Id} does not exist...");
         else
             DataSource.Assignments[index] = assignment;
     }
@@ -49,7 +48,7 @@ internal class AssignmentImplementation : IAssignment
         if (DataSource.Assignments.Exists(a => a.Id == id))
             DataSource.Assignments.RemoveAll(a => a.Id == id);
         else
-            throw new Exception($"Assignment with the ID : {id} does not exist...");
+            throw new DalDoesNotExistException($"Assignment with the ID : {id} does not exist...");
     }
 
     public void DeleteAll()

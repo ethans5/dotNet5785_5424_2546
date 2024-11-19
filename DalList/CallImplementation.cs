@@ -7,9 +7,9 @@ internal class CallImplementation : ICall
 {
     public void Create(Call call)
     {
-        if (DataSource.Calls.Exists(c => c.Id == call.Id))
-            throw new Exception($"Call with the ID : {call.Id} already exists...");
-        DataSource.Calls.Add(call);
+        int id= Config.NextCallId;
+        Call copy= call with { Id = id };
+        DataSource.Calls.Add(copy);
     }
 
 
@@ -18,7 +18,7 @@ internal class CallImplementation : ICall
         if (DataSource.Calls.Exists(c => c.Id == id))
             return DataSource.Calls.FirstOrDefault(c => c.Id == id);
         else
-            throw new Exception($"Call with the ID : {id} does not exist...");
+            throw new DalDoesNotExistException($"Call with the ID : {id} does not exist...");
     }
     public Call? Read(Func<Call, bool> filter)
     {
@@ -39,7 +39,7 @@ internal class CallImplementation : ICall
     {
         int index = DataSource.Calls.FindIndex(c => c.Id == call.Id);
         if (index == -1)
-            throw new Exception($"Call with the ID : {call.Id} does not exist...");
+            throw new DalDoesNotExistException($"Call with the ID : {call.Id} does not exist...");
         DataSource.Calls[index] = call;
     }
 
@@ -48,7 +48,7 @@ internal class CallImplementation : ICall
         if(DataSource.Calls.Any(c => c.Id == id)!)
             DataSource.Calls.RemoveAll(c => c.Id == id);
         else
-            throw new Exception($"Call with the ID : {id} deos not exist...");
+            throw new DalDoesNotExistException($"Call with the ID : {id} deos not exist...");
 
     }
   
