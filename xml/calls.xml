@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfCall xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Call>
+    <Id>1</Id>
+    <CallType>BuyingFood</CallType>
+    <Address>fdfd</Address>
+    <Latitude>14</Latitude>
+    <Longitude>74</Longitude>
+    <CallTime>2027-12-24T12:18:24</CallTime>
+    <Description>df</Description>
+    <MaxTime>2027-12-24T12:45:12</MaxTime>
+  </Call>
+</ArrayOfCall>

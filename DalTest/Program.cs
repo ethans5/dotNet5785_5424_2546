@@ -11,7 +11,8 @@ namespace DalTest
         //private static IAssignment? s_dalAssignment = new AssignmentImplementation();
         //private static IVolunteer? s_dalVolunteer = new VolunteerImplementation();
         //private static IConfig? s_dalConfig = new ConfigImplementation();
-        static readonly IDal s_dal = new DalList();
+        //static readonly IDal s_dal = new DalList();
+        static readonly IDal s_dal = new DalXml();
         // fucntion to print the menu of each type of object
         private static void printMenu(string typeOfMenu)
         {
@@ -730,7 +731,6 @@ namespace DalTest
                         break;
                     case 7:
                         SetNewConfigValue(); // Call method to set a new configuration value
-                        break;
                         break;
 
                     case 8:
