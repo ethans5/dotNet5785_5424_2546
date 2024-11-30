@@ -1,5 +1,6 @@
-﻿
-namespace Dal;
+﻿namespace Dal;
+
+// Import necessary namespaces
 using DalApi;
 using DO;
 using System;
@@ -8,6 +9,7 @@ using System.Xml.Linq;
 
 internal class VolunteerImplementation : IVolunteer
 {
+    // Function to get a Volunteer from an XML element
     static Volunteer GetVolunteer(XElement s)
     {
         return new Volunteer()
@@ -26,14 +28,18 @@ internal class VolunteerImplementation : IVolunteer
             Longitude = s.ToDoubleNullable("Longitude")
         };
     }
-    
+
+    // Function to create a Volunteer and add it to the XML
     public void Create(Volunteer item)
     {
-
         XElement volunteerList = XMLTools.LoadListFromXMLElement(Config.s_volunteers_xml);
         List<XElement> volunteers = volunteerList.Elements().ToList();
+
+        // Check if the Volunteer already exists
         if (volunteers.Any(s => s.ToIntNullable("Id") == item.Id))
             throw new DalAlreadyExistException($"Volunteer with the ID : {item.Id} already exists...");
+
+        // Add the new Volunteer
         volunteerList.Add(new XElement("Volunteer",
             new XAttribute("Id", item.Id),
             new XElement("Name", item.Name),
@@ -47,52 +53,62 @@ internal class VolunteerImplementation : IVolunteer
             new XElement("Address", item.Address),
             new XElement("Latitude", item.Latitude),
             new XElement("Longitude", item.Longitude)
-            ));
+        ));
         XMLTools.SaveListToXMLElement(volunteerList, Config.s_volunteers_xml);
+    }
 
-    }       
-
+    // Function to delete a Volunteer from the XML
     public void Delete(int id)
     {
         XElement volunteerList = XMLTools.LoadListFromXMLElement(Config.s_volunteers_xml);
         XElement? volunteerElem = volunteerList.Elements().FirstOrDefault(s => s.ToIntNullable("Id") == id);
+
+        // Check if the Volunteer exists
         if (volunteerElem == null)
             throw new DalDoesNotExistException($"Volunteer with the ID : {id} does not exist...");
+
+        // Remove the Volunteer
         volunteerElem.Remove();
         XMLTools.SaveListToXMLElement(volunteerList, Config.s_volunteers_xml);
-
     }
 
-
+    // Function to delete all Volunteers from the XML
     public void DeleteAll()
     {
         XMLTools.SaveListToXMLElement(new XElement("Volunteers"), Config.s_volunteers_xml);
     }
 
+    // Function to read a Volunteer by ID from the XML
     public Volunteer? Read(int id)
     {
-        XElement? voluteerElem= XMLTools.LoadListFromXMLElement(Config.s_volunteers_xml)?.Elements().FirstOrDefault(s => s.ToIntNullable("Id") == id);
-        return voluteerElem == null ? null : GetVolunteer(voluteerElem);
+        XElement? volunteerElem = XMLTools.LoadListFromXMLElement(Config.s_volunteers_xml)?.Elements().FirstOrDefault(s => s.ToIntNullable("Id") == id);
+        return volunteerElem == null ? null : GetVolunteer(volunteerElem);
     }
 
+    // Function to read a Volunteer by a filter from the XML
     public Volunteer? Read(Func<Volunteer, bool> filter)
     {
         return XMLTools.LoadListFromXMLElement(Config.s_volunteers_xml)?.Elements().Select(GetVolunteer).FirstOrDefault(filter);
     }
 
+    // Function to read all Volunteers from the XML
     public IEnumerable<Volunteer> ReadAll(Func<Volunteer, bool>? filter = null)
     {
         XElement? volunteerList = XMLTools.LoadListFromXMLElement(Config.s_volunteers_xml);
         IEnumerable<Volunteer> volunteers = volunteerList.Elements().Select(GetVolunteer);
-        return filter!=null?volunteers.Where(filter):volunteers;
-
+        return filter != null ? volunteers.Where(filter) : volunteers;
     }
 
+    // Function to update a Volunteer in the XML
     public void Update(Volunteer item)
     {
-        XElement volunteerRootElem= XMLTools.LoadListFromXMLElement(Config.s_volunteers_xml);
-        (volunteerRootElem.Elements().FirstOrDefault(s => s.ToIntNullable("Id") == item.Id) ?? 
+        XElement volunteerRootElem = XMLTools.LoadListFromXMLElement(Config.s_volunteers_xml);
+
+        // Check if the Volunteer exists and remove the old data
+        (volunteerRootElem.Elements().FirstOrDefault(s => s.ToIntNullable("Id") == item.Id) ??
             throw new DalDoesNotExistException($"Volunteer with the ID : {item.Id} does not exist...")).Remove();
+
+        // Add the updated Volunteer data
         volunteerRootElem.Add(new XElement("Volunteer",
             new XElement("Id", item.Id),
             new XElement("Name", item.Name),
@@ -108,6 +124,5 @@ internal class VolunteerImplementation : IVolunteer
             new XElement("Longitude", item.Longitude)
         ));
         XMLTools.SaveListToXMLElement(volunteerRootElem, Config.s_volunteers_xml);
-
     }
 }
