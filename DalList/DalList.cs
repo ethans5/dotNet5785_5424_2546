@@ -6,8 +6,10 @@ using s_dal;
 /// Provides an implementation of the IDal interface using in-memory data structures.
 /// This serves as a complete data access layer for the application.
 /// </summary>
-public sealed class DalList : IDal
+ sealed internal class DalList : IDal
 {
+    public static DalList Instance { get; } = new DalList();
+    private DalList() { }
     /// <summary>
     /// Provides operations for managing Call entities.
     /// </summary>

@@ -298,13 +298,13 @@ public static class Initialization
             }
         }
     }
-    public static void Do(IDal dal)
+    public static void Do()
     {
         //s_dalCall = dalCall ?? throw new NullReferenceException("DAL object can not be null!");
         //s_dalVolunteer = dalVolunteer ?? throw new NullReferenceException("DAL object can not be null!");
         //s_dalAssignment = dalAssignment ?? throw new NullReferenceException("DAL object can not be null!");
         //s_dalConfig = dalConfig ?? throw new NullReferenceException("DAL object can not be null!");
-        s_dal = dal ?? throw new NullReferenceException("DAL object can not be null!");
+        s_dal = Factory.Get;
 
         Console.WriteLine("Reset Configuration values and List values");
         s_dal.ResetDB();

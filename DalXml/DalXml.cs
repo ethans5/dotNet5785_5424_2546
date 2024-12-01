@@ -4,8 +4,10 @@
 using DalApi;
 
 // Sealed class implementing the IDal interface for XML-based data access
-sealed public class DalXml : IDal
+sealed internal class DalXml : IDal
 {
+    public static DalXml Instance { get; } = new DalXml();
+    private DalXml() { }
     // Properties for each data type implementation
     public ICall Call { get; } = new CallImplementation();
     public IVolunteer Volunteer { get; } = new VolunteerImplementation();
