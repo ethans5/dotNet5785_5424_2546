@@ -96,7 +96,12 @@ static class XMLTools
         try
         {
             if (File.Exists(xmlFilePath))
-                return XElement.Load(xmlFilePath);
+            {
+                var temp = XElement.Load(xmlFilePath);
+                return temp;
+
+            }
+            
 
             XElement rootElem = new(xmlFileName);
             rootElem.Save(xmlFilePath);

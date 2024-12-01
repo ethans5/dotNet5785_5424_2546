@@ -14,7 +14,7 @@ internal class VolunteerImplementation : IVolunteer
     {
         return new Volunteer()
         {
-            Id = s.ToIntNullable("Id") ?? throw new FormatException("missing Id"),
+            Id = int.Parse(s.Attribute("Id")?.Value ?? throw new FormatException("missing Id")),
             Name = s.Element("Name")?.Value ?? throw new FormatException("missing Name"),
             Phone = s.Element("Phone")?.Value ?? throw new FormatException("missing Phone"),
             Email = s.Element("Email")?.Value ?? throw new FormatException("missing Email"),
@@ -36,7 +36,7 @@ internal class VolunteerImplementation : IVolunteer
         List<XElement> volunteers = volunteerList.Elements().ToList();
 
         // Check if the Volunteer already exists
-        if (volunteers.Any(s => s.ToIntNullable("Id") == item.Id))
+        if (volunteers.Any(s => s.Attribute("Id")!.Value == item.Id.ToString()))
             throw new DalAlreadyExistException($"Volunteer with the ID : {item.Id} already exists...");
 
         // Add the new Volunteer
@@ -61,7 +61,7 @@ internal class VolunteerImplementation : IVolunteer
     public void Delete(int id)
     {
         XElement volunteerList = XMLTools.LoadListFromXMLElement(Config.s_volunteers_xml);
-        XElement? volunteerElem = volunteerList.Elements().FirstOrDefault(s => s.ToIntNullable("Id") == id);
+        XElement? volunteerElem = volunteerList.Elements().FirstOrDefault(s => s.Attribute("Id")!.Value == id.ToString());
 
         // Check if the Volunteer exists
         if (volunteerElem == null)
@@ -81,7 +81,7 @@ internal class VolunteerImplementation : IVolunteer
     // Function to read a Volunteer by ID from the XML
     public Volunteer? Read(int id)
     {
-        XElement? volunteerElem = XMLTools.LoadListFromXMLElement(Config.s_volunteers_xml)?.Elements().FirstOrDefault(s => s.ToIntNullable("Id") == id);
+        XElement? volunteerElem = XMLTools.LoadListFromXMLElement(Config.s_volunteers_xml)?.Elements().FirstOrDefault(s => s.Attribute("Id")!.Value == id.ToString());
         return volunteerElem == null ? null : GetVolunteer(volunteerElem);
     }
 
@@ -105,12 +105,12 @@ internal class VolunteerImplementation : IVolunteer
         XElement volunteerRootElem = XMLTools.LoadListFromXMLElement(Config.s_volunteers_xml);
 
         // Check if the Volunteer exists and remove the old data
-        (volunteerRootElem.Elements().FirstOrDefault(s => s.ToIntNullable("Id") == item.Id) ??
+        (volunteerRootElem.Elements().FirstOrDefault(s => s.Attribute("Id")!.Value == item.Id.ToString()) ??
             throw new DalDoesNotExistException($"Volunteer with the ID : {item.Id} does not exist...")).Remove();
 
         // Add the updated Volunteer data
         volunteerRootElem.Add(new XElement("Volunteer",
-            new XElement("Id", item.Id),
+            new XAttribute("Id", item.Id),
             new XElement("Name", item.Name),
             new XElement("Phone", item.Phone),
             new XElement("Email", item.Email),

@@ -60,7 +60,7 @@ public static class Initialization
 
         for (int i = 0; i < 50; i++)
         {
-            int id = s_dal!.Config.NextCallId;
+           
             Array values = Enum.GetValues(typeof(callType));
             callType type = (callType)values.GetValue(s_rand.Next(values.Length))!;
             string address = "address" + s_rand.Next(1000);
@@ -246,7 +246,6 @@ public static class Initialization
     {
         for (int i = 0; i < 50; i++)
         {
-            int id = s_dal!.Config!.NextAssignmentId;
             var callList = s_dal!.Call!.ReadAll().ToList();
             int myCallId = callList[s_rand.Next(callList.Count)].Id;
 
