@@ -13,7 +13,8 @@ public enum distanceType
 }
 public enum callType
 {
-    BuyingFood = 1,
+    None,
+    BuyingFood ,
     BuyingMedicine,
     BuyingClothes,
     BuyingCartoons,
@@ -28,4 +29,11 @@ public enum Treatment
 {
     Intreatment,
     Inrisktreatment
+}
+public enum typeOfEndTreatment
+{
+    treated = 1,
+    selfCancellation,
+    directorCancellation,
+    Expired
 }
