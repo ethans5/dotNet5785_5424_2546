@@ -10,6 +10,8 @@ namespace BO
         public double? Longitude { get; set; }
         public DateTime Created { get; set; }
         public DateTime? MaxEndTreatment { get; set; }
+        public Status Status { get; set; }
+        public List <BO.CallAssignInList> callAssignInLists { get; set; }
 
     }
 }

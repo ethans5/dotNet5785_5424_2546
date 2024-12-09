@@ -37,3 +37,12 @@ public enum typeOfEndTreatment
     directorCancellation,
     Expired
 }
+
+public enum Status
+{
+    Open,
+    InProgress,
+    Closed,
+    Expired,
+    AlmostExpired
+}
