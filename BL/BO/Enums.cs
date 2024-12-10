@@ -45,4 +45,14 @@ public enum Status
     Closed,
     Expired,
     AlmostExpired
+
+}
+public enum VolunteerSortField
+{
+    Id,
+    Name,
+    Totaltreated,
+    TotalSelfCancellation,
+    TotalExpired,
+    CallType
 }
