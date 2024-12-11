@@ -90,3 +90,11 @@ public enum OpenCallFields
     MaxEndTreatment,
     Distance
 }
+public enum UnitTime
+{
+    Minutes,
+    Hours,
+    Days,
+    Months,
+    Years
+}
