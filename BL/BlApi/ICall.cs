@@ -11,5 +11,6 @@ public interface ICall
     public void UpdateCall(BO.Call call);
     public void DeleteCall(int id);
     public void CreateCall(BO.Call call);
-    public IEnumerable<ClosedCallInList> ReadAllEndedCalls(int id, typeOfEndTreatment? filetr, closedCallFields? sort);
+    public IEnumerable<ClosedCallInList> ReadAllEndedCalls(int id, callType? filter, closedCallFields? sort);
+    public IEnumerable<OpenCallInList> ReadAllOpenCalls(int id, callType? filter, OpenCallFields? sort);
 }

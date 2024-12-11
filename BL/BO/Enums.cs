@@ -80,3 +80,13 @@ public enum closedCallFields
     endTreatment,
     typeOfEndTreatment
 }
+public enum OpenCallFields
+{
+    Id,
+    callType,
+    description,
+    Address,
+    Created,
+    MaxEndTreatment,
+    Distance
+}
