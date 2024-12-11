@@ -2,7 +2,7 @@
 
 public class CallInList
 {
-    public int? assignmentId { get; set; }
+    public int? Id { get; init;}
     public int callId { get; set; }
     public callType callType { get; set; }
     public DateTime startingTime { get; set; }

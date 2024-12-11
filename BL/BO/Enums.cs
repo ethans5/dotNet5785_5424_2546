@@ -56,3 +56,27 @@ public enum VolunteerSortField
     TotalExpired,
     CallType
 }
+
+public enum CallFields
+{
+    Id,
+    CallId,
+    callType,
+    startingTime,
+    remainingTime,
+    LastVolunteerName,
+    duration,
+    Status,
+    totalAssignmentAllocation
+}
+
+public enum closedCallFields
+{
+    Id,
+    callType,
+    adress,
+    createdTime,
+    startTreatment,
+    endTreatment,
+    typeOfEndTreatment
+}

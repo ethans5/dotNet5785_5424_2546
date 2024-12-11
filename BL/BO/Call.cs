@@ -1,7 +1,7 @@
 ﻿
 namespace BO
 {
-    internal class Call
+    public class Call
     {
         public int Id { get; init; }
         public callType CallType { get; set; }
@@ -11,7 +11,7 @@ namespace BO
         public DateTime Created { get; set; }
         public DateTime? MaxEndTreatment { get; set; }
         public Status Status { get; set; }
-        public List <BO.CallAssignInList> callAssignInLists { get; set; }
+        public List <BO.CallAssignmentInList> callAssignInLists { get; set; }
 
     }
 }
