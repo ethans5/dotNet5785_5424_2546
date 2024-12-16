@@ -10,17 +10,27 @@ internal class volunteerImplementation : IVolunteer
     private DalApi.IDal _dal = Factory.Get;
     static readonly Tools toolsInstance = new Tools();
 
-    public void CreateVolunteer(Volunteer volunteer)
+    public void CreateVolunteer(BO.Volunteer volunteer)
     {
         throw new NotImplementedException();
     }
 
     public void DeleteVolunteer(int id)
     {
-        throw new NotImplementedException();
+        BO.Volunteer? volunteer = ReadVolunteer(id);
+        if (volunteer is null || volunteer.IsActive)
+            throw new BlDeletionImpossible($"Deletion of the Volunteer with ID {id} impossible");
+        try
+        {
+            _dal.Volunteer.Delete(id);
+        }
+        catch (DO.DalDoesNotExistException ex)
+        {
+            throw new BO.BlNotFoundException($"Volunteer with ID={id} does not exist", ex);
+        }
     }
 
-    public jobType LogIn(int id, string password)
+    public BO.jobType LogIn(int id, string password)
     {
         try
         {
@@ -40,13 +50,22 @@ internal class volunteerImplementation : IVolunteer
         }
     }
 
-    public IEnumerable<VolunteerInList> ReadAllVolunteers(bool? actif, VolunteerSortField? s)
+    public IEnumerable<VolunteerInList> ReadAllVolunteers(bool? actif, VolunteerSortField? sortBy)
     {
         var allAssign = _dal.Assignment.ReadAll();
         var allCalls = _dal.Call.ReadAll();
-        if (actif == null)
+
+
+        var volunteers = actif switch
         {
-            return from volunteer in _dal.Volunteer.ReadAll()
+            null => _dal.Volunteer.ReadAll(),
+            true => _dal.Volunteer.ReadAll().Where(v=> v.isActive),
+            false => _dal.Volunteer.ReadAll().Where(v=>!v.isActive)
+        };
+
+      
+        
+            var volunteerList =  from volunteer in volunteers
                    let volunteerAssignments = allAssign.Where(a => a.VolunteerId == volunteer.Id)
                    let activeCallId = volunteerAssignments
                              .Where(a => a.endTreatment == null)
@@ -67,48 +86,34 @@ internal class volunteerImplementation : IVolunteer
                        IdCall = activeCallId,
                        callType = activeCallType
                    };
-        }
-        else if (actif == true)
+
+        return sortBy switch
         {
-            return from volunteer in _dal.Volunteer.ReadAll()
-                   where volunteer.IsActive == true
-                   select new VolunteerInList
-                   {
-                       Id = volunteer.Id,
-                       Name = volunteer.Name,
-                       IsActive = volunteer.IsActive,
-                       Totaltreated = volunteer.Totaltreated,
-                       TotalSelfCancellation = volunteer.TotalSelfCancellation,
-                       TotalExpired = volunteer.TotalExpired,
-                       IdCall = volunteer.IdCall,
-                       callType = volunteer.callType
-                   };
-        }
-        else
-        {
-            return from volunteer in DataSource.Volunteers
-                   where volunteer.IsActive == false
-                   select new VolunteerInList
-                   {
-                       Id = volunteer.Id,
-                       Name = volunteer.Name,
-                       Phone = volunteer.Phone,
-                       Email = volunteer.Email,
-                       Job = volunteer.Job,
-                       IsActive = volunteer.IsActive,
-                       MaxDistance = volunteer.MaxDistance,
-                       DistanceType = volunteer.DistanceType,
-                       Totaltreated = volunteer.Totaltreated,
-                       TotalSelfCancellation = volunteer.TotalSelfCancellation,
-                       TotalExpired = volunteer.TotalExpired
-                   };
-        } 
-    public Volunteer ReadVolunteer(int id)
+            VolunteerSortField.Name => volunteerList.OrderBy(v=>v.Name),
+            VolunteerSortField.Totaltreated=>volunteerList.OrderBy(v=> v.Totaltreated),
+            VolunteerSortField.TotalSelfCancellation=>volunteerList.OrderBy(v=>v.TotalSelfCancellation),
+            VolunteerSortField.TotalExpired=>volunteerList.OrderBy(v=>v.TotalExpired),
+            VolunteerSortField.CallType=>volunteerList.OrderBy(v=>v.callType),
+            null => volunteerList.OrderBy(v=>v.Id)
+        };
+
+
+
+    }
+    public BO.Volunteer ReadVolunteer(int id)
     {
-        throw new NotImplementedException();
+        try
+        {
+            DO.Volunteer doVolunteer = _dal.Volunteer.Read(id)!;
+            return toolsInstance.parseDoToBo(doVolunteer);
+        }
+        catch
+        {
+            throw new BlDoesNotExistException($"Volunteer with ID: {id} doesn't exist");
+        }
     }
 
-    public void UpdateVolunteer(int id, Volunteer volunteer)
+    public void UpdateVolunteer(int id, BO.Volunteer volunteer)
     {
         throw new NotImplementedException();
     }

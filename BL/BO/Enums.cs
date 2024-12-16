@@ -49,7 +49,6 @@ public enum Status
 }
 public enum VolunteerSortField
 {
-    Id,
     Name,
     Totaltreated,
     TotalSelfCancellation,
