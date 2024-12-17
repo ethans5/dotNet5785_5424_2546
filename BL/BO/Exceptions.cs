@@ -62,7 +62,7 @@ public class WrongPassword : Exception
 }
 
 [Serializable]
-public class  xxxx:Exception
+public class BlUnauthorizedException : Exception
 {
-    
+    public BlUnauthorizedException(string? message) : base(message) { }
 }

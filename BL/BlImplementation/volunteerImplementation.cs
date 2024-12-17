@@ -5,7 +5,7 @@ using Helpers;
 
 namespace BlImplementation;
 
-internal class volunteerImplementation : IVolunteer
+internal class VolunteerImplementation : IVolunteer
 {
     private DalApi.IDal _dal = Factory.Get;
     static readonly Tools toolsInstance = new Tools();
@@ -18,7 +18,8 @@ internal class volunteerImplementation : IVolunteer
     public void DeleteVolunteer(int id)
     {
         BO.Volunteer? volunteer = ReadVolunteer(id);
-        if (volunteer is null || volunteer.IsActive)
+        if (volunteer is null || volunteer.IsActive || volunteer.CallInProgress != null 
+            || volunteer.Totaltreated != 0)
             throw new BlDeletionImpossible($"Deletion of the Volunteer with ID {id} impossible");
         try
         {
@@ -113,8 +114,50 @@ internal class volunteerImplementation : IVolunteer
         }
     }
 
-    public void UpdateVolunteer(int id, BO.Volunteer volunteer)
+    public async void UpdateVolunteer(int id, BO.Volunteer volunteer)
     {
-        throw new NotImplementedException();
+        var myVolunteer = _dal.Volunteer.Read(id);
+        if (myVolunteer!.JobType == DO.jobType.Director || id == volunteer.Id)
+        {
+            try
+            {
+                toolsInstance.ValidateFieldsFormat(volunteer);
+                var coordinate =   await toolsInstance.GetCoordinatesAsync(volunteer.Address);
+                volunteer.Latitude = coordinate.Latitude;
+                volunteer.Longitude = coordinate.Longitude;
+            }
+            catch
+            {
+                throw new BlInvalidInputException("Invalid input");
+            }
+
+            DO.Volunteer doVolunteer = _dal.Volunteer.Read(volunteer.Id)!;
+            if(doVolunteer.JobType != (DO.jobType)volunteer.Job && myVolunteer.JobType != DO.jobType.Director)
+            {
+                throw new BlUnauthorizedException("You are not authorized to change the job of this volunteer");
+            }
+
+
+        }
+        else 
+            throw new BlUnauthorizedException("You are not authorized to update this volunteer");
+
+        DO.Volunteer doVolunteer2 = new DO.Volunteer
+        {
+            Id = volunteer.Id,
+            Name = volunteer.Name,
+            Phone = volunteer.Phone,
+            Email = volunteer.Mail,
+            Password = volunteer.Password,
+            Address = volunteer.Address,
+            Latitude = volunteer.Latitude,
+            Longitude = volunteer.Longitude,
+            JobType = (DO.jobType)volunteer.Job,
+            isActive = volunteer.IsActive,
+            MaxDistance = volunteer.MaxDistance,
+            distanceType = (DO.distanceType)volunteer.DistanceType
+        };
+
+        _dal.Volunteer.Update(doVolunteer2);
     }
 }
