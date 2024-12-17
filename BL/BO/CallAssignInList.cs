@@ -1,7 +1,7 @@
 ﻿namespace BO;
 
 
-public class CallAssignmentInList
+public class CallAssignInList
 {
     public int volounteerId { get; set; }
     public string? volounteerName { get; set; }

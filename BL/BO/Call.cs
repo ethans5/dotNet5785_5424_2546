@@ -11,7 +11,7 @@ namespace BO
         public DateTime Created { get; set; }
         public DateTime? MaxEndTreatment { get; set; }
         public Status Status { get; set; }
-        public List <BO.CallAssignmentInList> callAssignInLists { get; set; }
+        public  List <BO.CallAssignInList>? callAssignInLists { get; set; }
 
     }
 }
