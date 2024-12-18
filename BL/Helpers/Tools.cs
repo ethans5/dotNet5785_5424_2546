@@ -171,6 +171,96 @@ internal class Tools
 
        
     }
+
+    public Status DetermineCallStatus(DateTime created, DateTime? maxEndTreatment)
+    {
+        var now = DateTime.UtcNow;
+
+        // Vérifie si maxEndTreatment est défini et compare avec la date actuelle
+        if (maxEndTreatment.HasValue)
+        {
+            if (now > maxEndTreatment.Value)
+            {
+                return Status.Expired; // Si la date actuelle dépasse maxEndTreatment
+            }
+
+            // Vérifie si la date est proche d'expirer (par exemple, dans les 2 heures)
+            var timeUntilExpiration = maxEndTreatment.Value - now;
+            if (timeUntilExpiration.TotalHours <= 2)
+            {
+                return Status.AlmostExpired;
+            }
+        }
+
+        // Si la date actuelle est proche de la création mais pas encore expirée
+        var elapsedTimeSinceCreation = now - created;
+
+        if (elapsedTimeSinceCreation.TotalHours <= 1)
+        {
+            return Status.Open; // Statut ouvert pour les appels récents
+        }
+
+        // Appel en cours si aucune autre condition ne s'applique
+        return Status.InProgress;
+    }
+
+    public List<CallAssignInList> CreateCallAssignListFromDo(DO.Call call, IEnumerable<DO.Assignment> assignments, IEnumerable<DO.Volunteer> volunteers)
+    {
+        // Filtrer les assignations qui correspondent à l'appel
+        var callAssignments = assignments.Where(assign => assign.CallId == call.Id);
+
+        // Mapper les assignations vers des CallAssignInList
+        return callAssignments.Select(assign =>
+        {
+            var volunteer = volunteers.FirstOrDefault(v => v.Id == assign.VolunteerId);
+
+            return new CallAssignInList
+            {
+                volounteerId = assign.VolunteerId,
+                volounteerName = volunteer?.Name ?? "Unknown",
+                startingTime = assign.StartTreatment,
+                endingTime = assign.endTreatment,
+                TypeOfEndTreatment = assign.typeOfEnd.HasValue
+                    ? (BO.typeOfEndTreatment?)assign.typeOfEnd.Value
+                    : null
+            };
+        }).ToList();
+    }
+
+
+    public BO.Call parseDoToBo(DO.Call call)
+    {
+        return new BO.Call
+        {
+            Id = call.Id,
+            CallType = (BO.callType)call.CallType,
+            Description = call.Description,
+            Latitude = call.Latitude,
+            Longitude = call.Longitude,
+            Created = call.CallTime,
+            MaxEndTreatment = call.MaxTime,
+            Status = DetermineCallStatus(call.CallTime, call.MaxTime),
+            callAssignInLists = CreateCallAssignListFromDo(call, _dal.Assignment.ReadAll(), _dal.Volunteer.ReadAll())
+        };
+    }
+
+    public double CalculateDistance(double lat1, double lon1, double lat2, double lon2)
+    {
+        const double R = 6371; // Rayon de la Terre en km
+        double dLat = DegreesToRadians(lat2 - lat1);
+        double dLon = DegreesToRadians(lon2 - lon1);
+        double a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +
+                   Math.Cos(DegreesToRadians(lat1)) * Math.Cos(DegreesToRadians(lat2)) *
+                   Math.Sin(dLon / 2) * Math.Sin(dLon / 2);
+        double c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+        return R * c; // Distance en km
+    }
+
+    public double DegreesToRadians(double degrees)
+    {
+        return degrees * Math.PI / 180;
+    }
+
 }
 
 

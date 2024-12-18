@@ -131,10 +131,79 @@ internal class CallImplementation : ICall
         
     }
 
+    //public IEnumerable<OpenCallInList> ReadAllOpenCalls(int id, callType? filter, OpenCallFields? sort)
+    //{
+    //    var myVolont = _dal.Volunteer.Read(id);
+    //    var doCalls = _dal.Call.ReadAll();
+    //    var boCalls = doCalls.Select(call => toolsInstance.parseDoToBo(call));
+    //    var openCalls = boCalls.Where(call => call.Status == Status.Open);
+
+    //    return null;
+    //}
+
     public IEnumerable<OpenCallInList> ReadAllOpenCalls(int id, callType? filter, OpenCallFields? sort)
     {
-        throw new NotImplementedException();
+        // Lire les informations sur le volontaire
+        var myVolunteer = _dal.Volunteer.Read(id);
+        if (myVolunteer == null || myVolunteer.Latitude == null || myVolunteer.Longitude == null || myVolunteer.MaxDistance == null)
+            return Enumerable.Empty<OpenCallInList>(); // Si les données nécessaires sont manquantes, retourner une liste vide
+
+        // Lire tous les appels et les convertir en BO
+        var doCalls = _dal.Call.ReadAll();
+        var boCalls = doCalls.Select(call => toolsInstance.parseDoToBo(call));
+
+        // Filtrer les appels ouverts
+        var openCalls = boCalls.Where(call => call.Status == Status.Open);
+
+        // Calculer et filtrer les appels par distance
+        var nearbyCalls = openCalls.Where(call =>
+        {
+            if (call.Latitude == null || call.Longitude == null) return false;
+            double distance = toolsInstance.CalculateDistance(
+                myVolunteer.Latitude.Value,
+                myVolunteer.Longitude.Value,
+                call.Latitude.Value,
+                call.Longitude.Value
+            );
+            return distance <= myVolunteer.MaxDistance.Value;
+        });
+
+        // Mapper les appels en OpenCallInList
+        var result = nearbyCalls.Select(call => new OpenCallInList
+        {
+            Id = call.Id,
+            callType = call.CallType,
+            description = call.Description,
+            Address = call.Address,
+            Distance = toolsInstance.CalculateDistance(
+                myVolunteer.Latitude.Value,
+                myVolunteer.Longitude.Value,
+                call.Latitude!.Value,
+                call.Longitude!.Value
+            )
+        });
+
+        // Appliquer le filtre sur le type de call, si nécessaire
+        if (filter.HasValue)
+        {
+            result = result.Where(call => call.CallType == filter.Value);
+        }
+
+        // Appliquer le tri, si nécessaire
+        return sort switch
+        {
+            OpenCallFields.Id => result.OrderBy(call => call.Id),
+            OpenCallFields.callType => result.OrderBy(call => call.CallType),
+            OpenCallFields.description => result.OrderBy(call => call.description),
+            OpenCallFields.Address => result.OrderBy(call => call.Address),
+            OpenCallFields.Created => result.OrderBy(call => call.Created),
+            OpenCallFields.MaxEndTreatment => result.OrderBy(call => call.MaxEndTreatment),
+            OpenCallFields.Distance => result.OrderBy(call => call.Distance)
+        };
     }
+
+
+
 
     public Call ReadCall(int id)
     {
