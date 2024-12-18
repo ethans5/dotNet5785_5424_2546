@@ -142,6 +142,35 @@ internal class Tools
             }
         }
     }
+
+
+
+    public void ValidateCallFieldsFormat(BO.Call call)
+    {
+        // Vérification de l'ID
+        if (call.Id <= 0)
+            throw new BlInvalidInputException("The ID must be geater than 0 and not null");
+
+        // Vérification des coordonnées géographiques
+        if (call.Latitude != null && (call.Latitude < -90 || call.Latitude > 90))
+            throw new BlInvalidInputException("The Latitude must be between -90 and 90 degree");
+
+        if (call.Longitude != null && (call.Longitude < -180 || call.Longitude > 180))
+            throw new BlInvalidInputException("The Longitude must be between -180 and 180 degree");
+
+        // Vérification des dates
+        if (call.Created > DateTime.Now)
+            throw new BlInvalidInputException("The creation date cannot be in the futur");
+
+        if (call.MaxEndTreatment != null && call.MaxEndTreatment <= call.Created)
+            throw new BlInvalidInputException("The maximal end of treatment's date must be greater than the creation's date");
+
+        // Vérification du type d'appel
+        if (!Enum.IsDefined(typeof(BO.callType), call.CallType))
+            throw new BlInvalidInputException("Type of Call Invalid");
+
+       
+    }
 }
 
 

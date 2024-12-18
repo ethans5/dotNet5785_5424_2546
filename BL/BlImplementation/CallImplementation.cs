@@ -14,9 +14,51 @@ internal class CallImplementation : ICall
         throw new NotImplementedException();
     }
 
-    public void CreateCall(Call call)
+    public void CreateCall(BO.Call call)
     {
-        
+        try
+        {
+            // 1. Validation du format des champs
+            toolsInstance.ValidateCallFieldsFormat(call);
+
+            // 2. Vérifier si l'appel existe déjà dans la couche DAL
+            try
+            {
+                var existingCall = _dal.Call.Read(call.Id);
+                if (existingCall != null)
+                {
+                    throw new BlAlreadyExistsException("The call already exist");
+                }
+            }
+            catch (DO.DalAlreadyExistException ex)
+            {
+                throw new BlAlreadyExistsException("The call already exist", ex);
+            }
+
+            // 3. Conversion de BO.Call en DO.Call
+            DO.Call doCall = new DO.Call
+            {
+                Id = call.Id,
+                CallType = (DO.callType)call.CallType,
+                Description = call.Description,
+                Latitude = call.Latitude ?? 0,
+                Longitude = call.Longitude ?? 0,
+                CallTime = call.Created,
+                MaxTime = call.MaxEndTreatment
+            };
+
+            // 4. Ajout de l'appel dans la base de données via DAL
+            _dal.Call.Create(doCall);
+        }
+        catch (BlAlreadyExistsException)
+        {
+            throw; // Relance l'exception pour que la couche d'affichage la capture
+        }
+        catch
+        {
+            // Gestion des erreurs générales
+            throw new BlInvalidInputException("Invalid inputs");
+        }
     }
 
     public void DeleteCall(int id)
