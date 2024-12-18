@@ -2,6 +2,7 @@
 using BlApi;
 using BO;
 using Helpers;
+using System.Net.Http.Headers;
 
 namespace BlImplementation;
 
@@ -78,7 +79,56 @@ internal class CallImplementation : ICall
 
     public IEnumerable<ClosedCallInList> ReadAllEndedCalls(int id, callType? filter, closedCallFields? sort)
     {
-        throw new NotImplementedException();
+        var assign = _dal.Assignment.ReadAll().Where(c => c.VolunteerId == id);
+        var assignClosedCalls = assign.Where(a => a.typeOfEnd != null);
+        var calls = _dal.Call.ReadAll();
+
+        // second parameter is the filter
+        var closedCalls = calls.Where(call => assignClosedCalls.Any(assignClosedCalls => assignClosedCalls.CallId == call.Id));
+        var sortByCallType = filter switch
+        {
+            null => closedCalls,
+            callType.BuyingFood => closedCalls.Where(c => c.CallType == (DO.callType)callType.BuyingFood),
+            callType.BuyingMedicine => closedCalls.Where(c => c.CallType == (DO.callType)callType.BuyingMedicine),
+            callType.BuyingClothes => closedCalls.Where(c => c.CallType == (DO.callType)callType.BuyingClothes),
+            callType.BuyingCartoons => closedCalls.Where(c => c.CallType == (DO.callType)callType.BuyingCartoons),
+            callType.PackingFood => closedCalls.Where(c => c.CallType == (DO.callType)callType.PackingFood),
+            callType.PackingMedicine => closedCalls.Where(c => c.CallType == (DO.callType)callType.PackingMedicine),
+            callType.PackingClothes => closedCalls.Where(c => c.CallType == (DO.callType)callType.PackingClothes),
+            callType.PackingCartoonsInTheTruck => closedCalls.Where(c => c.CallType == (DO.callType)callType.PackingCartoonsInTheTruck),
+            callType.Deliveries => closedCalls.Where(c => c.CallType == (DO.callType)callType.Deliveries),
+            callType.DelivriesToTheDoor => closedCalls.Where(c => c.CallType == (DO.callType)callType.DelivriesToTheDoor)
+        };
+        assignClosedCalls = assignClosedCalls.Where(call=>sortByCallType.Any(sortByCallType=>sortByCallType.Id==call.CallId));
+
+        //third parameter is the sort
+        var xx = from assignCall in assignClosedCalls
+                 join call in sortByCallType
+                 on assignCall.CallId equals call.Id
+                 select new ClosedCallInList
+                 {
+                     Id = call.Id,
+                     CallType= (BO.callType)call.CallType,
+                     Address= call.Address,
+                     Created=call.CallTime,
+                     StartTreatment = assignCall.StartTreatment,
+                     EndTreatment = assignCall.endTreatment,
+                     TypeOfEndTreatment = (BO.typeOfEndTreatment)assignCall.typeOfEnd!
+
+                 };
+        return  sort switch
+        {
+            closedCallFields.Id => xx.OrderBy(c => c.Id),
+            closedCallFields.callType => xx.OrderBy(c => c.CallType),
+            closedCallFields.adress => xx.OrderBy(c => c.Address),
+            closedCallFields.createdTime => xx.OrderBy(c => c.Created),
+            closedCallFields.startTreatment => xx.OrderBy(c => c.StartTreatment),
+            closedCallFields.endTreatment => xx.OrderBy(c => c.EndTreatment),
+            closedCallFields.typeOfEndTreatment => xx.OrderBy(c => c.TypeOfEndTreatment),
+            null => xx.OrderBy(c => c.Id)
+        };  
+
+        
     }
 
     public IEnumerable<OpenCallInList> ReadAllOpenCalls(int id, callType? filter, OpenCallFields? sort)

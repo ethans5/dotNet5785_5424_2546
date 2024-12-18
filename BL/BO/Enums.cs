@@ -13,7 +13,6 @@ public enum distanceType
 }
 public enum callType
 {
-    None,
     BuyingFood ,
     BuyingMedicine,
     BuyingClothes,
@@ -22,8 +21,8 @@ public enum callType
     PackingMedicine,
     PackingClothes,
     PackingCartoonsInTheTruck,
-    Delivries,
-    DelivriesToTheDoor,
+    Deliveries,
+    DelivriesToTheDoor
 }
 public enum Treatment 
 {
