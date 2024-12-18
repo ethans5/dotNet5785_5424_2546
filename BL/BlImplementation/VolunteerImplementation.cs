@@ -58,7 +58,7 @@ internal class VolunteerImplementation : IVolunteer
     public void DeleteVolunteer(int id)
     {
         BO.Volunteer? volunteer = ReadVolunteer(id);
-        if (volunteer is null || volunteer.IsActive || volunteer.CallInProgress != null 
+        if (volunteer is null || volunteer.IsActive || volunteer.CallInProgress != null
             || volunteer.Totaltreated != 0)
             throw new BlDeletionImpossible($"Deletion of the Volunteer with ID {id} impossible");
         try
@@ -104,29 +104,29 @@ internal class VolunteerImplementation : IVolunteer
             false => _dal.Volunteer.ReadAll().Where(v=>!v.isActive)
         };
 
-      
-        
+
+
             var volunteerList =  from volunteer in volunteers
-                   let volunteerAssignments = allAssign.Where(a => a.VolunteerId == volunteer.Id)
-                   let activeCallId = volunteerAssignments
-                             .Where(a => a.endTreatment == null)
-                             .Select(a => a.CallId)
-                             .FirstOrDefault()
-                   let activeCallType = allCalls
-                                        .Where(c => c.Id == activeCallId)
-                                        .Select(c => (BO.callType)c.CallType)
-                                        .FirstOrDefault()
-                   select new VolunteerInList
-                   {
-                       Id = volunteer.Id,
-                       Name = volunteer.Name,
-                       IsActive = volunteer.isActive,
-                       Totaltreated = volunteerAssignments.Count(a => a.typeOfEnd == DO.typeOfEndTreatment.treated),
-                       TotalSelfCancellation = volunteerAssignments.Count(a => a.typeOfEnd == DO.typeOfEndTreatment.selfCancellation),
-                       TotalExpired = volunteerAssignments.Count(a => a.typeOfEnd == DO.typeOfEndTreatment.Expired),
-                       IdCall = activeCallId,
-                       callType = activeCallType
-                   };
+                            let volunteerAssignments = allAssign.Where(a => a.VolunteerId == volunteer.Id)
+                            let activeCallId = volunteerAssignments
+                                      .Where(a => a.endTreatment == null)
+                                      .Select(a => a.CallId)
+                                      .FirstOrDefault()
+                            let activeCallType = allCalls
+                                                 .Where(c => c.Id == activeCallId)
+                                                 .Select(c => (BO.callType)c.CallType)
+                                                 .FirstOrDefault()
+                            select new VolunteerInList
+                            {
+                                Id = volunteer.Id,
+                                Name = volunteer.Name,
+                                IsActive = volunteer.isActive,
+                                Totaltreated = volunteerAssignments.Count(a => a.typeOfEnd == DO.typeOfEndTreatment.treated),
+                                TotalSelfCancellation = volunteerAssignments.Count(a => a.typeOfEnd == DO.typeOfEndTreatment.selfCancellation),
+                                TotalExpired = volunteerAssignments.Count(a => a.typeOfEnd == DO.typeOfEndTreatment.Expired),
+                                IdCall = activeCallId,
+                                callType = activeCallType
+                            };
 
         return sortBy switch
         {
@@ -179,7 +179,7 @@ internal class VolunteerImplementation : IVolunteer
 
 
         }
-        else 
+        else
             throw new BlUnauthorizedException("You are not authorized to update this volunteer");
 
         DO.Volunteer doVolunteer2 = new DO.Volunteer
