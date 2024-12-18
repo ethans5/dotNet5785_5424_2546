@@ -10,9 +10,48 @@ internal class VolunteerImplementation : IVolunteer
     private DalApi.IDal _dal = Factory.Get;
     static readonly Tools toolsInstance = new Tools();
 
-    public void CreateVolunteer(BO.Volunteer volunteer)
+    public async void CreateVolunteer(BO.Volunteer volunteer)
     {
-        throw new NotImplementedException();
+
+        try
+        {
+            toolsInstance.ValidateFieldsFormat(volunteer);
+            var coordinate = await toolsInstance.GetCoordinatesAsync(volunteer.Address!);
+            volunteer.Latitude = coordinate.Latitude;
+            volunteer.Longitude = coordinate.Longitude;
+            try
+            {
+                var testVolunteer = _dal.Volunteer.Read(volunteer.Id);
+                if (testVolunteer != null)
+                {
+                    throw new BlAlreadyExistsException("Volunteer already exists");
+                }
+            }
+            catch (DO.DalAlreadyExistException ex)
+            {
+                throw new BlAlreadyExistsException("Volunteer already exists", ex);
+            }
+            DO.Volunteer doVolunteer = new DO.Volunteer
+            {
+                Id = volunteer.Id,
+                Name = volunteer.Name,
+                Phone = volunteer.Phone,
+                Email = volunteer.Mail,
+                Password = volunteer.Password,
+                Address = volunteer.Address,
+                Latitude = volunteer.Latitude,
+                Longitude = volunteer.Longitude,
+                JobType = (DO.jobType)volunteer.Job,
+                isActive = volunteer.IsActive,
+                MaxDistance = volunteer.MaxDistance,
+                distanceType = (DO.distanceType)volunteer.DistanceType
+            };
+            _dal.Volunteer.Create(doVolunteer);
+        }
+        catch
+        {
+            throw new BlInvalidInputException("Invalid input");
+        }
     }
 
     public void DeleteVolunteer(int id)
@@ -122,7 +161,7 @@ internal class VolunteerImplementation : IVolunteer
             try
             {
                 toolsInstance.ValidateFieldsFormat(volunteer);
-                var coordinate =   await toolsInstance.GetCoordinatesAsync(volunteer.Address);
+                var coordinate =   await toolsInstance.GetCoordinatesAsync(volunteer.Address!);
                 volunteer.Latitude = coordinate.Latitude;
                 volunteer.Longitude = coordinate.Longitude;
             }
