@@ -15,7 +15,7 @@ internal class CallImplementation : ICall
         throw new NotImplementedException();
     }
 
-    public void CreateCall(BO.Call call)
+    public async void CreateCall(BO.Call call)
     {
         try
         {
@@ -42,6 +42,7 @@ internal class CallImplementation : ICall
                 Id = call.Id,
                 CallType = (DO.callType)call.CallType,
                 Description = call.Description,
+                Address = await toolsInstance.GetAddressAsync(call.Latitude,call.Longitude),
                 Latitude = call.Latitude ?? 0,
                 Longitude = call.Longitude ?? 0,
                 CallTime = call.Created,
@@ -131,15 +132,7 @@ internal class CallImplementation : ICall
         
     }
 
-    //public IEnumerable<OpenCallInList> ReadAllOpenCalls(int id, callType? filter, OpenCallFields? sort)
-    //{
-    //    var myVolont = _dal.Volunteer.Read(id);
-    //    var doCalls = _dal.Call.ReadAll();
-    //    var boCalls = doCalls.Select(call => toolsInstance.parseDoToBo(call));
-    //    var openCalls = boCalls.Where(call => call.Status == Status.Open);
-
-    //    return null;
-    //}
+  
 
     public IEnumerable<OpenCallInList> ReadAllOpenCalls(int id, callType? filter, OpenCallFields? sort)
     {
@@ -150,7 +143,7 @@ internal class CallImplementation : ICall
 
         // Lire tous les appels et les convertir en BO
         var doCalls = _dal.Call.ReadAll();
-        var boCalls = doCalls.Select(call => toolsInstance.parseDoToBo(call));
+        var boCalls = doCalls.Select(call => toolsInstance.parseDoToBoCall(call));
 
         // Filtrer les appels ouverts
         var openCalls = boCalls.Where(call => call.Status == Status.Open);
@@ -167,14 +160,15 @@ internal class CallImplementation : ICall
             );
             return distance <= myVolunteer.MaxDistance.Value;
         });
+        // Appliquer le filtre sur le type de call, si nécessaire
 
         // Mapper les appels en OpenCallInList
-        var result = nearbyCalls.Select(call => new OpenCallInList
+        var result = nearbyCalls.Select( call => new OpenCallInList
         {
             Id = call.Id,
             callType = call.CallType,
             description = call.Description,
-            Address = call.Address,
+            Address = toolsInstance.GetAddressAsync(call.Latitude, call.Longitude).Result,
             Distance = toolsInstance.CalculateDistance(
                 myVolunteer.Latitude.Value,
                 myVolunteer.Longitude.Value,
@@ -182,18 +176,18 @@ internal class CallImplementation : ICall
                 call.Longitude!.Value
             )
         });
-
-        // Appliquer le filtre sur le type de call, si nécessaire
+       
         if (filter.HasValue)
         {
-            result = result.Where(call => call.CallType == filter.Value);
+            result = result.Where(call => call.callType == filter.Value);
         }
+
 
         // Appliquer le tri, si nécessaire
         return sort switch
         {
             OpenCallFields.Id => result.OrderBy(call => call.Id),
-            OpenCallFields.callType => result.OrderBy(call => call.CallType),
+            OpenCallFields.callType => result.OrderBy(call => call.callType),
             OpenCallFields.description => result.OrderBy(call => call.description),
             OpenCallFields.Address => result.OrderBy(call => call.Address),
             OpenCallFields.Created => result.OrderBy(call => call.Created),
@@ -207,8 +201,24 @@ internal class CallImplementation : ICall
 
     public Call ReadCall(int id)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var call = _dal.Call.Read(id);
+            if (call == null)
+            {
+                throw new BlDoesNotExistException("Call not found");
+            }
+            var boCall = toolsInstance.parseDoToBoCall(call);
+            return boCall;
+
+        }
+
+        catch (DO.DalDoesNotExistException ex)
+        {
+            throw new BlNotFoundException("Call not found", ex);
+        }
     }
+        
 
     public void UpdateCall(Call call)
     {

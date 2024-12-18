@@ -34,7 +34,7 @@ internal class Tools
     }
 
 
-    public BO.Volunteer parseDoToBo(DO.Volunteer volunteer)
+    public BO.Volunteer parseDoToBoVolunteer(DO.Volunteer volunteer)
     {
         return new BO.Volunteer
         {
@@ -142,7 +142,31 @@ internal class Tools
             }
         }
     }
+    public async Task<string> GetAddressAsync(double? latitude, double ?longitude)
+    {
+        string url = $"https://geocode.maps.co/reverse?lat={latitude}&lon={longitude}&api_key={ApiKey}";
 
+        using (HttpClient client = new HttpClient())
+        {
+            try
+            {
+                HttpResponseMessage response = await client.GetAsync(url);
+                response.EnsureSuccessStatusCode();
+
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                JObject result = JObject.Parse(jsonResponse);
+
+                string? address = result["display_name"]?.ToString();
+
+                return address ?? "Adresse introuvable";
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erreur lors de la récupération de l'adresse : {ex.Message}");
+                return "Erreur lors de la récupération de l'adresse";
+            }
+        }
+    }
 
 
     public void ValidateCallFieldsFormat(BO.Call call)
@@ -228,7 +252,7 @@ internal class Tools
     }
 
 
-    public BO.Call parseDoToBo(DO.Call call)
+    public BO.Call parseDoToBoCall(DO.Call call)
     {
         return new BO.Call
         {
