@@ -10,15 +10,54 @@ internal class VolunteerImplementation : IVolunteer
     private DalApi.IDal _dal = Factory.Get;
     static readonly Tools toolsInstance = new Tools();
 
-    public void CreateVolunteer(BO.Volunteer volunteer)
+    public async void CreateVolunteer(BO.Volunteer volunteer)
     {
-        throw new NotImplementedException();
+
+        try
+        {
+            toolsInstance.ValidateFieldsFormat(volunteer);
+            var coordinate = await toolsInstance.GetCoordinatesAsync(volunteer.Address!);
+            volunteer.Latitude = coordinate.Latitude;
+            volunteer.Longitude = coordinate.Longitude;
+            try
+            {
+                var testVolunteer = _dal.Volunteer.Read(volunteer.Id);
+                if (testVolunteer != null)
+                {
+                    throw new BlAlreadyExistsException("Volunteer already exists");
+                }
+            }
+            catch (DO.DalAlreadyExistException ex)
+            {
+                throw new BlAlreadyExistsException("Volunteer already exists", ex);
+            }
+            DO.Volunteer doVolunteer = new DO.Volunteer
+            {
+                Id = volunteer.Id,
+                Name = volunteer.Name,
+                Phone = volunteer.Phone,
+                Email = volunteer.Mail,
+                Password = volunteer.Password,
+                Address = volunteer.Address,
+                Latitude = volunteer.Latitude,
+                Longitude = volunteer.Longitude,
+                JobType = (DO.jobType)volunteer.Job,
+                isActive = volunteer.IsActive,
+                MaxDistance = volunteer.MaxDistance,
+                distanceType = (DO.distanceType)volunteer.DistanceType
+            };
+            _dal.Volunteer.Create(doVolunteer);
+        }
+        catch
+        {
+            throw new BlInvalidInputException("Invalid input");
+        }
     }
 
     public void DeleteVolunteer(int id)
     {
         BO.Volunteer? volunteer = ReadVolunteer(id);
-        if (volunteer is null || volunteer.IsActive || volunteer.CallInProgress != null 
+        if (volunteer is null || volunteer.IsActive || volunteer.CallInProgress != null
             || volunteer.Totaltreated != 0)
             throw new BlDeletionImpossible($"Deletion of the Volunteer with ID {id} impossible");
         try
@@ -64,29 +103,29 @@ internal class VolunteerImplementation : IVolunteer
             false => _dal.Volunteer.ReadAll().Where(v=>!v.isActive)
         };
 
-      
-        
+
+
             var volunteerList =  from volunteer in volunteers
-                   let volunteerAssignments = allAssign.Where(a => a.VolunteerId == volunteer.Id)
-                   let activeCallId = volunteerAssignments
-                             .Where(a => a.endTreatment == null)
-                             .Select(a => a.CallId)
-                             .FirstOrDefault()
-                   let activeCallType = allCalls
-                                        .Where(c => c.Id == activeCallId)
-                                        .Select(c => (BO.callType)c.CallType)
-                                        .FirstOrDefault()
-                   select new VolunteerInList
-                   {
-                       Id = volunteer.Id,
-                       Name = volunteer.Name,
-                       IsActive = volunteer.isActive,
-                       Totaltreated = volunteerAssignments.Count(a => a.typeOfEnd == DO.typeOfEndTreatment.treated),
-                       TotalSelfCancellation = volunteerAssignments.Count(a => a.typeOfEnd == DO.typeOfEndTreatment.selfCancellation),
-                       TotalExpired = volunteerAssignments.Count(a => a.typeOfEnd == DO.typeOfEndTreatment.Expired),
-                       IdCall = activeCallId,
-                       callType = activeCallType
-                   };
+                            let volunteerAssignments = allAssign.Where(a => a.VolunteerId == volunteer.Id)
+                            let activeCallId = volunteerAssignments
+                                      .Where(a => a.endTreatment == null)
+                                      .Select(a => a.CallId)
+                                      .FirstOrDefault()
+                            let activeCallType = allCalls
+                                                 .Where(c => c.Id == activeCallId)
+                                                 .Select(c => (BO.callType)c.CallType)
+                                                 .FirstOrDefault()
+                            select new VolunteerInList
+                            {
+                                Id = volunteer.Id,
+                                Name = volunteer.Name,
+                                IsActive = volunteer.isActive,
+                                Totaltreated = volunteerAssignments.Count(a => a.typeOfEnd == DO.typeOfEndTreatment.treated),
+                                TotalSelfCancellation = volunteerAssignments.Count(a => a.typeOfEnd == DO.typeOfEndTreatment.selfCancellation),
+                                TotalExpired = volunteerAssignments.Count(a => a.typeOfEnd == DO.typeOfEndTreatment.Expired),
+                                IdCall = activeCallId,
+                                callType = activeCallType
+                            };
 
         return sortBy switch
         {
@@ -122,7 +161,7 @@ internal class VolunteerImplementation : IVolunteer
             try
             {
                 toolsInstance.ValidateFieldsFormat(volunteer);
-                var coordinate =   await toolsInstance.GetCoordinatesAsync(volunteer.Address);
+                var coordinate =   await toolsInstance.GetCoordinatesAsync(volunteer.Address!);
                 volunteer.Latitude = coordinate.Latitude;
                 volunteer.Longitude = coordinate.Longitude;
             }
@@ -139,7 +178,7 @@ internal class VolunteerImplementation : IVolunteer
 
 
         }
-        else 
+        else
             throw new BlUnauthorizedException("You are not authorized to update this volunteer");
 
         DO.Volunteer doVolunteer2 = new DO.Volunteer
