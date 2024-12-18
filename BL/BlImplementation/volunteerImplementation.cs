@@ -44,6 +44,7 @@ internal class VolunteerImplementation : IVolunteer
                 JobType = (DO.jobType)volunteer.Job,
                 isActive = volunteer.IsActive,
                 MaxDistance = volunteer.MaxDistance,
+               
                 distanceType = (DO.distanceType)volunteer.DistanceType
             };
             _dal.Volunteer.Create(doVolunteer);
