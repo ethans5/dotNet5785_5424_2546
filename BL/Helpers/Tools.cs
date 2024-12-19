@@ -88,6 +88,12 @@ internal class Tools
         return Regex.IsMatch(number.ToString()!, pattern);
     }
 
+    public bool isDirector(int id)
+    {
+        var volunteer = _dal.Volunteer.Read(id);
+        return volunteer!.JobType == DO.jobType.Director;
+    }
+
     public void ValidateFieldsFormat(BO.Volunteer volunteer)
     {
         if (!IsValidId(volunteer.Id)) { throw new BlInvalidInputException("Invalid ID"); }

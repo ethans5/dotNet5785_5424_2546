@@ -51,6 +51,8 @@ public class BlNotFoundException : Exception
 public class BlInvalidInputException : Exception
 {
     public BlInvalidInputException(string? message) : base(message) { }
+    public BlInvalidInputException(string message, Exception innerException)
+                : base(message, innerException) { }
 }
 
 

@@ -42,7 +42,7 @@ internal class CallImplementation : ICall
                 Id = call.Id,
                 CallType = (DO.callType)call.CallType,
                 Description = call.Description,
-                Address = await toolsInstance.GetAddressAsync(call.Latitude,call.Longitude),
+                Address = await toolsInstance.GetAddressAsync(call.Latitude, call.Longitude),
                 Latitude = call.Latitude ?? 0,
                 Longitude = call.Longitude ?? 0,
                 CallTime = call.Created,
@@ -100,7 +100,7 @@ internal class CallImplementation : ICall
             callType.Deliveries => closedCalls.Where(c => c.CallType == (DO.callType)callType.Deliveries),
             callType.DelivriesToTheDoor => closedCalls.Where(c => c.CallType == (DO.callType)callType.DelivriesToTheDoor)
         };
-        assignClosedCalls = assignClosedCalls.Where(call=>sortByCallType.Any(sortByCallType=>sortByCallType.Id==call.CallId));
+        assignClosedCalls = assignClosedCalls.Where(call => sortByCallType.Any(sortByCallType => sortByCallType.Id == call.CallId));
 
         //third parameter is the sort
         var xx = from assignCall in assignClosedCalls
@@ -109,15 +109,15 @@ internal class CallImplementation : ICall
                  select new ClosedCallInList
                  {
                      Id = call.Id,
-                     CallType= (BO.callType)call.CallType,
-                     Address= call.Address,
-                     Created=call.CallTime,
+                     CallType = (BO.callType)call.CallType,
+                     Address = call.Address,
+                     Created = call.CallTime,
                      StartTreatment = assignCall.StartTreatment,
                      EndTreatment = assignCall.endTreatment,
                      TypeOfEndTreatment = (BO.typeOfEndTreatment)assignCall.typeOfEnd!
 
                  };
-        return  sort switch
+        return sort switch
         {
             closedCallFields.Id => xx.OrderBy(c => c.Id),
             closedCallFields.callType => xx.OrderBy(c => c.CallType),
@@ -127,12 +127,12 @@ internal class CallImplementation : ICall
             closedCallFields.endTreatment => xx.OrderBy(c => c.EndTreatment),
             closedCallFields.typeOfEndTreatment => xx.OrderBy(c => c.TypeOfEndTreatment),
             null => xx.OrderBy(c => c.Id)
-        };  
+        };
 
-        
+
     }
 
-  
+
 
     public IEnumerable<OpenCallInList> ReadAllOpenCalls(int id, callType? filter, OpenCallFields? sort)
     {
@@ -163,7 +163,7 @@ internal class CallImplementation : ICall
         // Appliquer le filtre sur le type de call, si nécessaire
 
         // Mapper les appels en OpenCallInList
-        var result = nearbyCalls.Select( call => new OpenCallInList
+        var result = nearbyCalls.Select(call => new OpenCallInList
         {
             Id = call.Id,
             callType = call.CallType,
@@ -176,7 +176,7 @@ internal class CallImplementation : ICall
                 call.Longitude!.Value
             )
         });
-       
+
         if (filter.HasValue)
         {
             result = result.Where(call => call.callType == filter.Value);
@@ -218,20 +218,98 @@ internal class CallImplementation : ICall
             throw new BlNotFoundException("Call not found", ex);
         }
     }
-        
+
 
     public void UpdateCall(Call call)
     {
         throw new NotImplementedException();
     }
-
-    public void UpdateCallCancel(int id, int idA)
+    public void UpdateCallCancel(int requesterId, int assignmentId)
     {
-        throw new NotImplementedException();
+        try
+        {
+            // Retrieve the assignment from the data layer
+            var assign = _dal.Assignment.Read(assignmentId);
+
+            // Check if the treatment has already ended
+            if (assign.typeOfEnd != null)
+            {
+                throw new BlInvalidInputException("The call has already been closed.");
+            }
+
+            // Check if the requester has permission to cancel
+            bool isManager = toolsInstance.isDirector(requesterId); // Hypothetical check for manager status
+            bool isVolunteerAssigned = assign.VolunteerId == requesterId;
+
+            if (!isManager && !isVolunteerAssigned)
+            {
+                throw new BlUnauthorizedException("You do not have permission to cancel this assignment.");
+            }
+
+            // Determine the type of cancellation based on the requester
+            var cancellationType = isVolunteerAssigned
+                ? DO.typeOfEndTreatment.selfCancellation
+                : DO.typeOfEndTreatment.directorCancellation;
+
+            // Update the type of end and end treatment timestamp
+            var updatedAssignment = assign with
+            {
+                typeOfEnd = cancellationType,
+                endTreatment = DateTime.Now
+            };
+
+            // Update the record in the data layer
+            _dal.Assignment.Update(updatedAssignment);
+        }
+        catch (Exception ex)
+        {
+            // Catch other exceptions and rethrow them with meaningful messages
+            throw new BlInvalidInputException("An error occurred while canceling the call.", ex);
+        }
     }
 
-    public void UpdateCallEns(int id, int idA)
+
+    public void UpdateCallEnd(int volunteerId, int assignmentId)
     {
-        throw new NotImplementedException();
+        try
+        {
+            // Retrieve the volunteer and assignment from the data layer
+            var volunteer = _dal.Volunteer.Read(volunteerId);
+            var assign = _dal.Assignment.Read(assignmentId);
+
+            // Check if the assignment belongs to the given volunteer
+            if (assign!.VolunteerId != volunteerId)
+            {
+                throw new BlNotFoundException("The assignment does not belong to this volunteer.");
+            }
+
+            // Check if the treatment has already ended
+            if (assign.endTreatment != null)
+            {
+                throw new BlAlreadyExistsException("The call has already ended.");
+            }
+
+            //// Check if the treatment has started
+            //if (assign.StartTreatment == null)
+            //{
+            //    throw new BlInvalidInputException("The call has not started yet.");
+            //}
+
+            // Update the type of end and end treatment timestamp
+            var updatedAssignment = assign with
+            {
+                typeOfEnd = DO.typeOfEndTreatment.treated,
+                endTreatment = DateTime.Now
+            };
+
+            // Update the record in the data layer
+            _dal.Assignment.Update(updatedAssignment);
+        }
+        
+        catch (Exception ex)
+        {
+            // Catch other exceptions and rethrow them with meaningful messages
+            throw new BlInvalidInputException("An error occurred while updating the call.", ex);
+        }
     }
 }
