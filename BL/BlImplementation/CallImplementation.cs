@@ -3,6 +3,7 @@ using BlApi;
 using BO;
 using Helpers;
 using System.Net.Http.Headers;
+using System.Security.Cryptography;
 
 namespace BlImplementation;
 
@@ -65,13 +66,36 @@ internal class CallImplementation : ICall
 
     public void DeleteCall(int id)
     {
-        throw new NotImplementedException();
+        BO.Call myCall = ReadCall(id);
+        var assign = _dal.Assignment.ReadAll().Where(a=>a.CallId==id).FirstOrDefault();
+        int voulunteerAssigned = assign!.VolunteerId;
+        try
+        {
+            if (myCall == null || myCall.Status!=Status.Open|| !toolsInstance.isDirector(voulunteerAssigned)) 
+            {
+                throw new BlDeletionImpossible($"The coditions to delete the call Id: {id} are not match");
+            }
+
+            _dal.Call.Delete(id);
+
+        }
+        catch 
+        { 
+            throw new BlDeletionImpossible($"The coditions to delete the call Id: {id} are not match");
+        }
     }
 
-    public int[] GetCallCountsByStatus()
-    {
-        throw new NotImplementedException();
-    }
+
+
+    //public int[] GetCallCountsByStatus()
+    //{
+    //    var allCalls = _dal.Call.ReadAll();
+
+    //    IEnumerable<int>[] array = from BO.Call myCall in allCalls orderby myCall.Status select new int
+    //    {
+              
+    //    };
+    //}
 
     public IEnumerable<CallInList> ReadAllCalls(CallFields? filter, object? obj, CallFields? sort)
     {
