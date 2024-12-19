@@ -11,10 +11,59 @@ internal class CallImplementation : ICall
 {
     private DalApi.IDal _dal = Factory.Get;
     static readonly Tools toolsInstance = new Tools();
-    public void ChoiceCall(int id, int idC)
+    public void ChoiceCall(int volunteerId, int callId)
     {
-        throw new NotImplementedException();
+        // Retrieve the volunteer data
+        var volunteer = _dal.Volunteer.Read(volunteerId);
+        if (volunteer == null)
+        {
+            throw new BlNotFoundException("Volunteer not found.");
+        }
+
+        // Retrieve the call data
+        var call = _dal.Call.Read(callId);
+        if (call == null)
+        {
+            throw new BlNotFoundException("Call not found.");
+        }
+
+        // Convert the call to BO entity to include the status field
+        var boCall = toolsInstance.parseDoToBoCall(call);
+
+        // Validate the call
+        if (boCall.Status != Status.Open)
+        {
+            throw new BlUnauthorizedException("The call is not available for treatment.");
+        }
+
+        // Check if the call has expired
+        if (boCall.Status == Status.Expired)
+        {
+            throw new BlUnauthorizedException("The call has expired.");
+        }
+
+        // Check if the call is already assigned to another volunteer
+        var existingAssignments = _dal.Assignment.ReadAll()
+            .Where(a => a.CallId == callId && a.endTreatment == null);
+        if (existingAssignments.Any())
+        {
+            throw new BlUnauthorizedException("The call is already assigned to another volunteer.");
+        }
+
+        // Create a new assignment entity
+        var newAssignment = new DO.Assignment
+        {
+            VolunteerId = volunteerId,
+            CallId = callId,
+            StartTreatment = DateTime.Now,
+            endTreatment = null,
+            typeOfEnd = null
+        };
+
+        // Add the new assignment to the data layer
+        _dal.Assignment.Create(newAssignment);
     }
+
 
     public async void CreateCall(BO.Call call)
     {
@@ -87,15 +136,37 @@ internal class CallImplementation : ICall
 
 
 
-    //public int[] GetCallCountsByStatus()
-    //{
-    //    var allCalls = _dal.Call.ReadAll();
+    public int[] GetCallCountsByStatus()
+    {
+        // Lire tous les appels depuis la couche DAL
+        var doCalls = _dal.Call.ReadAll();
 
-    //    IEnumerable<int>[] array = from BO.Call myCall in allCalls orderby myCall.Status select new int
-    //    {
-              
-    //    };
-    //}
+        // Convertir les objets DO en BO tout en calculant le statut
+        var boCalls = doCalls.Select(doCall =>
+        {
+            var boCall = toolsInstance.parseDoToBoCall(doCall);
+            return boCall;
+        });
+
+        // Grouper les appels par leur statut
+        var groupedByStatus = boCalls
+            .GroupBy(call => (int)call.Status) // Utilise l'index numérique du statut
+            .ToDictionary(group => group.Key, group => group.Count());
+
+        // Trouver le nombre maximal de statuts (par exemple, Status peut aller de 0 à 4)
+        int maxStatusIndex = Enum.GetValues(typeof(Status)).Cast<int>().Max();
+
+        // Initialiser un tableau pour stocker les résultats
+        int[] callCounts = new int[maxStatusIndex + 1];
+
+        // Remplir le tableau avec les quantités pour chaque statut
+        foreach (var kvp in groupedByStatus)
+        {
+            callCounts[kvp.Key] = kvp.Value;
+        }
+
+        return callCounts;
+    }
 
     public IEnumerable<CallInList> ReadAllCalls(CallFields? filter, object? obj, CallFields? sort)
     {
