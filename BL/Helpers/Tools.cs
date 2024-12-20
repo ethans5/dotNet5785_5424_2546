@@ -204,7 +204,7 @@ internal class Tools
 
     public Status DetermineCallStatus(DateTime created, DateTime? maxEndTreatment)
     {
-        var now = DateTime.UtcNow;
+        var now = ClockManager.Now;
 
         // Vérifie si maxEndTreatment est défini et compare avec la date actuelle
         if (maxEndTreatment.HasValue)
