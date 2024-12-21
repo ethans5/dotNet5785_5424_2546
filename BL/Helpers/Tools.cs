@@ -199,7 +199,10 @@ internal class Tools
         if (!Enum.IsDefined(typeof(BO.callType), call.CallType))
             throw new BlInvalidInputException("Type of Call Invalid");
 
-       
+        //// verification de l'adresse
+        //GetAddressAsync(call.Latitude, call.Longitude).Wait();
+
+
     }
 
     public Status DetermineCallStatus(DateTime created, DateTime? maxEndTreatment)

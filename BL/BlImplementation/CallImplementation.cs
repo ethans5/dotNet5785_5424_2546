@@ -170,111 +170,118 @@ internal class CallImplementation : ICall
 
     public IEnumerable<CallInList> ReadAllCalls(CallFields? filter, object? obj, CallFields? sort)
     {
+        // Read data from the data access layer
         var calls = _dal.Call.ReadAll();
-        var assign = _dal.Assignment.ReadAll();
+        var assignments = _dal.Assignment.ReadAll();
         var volunteers = _dal.Volunteer.ReadAll();
- 
-                    
-        var xx = from call in calls
-                 let validAssign= assign.Where(a => a.CallId == call.Id).OrderByDescending(a => a.StartTreatment)
-                 let lastAssignment = assign.Where(assign => assign.CallId == call.Id&&(assign.typeOfEnd == DO.typeOfEndTreatment.treated || assign.typeOfEnd == DO.typeOfEndTreatment.Expired||assign.typeOfEnd==null)).FirstOrDefault()
-                 let lastVolunteer = lastAssignment != null
-      ? volunteers.FirstOrDefault(v => v.Id == lastAssignment.VolunteerId)
-      : (validAssign.Any() ? volunteers.FirstOrDefault(v => v.Id == validAssign.FirstOrDefault().VolunteerId) : null)
 
-                 select new CallInList
-                 {
-                     Id = call.Id,
-                     callId = call.Id,
-                     callType = (BO.callType)call.CallType,
-                     startingTime = lastAssignment.StartTreatment,
-                     remainingTime = call.MaxTime.HasValue
-                         ? call.MaxTime.Value - ClockManager.Now
-                         : null,
-                     LastVolunteerName = lastVolunteer?.Name,
-                     duration = lastAssignment?.endTreatment.HasValue == true 
-                         ? lastAssignment.endTreatment - lastAssignment.StartTreatment
-                         : null,
-                     Status = toolsInstance.DetermineCallStatus(call.CallTime,call.MaxTime),
-                     TotalAssignmentAllocations = validAssign.Count()
-                 };
-      if(filter.HasValue&& obj!=null)
+        // Build the query to generate CallInList objects
+        var callInList = from call in calls
+                         let validAssignments = assignments.Where(a => a.CallId == call.Id).OrderByDescending(a => a.StartTreatment)
+                         let lastAssignment = assignments.Where(a => a.CallId == call.Id &&
+                             (a.typeOfEnd == DO.typeOfEndTreatment.treated ||
+                              a.typeOfEnd == DO.typeOfEndTreatment.Expired ||
+                              a.typeOfEnd == null)).FirstOrDefault()
+                         let lastVolunteer = lastAssignment != null
+                             ? volunteers.FirstOrDefault(v => v.Id == lastAssignment.VolunteerId)
+                             : (validAssignments.Any()
+                                 ? volunteers.FirstOrDefault(v => v.Id == validAssignments.FirstOrDefault()!.VolunteerId)
+                                 : null)
+                         select new CallInList
+                         {
+                             Id = call.Id,
+                             callId = call.Id,
+                             callType = (BO.callType)call.CallType,
+                             startingTime = lastAssignment.StartTreatment,
+                             remainingTime = call.MaxTime.HasValue
+                                 ? call.MaxTime.Value - ClockManager.Now
+                                 : null,
+                             LastVolunteerName = lastVolunteer?.Name,
+                             duration = lastAssignment?.endTreatment.HasValue == true
+                                 ? lastAssignment.endTreatment - lastAssignment.StartTreatment
+                                 : null,
+                             Status = toolsInstance.DetermineCallStatus(call.CallTime, call.MaxTime),
+                             TotalAssignmentAllocations = validAssignments.Count()
+                         };
+
+        // Apply filtering based on the given field and value
+        if (filter.HasValue && obj != null)
         {
             switch (filter.Value)
             {
                 case CallFields.Id:
-                    xx = xx.Where(c => c.Id == (int)obj);
+                    callInList = callInList.Where(c => c.Id == (int)obj);
                     break;
                 case CallFields.CallId:
-                    xx = xx.Where(c => c.callId == (int)obj);
+                    callInList = callInList.Where(c => c.callId == (int)obj);
                     break;
                 case CallFields.callType:
-                    xx = xx.Where(c => c.callType == (BO.callType)obj);
+                    callInList = callInList.Where(c => c.callType == (BO.callType)obj);
                     break;
                 case CallFields.startingTime:
-                    xx = xx.Where(c => c.startingTime == (DateTime)obj);
+                    callInList = callInList.Where(c => c.startingTime == (DateTime)obj);
                     break;
                 case CallFields.remainingTime:
-                    xx = xx.Where(c => c.remainingTime == (TimeSpan)obj);
+                    callInList = callInList.Where(c => c.remainingTime == (TimeSpan)obj);
                     break;
                 case CallFields.LastVolunteerName:
-                    xx = xx.Where(c => c.LastVolunteerName == (string)obj);
+                    callInList = callInList.Where(c => c.LastVolunteerName == (string)obj);
                     break;
                 case CallFields.duration:
-                    xx = xx.Where(c => c.duration == (TimeSpan)obj);
+                    callInList = callInList.Where(c => c.duration == (TimeSpan)obj);
                     break;
                 case CallFields.Status:
-                    xx = xx.Where(c => c.Status == (Status)obj);
+                    callInList = callInList.Where(c => c.Status == (Status)obj);
                     break;
                 case CallFields.totalAssignmentAllocation:
-                    xx = xx.Where(c => c.TotalAssignmentAllocations == (int)obj);
+                    callInList = callInList.Where(c => c.TotalAssignmentAllocations == (int)obj);
                     break;
-
             }
         }
+
+        // Apply sorting based on the given field
         if (sort.HasValue)
         {
             switch (sort.Value)
             {
                 case CallFields.Id:
-                    xx = xx.OrderBy(c => c.Id);
+                    callInList = callInList.OrderBy(c => c.Id);
                     break;
                 case CallFields.CallId:
-                    xx = xx.OrderBy(c => c.callId);
+                    callInList = callInList.OrderBy(c => c.callId);
                     break;
                 case CallFields.callType:
-                    xx = xx.OrderBy(c => c.callType);
+                    callInList = callInList.OrderBy(c => c.callType);
                     break;
                 case CallFields.startingTime:
-                    xx = xx.OrderBy(c => c.startingTime);
+                    callInList = callInList.OrderBy(c => c.startingTime);
                     break;
                 case CallFields.remainingTime:
-                    xx = xx.OrderBy(c => c.remainingTime);
+                    callInList = callInList.OrderBy(c => c.remainingTime);
                     break;
                 case CallFields.LastVolunteerName:
-                    xx = xx.OrderBy(c => c.LastVolunteerName);
+                    callInList = callInList.OrderBy(c => c.LastVolunteerName);
                     break;
                 case CallFields.duration:
-                    xx = xx.OrderBy(c => c.duration);
+                    callInList = callInList.OrderBy(c => c.duration);
                     break;
                 case CallFields.Status:
-                    xx = xx.OrderBy(c => c.Status);
+                    callInList = callInList.OrderBy(c => c.Status);
                     break;
                 case CallFields.totalAssignmentAllocation:
-                    xx = xx.OrderBy(c => c.TotalAssignmentAllocations);
+                    callInList = callInList.OrderBy(c => c.TotalAssignmentAllocations);
                     break;
-
             }
         }
         else
         {
-            xx = xx.OrderBy(c => c.Id);
+            // Default sorting by ID
+            callInList = callInList.OrderBy(c => c.Id);
         }
 
-
-        return xx;
-
+        return callInList;
     }
+
 
     public IEnumerable<ClosedCallInList> ReadAllEndedCalls(int id, callType? filter, closedCallFields? sort)
     {
@@ -418,10 +425,22 @@ internal class CallImplementation : ICall
     }
 
 
-    public void UpdateCall(Call call)
+    public void UpdateCall(BO.Call call)
     {
-        throw new NotImplementedException();
+        try
+        {
+            toolsInstance.ValidateCallFieldsFormat(call);
+            toolsInstance.GetAddressAsync(call.Latitude, call.Longitude).Wait();
+
+
+        }
+        catch (DO.DalDoesNotExistException ex)
+        {
+            throw new BlNotFoundException("Call not found", ex);
+        }
     }
+
+
     public void UpdateCallCancel(int requesterId, int assignmentId)
     {
         try
