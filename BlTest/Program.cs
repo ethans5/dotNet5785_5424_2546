@@ -58,6 +58,389 @@ internal class Program
 
     }
 
+    private static void callsOptions()
+    {
+        Console.WriteLine(
+        "1. Get Call Counts by Status\n" +
+        "2. Read All Calls\n" +
+        "3. Read a Specific Call\n" +
+        "4. Create Call\n" +
+        "5. Update Call\n" +
+        "6. Delete Call\n" +
+        "7. Read All Ended Calls\n" +
+        "8. Read All Open Calls\n" +
+        "9. Update Call End\n" +
+        "10. Update Call Cancel\n" +
+        "11. Choice Call");
+        int choice = Convert.ToInt32(Console.ReadLine());
+        switch (choice)
+        {
+            case 1:
+                s_bl.Call.GetCallCountsByStatus();
+                break;
+            case 2:
+                int filter1;
+                while (true)
+                {
+                    Console.WriteLine("Enter filter (optional):");
+                    string? filter = Console.ReadLine();
+                    if (Int32.TryParse(filter, out  filter1))
+                        { break; }
+                    else
+                    {
+                        Console.WriteLine("Invalid input");
+                        break;
+                    }
+                }
+
+                Console.WriteLine("Enter object (optional):");
+                object? obj = Console.ReadLine(); // Placeholder for actual object input
+                int sort1;
+                while (true)
+                 {
+                    Console.WriteLine("Enter sort (optional):");
+                    string? sort = Console.ReadLine();
+                    if (Int32.TryParse(sort, out sort1))
+                    { break; }
+                    else
+                    {
+                        Console.WriteLine("Invalid input");
+                        break;
+                    }
+                }
+              
+                var allCalls = s_bl.Call.ReadAllCalls((BO.CallFields)filter1, obj, (BO.CallFields)sort1);
+                foreach (var call1 in allCalls)
+                {
+                    Console.WriteLine(call1);
+                }
+                break;
+            case 3:
+                Console.WriteLine("Enter Call ID:");
+                int id = Convert.ToInt32(Console.ReadLine());
+                var call = s_bl.Call.ReadCall(id);
+                Console.WriteLine(call);
+                break;
+            case 4:
+                CreateCall();
+                break;
+            case 5:
+                UpdateCall();
+                break;
+            case 6:
+                DeleteCall();
+                break;
+            case 7:
+                ReadAllEndedCalls();
+                break;
+            case 8:
+                ReadAllOpenCalls();
+                break;
+            case 9:
+                UpdateCallEnd();
+                break;
+            case 10:
+                UpdateCallCancel();
+                break;
+            case 11:
+                ChoiceCall();
+                break;
+            default:
+                Console.WriteLine("Invalid input");
+                break;
+        }
+    }
+
+    private static void ChoiceCall()
+    {
+        Console.WriteLine("Enter yout Id:");
+        int id = Convert.ToInt32(Console.ReadLine());
+        Console.WriteLine("Enter the ID of the call you want to choose:");
+        int idC = Convert.ToInt32(Console.ReadLine());
+        try
+        {
+            s_bl.Call.ChoiceCall(id, idC);
+            Console.WriteLine("Call choosen successfully");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to choose call: {ex.Message}");
+        }
+    }
+
+    private static void UpdateCallCancel()
+    {
+        Console.WriteLine("Enter your ID:");
+        int id = Convert.ToInt32(Console.ReadLine());
+        Console.WriteLine("Enter the ID of the assignement :");
+        int idA = Convert.ToInt32(Console.ReadLine());
+        try
+        {
+            s_bl.Call.UpdateCallCancel(id, idA);
+            Console.WriteLine("Call updated successfully");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to update call: {ex.Message}");
+        }
+    }
+
+    private static void UpdateCallEnd()
+    {
+        Console.WriteLine("Enter your ID:");
+        int id = Convert.ToInt32(Console.ReadLine());
+        Console.WriteLine("Enter the ID of the assignement :");
+        int idA = Convert.ToInt32(Console.ReadLine());
+        try
+        {
+            s_bl.Call.UpdateCallEnd(id, idA);
+            Console.WriteLine("Call updated successfully");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to update call: {ex.Message}");
+        }
+    }
+
+    private static void ReadAllOpenCalls()
+    {
+        Console.WriteLine("Please enter your id");
+        int id = Convert.ToInt32(Console.ReadLine());
+        Console.WriteLine("Please enter a filter (optional):");
+        int filter;
+        while (true)
+        {
+            string? filter1 = Console.ReadLine();
+            if (Int32.TryParse(filter1, out filter))
+            {
+                break; // L'entrée est correcte, on sort de la boucle
+            }
+            else
+            {
+                Console.WriteLine("Invalid input. Please enter a number.\n");
+            }
+        }
+        Console.WriteLine("Please enter a sort (optional):");
+        int sort;
+        while (true)
+        {
+            string? sort1 = Console.ReadLine();
+            if (Int32.TryParse(sort1, out sort))
+            {
+                break; // L'entrée est correcte, on sort de la boucle
+            }
+            else
+            {
+                Console.WriteLine("Invalid input. Please enter a number.\n");
+            }
+        }
+        var calls = s_bl.Call.ReadAllOpenCalls(id, (BO.callType)filter, (BO.OpenCallFields)sort);
+        foreach (var call in calls)
+        {
+            Console.WriteLine(call);
+        }
+    }
+
+    private static void ReadAllEndedCalls()
+    {
+        Console.WriteLine("Please enter your id");
+        int id = Convert.ToInt32(Console.ReadLine());
+        Console.WriteLine("Please enter a filter (optional):");
+        int filter;
+        while (true)
+        {
+            string? filter1 = Console.ReadLine();
+            if (Int32.TryParse(filter1, out filter))
+            {
+                break; // L'entrée est correcte, on sort de la boucle
+            }
+            else
+            {
+                Console.WriteLine("Invalid input. Please enter a number.\n");
+            }
+        }
+        Console.WriteLine("Please enter a sort (optional):");
+        int sort;
+        while (true)
+        {
+            string? sort1 = Console.ReadLine();
+            if (Int32.TryParse(sort1, out sort))
+            {
+                break; // L'entrée est correcte, on sort de la boucle
+            }
+            else
+            {
+                Console.WriteLine("Invalid input. Please enter a number.\n");
+            }
+        }
+        var calls = s_bl.Call.ReadAllEndedCalls(id, (BO.callType)filter, (BO.closedCallFields)sort);
+        foreach (var call in calls)
+        {
+            Console.WriteLine(call);
+        }
+
+    }
+
+    private static void DeleteCall()
+    {
+        Console.WriteLine("Enter the ID of the call you want to delete:");
+        int id = Convert.ToInt32(Console.ReadLine());
+        try
+        {
+            s_bl.Call.DeleteCall(id);
+            Console.WriteLine("Call deleted successfully");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to delete call: {ex.Message}");
+        }
+    }
+
+    private static void UpdateCall()
+    {
+        Console.WriteLine("Enter the ID of the call you want to update:");
+        int id = Convert.ToInt32(Console.ReadLine());
+        Console.WriteLine("Enter the call type:\n" +
+            "0.Buying Food\n" +
+            "1.Buying Medicine\n" +
+            "2.Buying Clothes\n" +
+            "3.Buying Cartoons\n" +
+            "4.Packing Food\n" +
+            "5.Packing Medicine\n" +
+            "6.Packing Clothes\n" +
+            "7.Packing Cartoons in the trucks\n" +
+            "8.Deliveries\n" +
+            "9.Delivries To The Door\n"
+            );
+        int type;
+        while (true)
+        {
+            string callType = Console.ReadLine()!;
+            if (Int32.TryParse(callType, out type) && (type >= 0 && type <= 9))
+            {
+                break; // L'entrée est correcte, on sort de la boucle
+            }
+            else
+            {
+                Console.WriteLine("Invalid input. Please enter a number between 0 and 9.\n");
+            }
+        }
+        Console.WriteLine("please enter a descrpition");
+        string description = Console.ReadLine()!;
+        Console.WriteLine("Please enter a latitude");
+        int latitude = Convert.ToInt32(Console.ReadLine());
+        Console.WriteLine("Please enter a longitude");
+        int longitude = Convert.ToInt32(Console.ReadLine());
+        Console.WriteLine("Please enter a created date");
+        DateTime created = Convert.ToDateTime(Console.ReadLine());
+        Console.WriteLine("Please enter a max end treatment");
+        DateTime maxEndTreatment = Convert.ToDateTime(Console.ReadLine());
+        Console.WriteLine("Please enter a status");
+        int status;
+        while (true)
+        {
+            string status1 = Console.ReadLine()!;
+            if (Int32.TryParse(status1, out status) && (status >= 0 && status <= 3))
+            {
+                break; // L'entrée est correcte, on sort de la boucle
+            }
+            else
+            {
+                Console.WriteLine("Invalid input. Please enter a number between 0 and 3.\n");
+            }
+        }
+       
+        try { s_bl.Call.UpdateCall(new BO.Call
+        {
+            Id = id,
+            CallType = (BO.callType)type,
+            Description = description,
+            Latitude = latitude,
+            Longitude = longitude,
+            Created = created,
+            MaxEndTreatment = maxEndTreatment,
+            Status = (BO.Status)status
+        });
+            Console.WriteLine("Call updated successfully");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to update call: {ex.Message}");
+        }
+    }
+
+    private static void CreateCall()
+    {
+        Console.WriteLine("Enter the call type:\n"+
+            "0.Buying Food\n"+
+            "1.Buying Medicine\n"+
+            "2.Buying Clothes\n"+
+            "3.Buying Cartoons\n" +
+            "4.Packing Food\n"+
+            "5.Packing Medicine\n" +
+            "6.Packing Clothes\n" +
+            "7.Packing Cartoons in the trucks\n" +
+            "8.Deliveries\n" +
+            "9.Delivries To The Door\n"
+            );
+        int type;
+        while (true)
+        {
+            string callType = Console.ReadLine()!;
+            if (Int32.TryParse(callType, out type) && (type >= 0 && type <= 9))
+            {
+                break; // L'entrée est correcte, on sort de la boucle
+            }
+            else
+            {
+                Console.WriteLine("Invalid input. Please enter a number between 0 and 9.\n");
+            }
+        }
+        Console.WriteLine("please enter a descrpition");
+        string description = Console.ReadLine()!;
+        Console.WriteLine("Please enter a latitude");
+        int latitude = Convert.ToInt32(Console.ReadLine());
+        Console.WriteLine("Please enter a longitude");
+        int longitude = Convert.ToInt32(Console.ReadLine());
+        Console.WriteLine("Please enter a created date");
+        DateTime created = Convert.ToDateTime(Console.ReadLine());
+        Console.WriteLine("Please enter a max end treatment");
+        DateTime maxEndTreatment = Convert.ToDateTime(Console.ReadLine());
+        Console.WriteLine("Please enter a status");
+        int status;
+        while (true)
+        {
+            string status1 = Console.ReadLine()!;
+            if (Int32.TryParse(status1, out status) && (status >= 0 && status <= 3))
+            {
+                break; // L'entrée est correcte, on sort de la boucle
+            }
+            else
+            {
+                Console.WriteLine("Invalid input. Please enter a number between 0 and 3.\n");
+            }
+        }
+
+        try
+        {
+            s_bl.Call.CreateCall(new BO.Call
+            {
+                CallType = (BO.callType)type,
+                Description = description,
+                Latitude = latitude,
+                Longitude = longitude,
+                Created = created,
+                MaxEndTreatment = maxEndTreatment,
+                Status = (BO.Status)status
+            });
+            Console.WriteLine("Call created successfully");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to create call: {ex.Message}");
+        }
+    }
+
     private static void volunteersOptions()
     {
         Console.WriteLine(

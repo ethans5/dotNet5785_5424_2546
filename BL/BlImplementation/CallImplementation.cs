@@ -55,7 +55,7 @@ internal class CallImplementation : ICall
         {
             VolunteerId = volunteerId,
             CallId = callId,
-            StartTreatment = DateTime.Now,
+            StartTreatment = ClockManager.Now,
             endTreatment = null,
             typeOfEnd = null
         };
@@ -472,7 +472,7 @@ internal class CallImplementation : ICall
             var updatedAssignment = assign with
             {
                 typeOfEnd = cancellationType,
-                endTreatment = DateTime.Now
+                endTreatment = ClockManager.Now
             };
 
             // Update the record in the data layer
@@ -516,7 +516,7 @@ internal class CallImplementation : ICall
             var updatedAssignment = assign with
             {
                 typeOfEnd = DO.typeOfEndTreatment.treated,
-                endTreatment = DateTime.Now
+                endTreatment = ClockManager.Now
             };
 
             // Update the record in the data layer

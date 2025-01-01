@@ -189,7 +189,7 @@ internal class Tools
             throw new BlInvalidInputException("The Longitude must be between -180 and 180 degree");
 
         // Vérification des dates
-        if (call.Created > DateTime.Now)
+        if (call.Created > ClockManager.Now)
             throw new BlInvalidInputException("The creation date cannot be in the futur");
 
         if (call.MaxEndTreatment != null && call.MaxEndTreatment <= call.Created)
