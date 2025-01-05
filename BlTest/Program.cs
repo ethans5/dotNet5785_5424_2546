@@ -7,6 +7,7 @@ namespace BlTest;
 internal class Program
 {
     static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
+
     static void Main(string[] args)
     {
         try
@@ -193,9 +194,8 @@ internal class Program
             Console.WriteLine("Call Assignments:");
             foreach (var assignment in call.callAssignInLists)
             {
-                Console.WriteLine($"\tAssignment ID: {assignment.volounteerId}");
-                Console.WriteLine($"\tAssigned Volunteer name: {assignment.volounteerName}");
-              
+               PrintCallAssignInList(assignment, "  ");
+
             }
         }
         else
@@ -203,6 +203,15 @@ internal class Program
             Console.WriteLine("No assignments available.");
         }
 
+        Console.WriteLine();
+    }
+    private static void PrintCallAssignInList(CallAssignInList callAssign, string indent )
+    {
+        Console.WriteLine($"{indent}Volunteer ID: {callAssign.volounteerId}");
+        Console.WriteLine($"{indent}Volunteer Name: {callAssign.volounteerName ?? "N/A"}");
+        Console.WriteLine($"{indent} Starting Time: {callAssign.startingTime}");
+        Console.WriteLine($"{indent} Ending Time: {callAssign.endingTime?.ToString() ?? "Not ended yet"}");
+        Console.WriteLine($"{indent} Type of End Treatment: {callAssign.TypeOfEndTreatment?.ToString() ?? "N/A"}");
         Console.WriteLine();
     }
 
@@ -577,8 +586,6 @@ internal class Program
         int latitude = Convert.ToInt32(Console.ReadLine());
         Console.WriteLine("Please enter a longitude");
         int longitude = Convert.ToInt32(Console.ReadLine());
-        Console.WriteLine("Please enter a created date");
-        DateTime created = Convert.ToDateTime(Console.ReadLine());
         Console.WriteLine("Please enter a max end treatment");
         DateTime maxEndTreatment = Convert.ToDateTime(Console.ReadLine());
         Console.WriteLine("Please enter a status");
@@ -604,7 +611,7 @@ internal class Program
                 Description = description,
                 Latitude = latitude,
                 Longitude = longitude,
-                Created = created,
+                Created = s_bl.Admin.GetSystemeClock(),
                 MaxEndTreatment = maxEndTreatment,
                 Status = (BO.Status)status
             });
@@ -733,9 +740,26 @@ internal class Program
             distanceType = Console.ReadLine()!;
             Int32.TryParse(distanceType, out myDistanceType);
         } while (distanceType != "0" && distanceType != "1" && distanceType != "2");
+        
+        Console.WriteLine("Do you want to assign a call to the volunteer?\n"+
+            "0. No\n" +
+            "1. Yes"
+            );
+        int? idcall;
+        if (Console.ReadLine() == "1")
+        {
+            Console.WriteLine("Please enter the ID of the call you want to assign:");
+             idcall = Convert.ToInt32(Console.ReadLine());
+
+        }
+        else
+        {
+            idcall = null;
+        }
+
 
         try
-        {
+            {
             s_bl.Volunteer.CreateVolunteer(new BO.Volunteer
             {
                 Id = myId,
@@ -747,8 +771,9 @@ internal class Program
                 Job = (BO.jobType)myJob,
                 IsActive = myIsActive,
                 MaxDistance = myDistance,
-                DistanceType = (BO.distanceType)myDistanceType
-            });
+                DistanceType = (BO.distanceType)myDistanceType,
+                CallInProgress = null
+            },idcall);
             Console.WriteLine("Volunteer created successfully");
         }
         catch (Exception ex)

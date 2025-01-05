@@ -375,6 +375,8 @@ internal class CallImplementation : ICall
             callType = call.CallType,
             description = call.Description,
             Address = toolsInstance.GetAddressAsync(call.Latitude, call.Longitude).Result,
+            Created = call.Created,
+            MaxEndTreatment = call.MaxEndTreatment,
             Distance = toolsInstance.CalculateDistance(
                 myVolunteer.Latitude.Value,
                 myVolunteer.Longitude.Value,

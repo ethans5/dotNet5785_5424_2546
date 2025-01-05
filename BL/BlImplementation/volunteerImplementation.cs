@@ -135,7 +135,7 @@ internal class VolunteerImplementation : IVolunteer
             VolunteerSortField.TotalSelfCancellation=>volunteerList.OrderBy(v=>v.TotalSelfCancellation),
             VolunteerSortField.TotalExpired=>volunteerList.OrderBy(v=>v.TotalExpired),
             VolunteerSortField.CallType=>volunteerList.OrderBy(v=>v.callType),
-            null => volunteerList.OrderBy(v=>v.Id)
+            _ => volunteerList.OrderBy(v=>v.Id)
         };
 
 
@@ -146,7 +146,9 @@ internal class VolunteerImplementation : IVolunteer
         try
         {
             DO.Volunteer doVolunteer = _dal.Volunteer.Read(id)!;
-            return toolsInstance.parseDoToBoVolunteer(doVolunteer);
+            var volunter= toolsInstance.parseDoToBoVolunteer(doVolunteer)  ;
+            volunter.CallInProgress = toolsInstance.GetCallInProgress(id);
+            return volunter  ;
         }
         catch
         {
