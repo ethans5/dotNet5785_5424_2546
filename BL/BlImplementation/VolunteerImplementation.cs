@@ -146,7 +146,9 @@ internal class VolunteerImplementation : IVolunteer
         try
         {
             DO.Volunteer doVolunteer = _dal.Volunteer.Read(id)!;
-            return toolsInstance.parseDoToBoVolunteer(doVolunteer);
+            var volunter= toolsInstance.parseDoToBoVolunteer(doVolunteer)  ;
+            volunter.CallInProgress = toolsInstance.GetCallInProgress(id);
+            return volunter  ;
         }
         catch
         {

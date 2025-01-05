@@ -293,7 +293,7 @@ internal class CallImplementation : ICall
         var closedCalls = calls.Where(call => assignClosedCalls.Any(assignClosedCalls => assignClosedCalls.CallId == call.Id));
         var sortByCallType = filter switch
         {
-            null => closedCalls,
+            
             callType.BuyingFood => closedCalls.Where(c => c.CallType == (DO.callType)callType.BuyingFood),
             callType.BuyingMedicine => closedCalls.Where(c => c.CallType == (DO.callType)callType.BuyingMedicine),
             callType.BuyingClothes => closedCalls.Where(c => c.CallType == (DO.callType)callType.BuyingClothes),
@@ -303,7 +303,8 @@ internal class CallImplementation : ICall
             callType.PackingClothes => closedCalls.Where(c => c.CallType == (DO.callType)callType.PackingClothes),
             callType.PackingCartoonsInTheTruck => closedCalls.Where(c => c.CallType == (DO.callType)callType.PackingCartoonsInTheTruck),
             callType.Deliveries => closedCalls.Where(c => c.CallType == (DO.callType)callType.Deliveries),
-            callType.DelivriesToTheDoor => closedCalls.Where(c => c.CallType == (DO.callType)callType.DelivriesToTheDoor)
+            callType.DelivriesToTheDoor => closedCalls.Where(c => c.CallType == (DO.callType)callType.DelivriesToTheDoor),
+            _ => closedCalls
         };
         assignClosedCalls = assignClosedCalls.Where(call => sortByCallType.Any(sortByCallType => sortByCallType.Id == call.CallId));
 
@@ -331,7 +332,7 @@ internal class CallImplementation : ICall
             closedCallFields.startTreatment => xx.OrderBy(c => c.StartTreatment),
             closedCallFields.endTreatment => xx.OrderBy(c => c.EndTreatment),
             closedCallFields.typeOfEndTreatment => xx.OrderBy(c => c.TypeOfEndTreatment),
-            null => xx.OrderBy(c => c.Id)
+            _ => xx.OrderBy(c => c.Id)
         };
 
 
@@ -397,7 +398,8 @@ internal class CallImplementation : ICall
             OpenCallFields.Address => result.OrderBy(call => call.Address),
             OpenCallFields.Created => result.OrderBy(call => call.Created),
             OpenCallFields.MaxEndTreatment => result.OrderBy(call => call.MaxEndTreatment),
-            OpenCallFields.Distance => result.OrderBy(call => call.Distance)
+            OpenCallFields.Distance => result.OrderBy(call => call.Distance),
+            _ => result.OrderBy(call => call.Id)
         };
     }
 
@@ -447,6 +449,11 @@ internal class CallImplementation : ICall
         {
             // Retrieve the assignment from the data layer
             var assign = _dal.Assignment.Read(assignmentId);
+            if (assign == null)
+            {
+                throw new BlInvalidInputException("The assignment does not exist.");
+            }
+
 
             // Check if the treatment has already ended
             if (assign.typeOfEnd != null)

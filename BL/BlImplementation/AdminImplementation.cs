@@ -26,7 +26,8 @@ internal class AdminImplementation : IAdmin
 
     public void ResetData()
     {
-        _dal.Config.Reset();
+        
+        _dal.ResetDB();
     }
 
     public void UpdateClock(UnitTime time)

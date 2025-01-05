@@ -99,12 +99,12 @@ internal class Tools
         if (!IsValidId(volunteer.Id)) { throw new BlInvalidInputException("Invalid ID"); }
         if (!IsValidPhone(volunteer.Phone)) { throw new BlInvalidInputException("Invalid Phone"); }
         if (!IsValidEmail(volunteer.Mail)) { throw new BlInvalidInputException("Invalid Email"); }
-        if(!IsValidNumber(volunteer.MaxDistance)) { throw new BlInvalidInputException("Invalid Max Distance"); }
+        if (!IsValidNumber(volunteer.MaxDistance)) { throw new BlInvalidInputException("Invalid Max Distance"); }
     }
 
 
 
-       
+
     private const string ApiKey = "6761782af11a3702282865asq982b03"; // Remplacez par votre clé d'API
 
     public async Task<(double? Latitude, double? Longitude)> GetCoordinatesAsync(string address)
@@ -148,7 +148,7 @@ internal class Tools
             }
         }
     }
-    public async Task<string> GetAddressAsync(double? latitude, double ?longitude)
+    public async Task<string> GetAddressAsync(double? latitude, double? longitude)
     {
         string url = $"https://geocode.maps.co/reverse?lat={latitude}&lon={longitude}&api_key={ApiKey}";
 
@@ -293,7 +293,50 @@ internal class Tools
     {
         return degrees * Math.PI / 180;
     }
+    public Treatment DetermineTreatment(DO.Call call)
+    {
+        if (call.MaxTime == null)
+            return BO.Treatment.Intreatment;
+        else if (call.MaxTime-ClockManager.Now<_dal.Config.RiskRange)
+            return BO.Treatment.Inrisktreatment;
+        else
+            return BO.Treatment.Intreatment;
 
+
+
+    }
+    public CallInProgress GetCallInProgress(int id)
+    {
+        var call = _dal.Call.ReadAll();
+        var callAssign = _dal.Assignment.ReadAll();
+        var volunteer = _dal.Volunteer.Read(id);
+        if (volunteer == null)
+            throw new BlNotFoundException("Volunteer not found");
+
+
+        var progress= (from c in call
+                join a in callAssign on c.Id equals a.CallId
+                where a.VolunteerId == id && a.endTreatment == null
+                select new CallInProgress
+                {
+                    Id = a.Id,
+                    CallId = c.Id,
+                    CallType = (BO.callType)c.CallType,
+                    Description = c.Description,
+                    Address = c.Address,
+                    Created = c.CallTime,
+                    MaxEndTreatment = c.MaxTime,
+                    StartTreatment = a.StartTreatment,
+                    Distance = (volunteer.Latitude.HasValue && volunteer.Longitude.HasValue)
+                    ? CalculateDistance(c.Latitude, c.Longitude, volunteer.Latitude.Value, volunteer.Longitude.Value)
+                    : 0,
+                    Treatment = DetermineTreatment(c)
+                }).FirstOrDefault();
+        
+        return progress;
+        
+
+    }
 }
 
 

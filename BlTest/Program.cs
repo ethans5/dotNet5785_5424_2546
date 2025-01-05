@@ -1,5 +1,6 @@
 ﻿
 using BO;
+using System;
 
 namespace BlTest;
 
@@ -138,47 +139,13 @@ internal class Program
                 s_bl.Call.GetCallCountsByStatus();
                 break;
             case 2:
-                int filter1;
-                while (true)
-                {
-                    Console.WriteLine("Enter filter (optional):");
-                    string? filter = Console.ReadLine();
-                    if (Int32.TryParse(filter, out  filter1))
-                        { break; }
-                    else
-                    {
-                        Console.WriteLine("Invalid input");
-                        break;
-                    }
-                }
-
-                Console.WriteLine("Enter object (optional):");
-                object? obj = Console.ReadLine(); // Placeholder for actual object input
-                int sort1;
-                while (true)
-                 {
-                    Console.WriteLine("Enter sort (optional):");
-                    string? sort = Console.ReadLine();
-                    if (Int32.TryParse(sort, out sort1))
-                    { break; }
-                    else
-                    {
-                        Console.WriteLine("Invalid input");
-                        break;
-                    }
-                }
-              
-                var allCalls = s_bl.Call.ReadAllCalls((BO.CallFields)filter1, obj, (BO.CallFields)sort1);
-                foreach (var call1 in allCalls)
-                {
-                    Console.WriteLine(call1);
-                }
+               ReadAllCall();
                 break;
             case 3:
                 Console.WriteLine("Enter Call ID:");
                 int id = Convert.ToInt32(Console.ReadLine());
                 var call = s_bl.Call.ReadCall(id);
-                Console.WriteLine(call);
+                PrintCall(call);
                 break;
             case 4:
                 CreateCall();
@@ -208,6 +175,133 @@ internal class Program
                 Console.WriteLine("Invalid input");
                 break;
         }
+    }
+    private static void PrintCall(Call call)
+    {
+        Console.WriteLine($"ID: {call.Id}");
+        Console.WriteLine($"Call Type: {call.CallType}");
+        Console.WriteLine($"Description: {call.Description ?? "N/A"}");
+        Console.WriteLine($"Latitude: {call.Latitude?.ToString() ?? "N/A"}");
+        Console.WriteLine($"Longitude: {call.Longitude?.ToString() ?? "N/A"}");
+        Console.WriteLine($"Created: {call.Created:yyyy-MM-dd HH:mm:ss}");
+        Console.WriteLine($"Max End Treatment: {call.MaxEndTreatment?.ToString("yyyy-MM-dd HH:mm:ss") ?? "N/A"}");
+        Console.WriteLine($"Status: {call.Status}");
+
+        // Imprimer la liste de CallAssignInList si elle existe
+        if (call.callAssignInLists != null && call.callAssignInLists.Any())
+        {
+            Console.WriteLine("Call Assignments:");
+            foreach (var assignment in call.callAssignInLists)
+            {
+                Console.WriteLine($"\tAssignment ID: {assignment.volounteerId}");
+                Console.WriteLine($"\tAssigned Volunteer name: {assignment.volounteerName}");
+              
+            }
+        }
+        else
+        {
+            Console.WriteLine("No assignments available.");
+        }
+
+        Console.WriteLine();
+    }
+
+    private static void ReadAllCall()
+    {
+        int? filter1 = null;
+        while (true)
+        {
+            Console.WriteLine("Enter filter (optional):");
+            string? filter = Console.ReadLine();
+            if (string.IsNullOrWhiteSpace(filter))
+            {
+                filter1 = null;
+                break;
+            }
+            else if (Int32.TryParse(filter, out int parsedFilter))
+            {
+                filter1 = parsedFilter;
+                break;
+            }
+            else
+            {
+                Console.WriteLine("Invalid input. Please enter a valid integer or leave empty.");
+            }
+        }
+
+        object? obj = null;
+        while (true)
+        {
+            Console.WriteLine("Enter object (optional):");
+            string? objInput = Console.ReadLine();
+            if (string.IsNullOrWhiteSpace(objInput))
+            {
+                obj = null;
+                break;
+            }
+            else if (Int32.TryParse(objInput, out int parsedObj))
+            {
+                obj = parsedObj;
+                break;
+            }
+            else
+            {
+                obj = objInput; // Keep it as string if not convertible to int
+                break;
+            }
+        }
+
+        int? sort1 = null;
+        while (true)
+        {
+            Console.WriteLine("Enter sort (optional):");
+            string? sort = Console.ReadLine();
+            if (string.IsNullOrWhiteSpace(sort))
+            {
+                sort1 = null;
+                break;
+            }
+            else if (Int32.TryParse(sort, out int parsedSort))
+            {
+                sort1 = parsedSort;
+                break;
+            }
+            else
+            {
+                Console.WriteLine("Invalid input. Please enter a valid integer or leave empty.");
+            }
+        }
+
+        try
+        {
+            var allCalls = s_bl.Call.ReadAllCalls(
+                (BO.CallFields?)filter1,
+                obj,
+                (BO.CallFields?)sort1
+            );
+
+            foreach (var call1 in allCalls)
+            {
+                PrintCallInList(call1);
+            }
+        }
+        catch (InvalidCastException ex)
+        {
+            Console.WriteLine($"An error occurred while processing the data: {ex.Message}");
+        }
+    }
+    private static void PrintCallInList(CallInList call)
+    {
+        Console.WriteLine($"ID: {call.Id?.ToString() ?? "N/A"}");
+        Console.WriteLine($"Call ID: {call.callId}");
+        Console.WriteLine($"Call Type: {call.callType}");
+        Console.WriteLine($"Starting Time: {call.startingTime:yyyy-MM-dd HH:mm:ss}");
+        Console.WriteLine($"Remaining Time: {call.remainingTime?.ToString(@"hh\:mm\:ss") ?? "N/A"}");
+        Console.WriteLine($"Last Volunteer Name: {call.LastVolunteerName ?? "N/A"}");
+        Console.WriteLine($"Duration: {call.duration?.ToString(@"hh\:mm\:ss") ?? "N/A"}");
+        Console.WriteLine($"Status: {call.Status}");
+        Console.WriteLine($"Total Assignment Allocations: {call.TotalAssignmentAllocations}");
+        Console.WriteLine();
     }
 
     private static void ChoiceCall()
@@ -296,8 +390,19 @@ internal class Program
         var calls = s_bl.Call.ReadAllOpenCalls(id, (BO.callType)filter, (BO.OpenCallFields)sort);
         foreach (var call in calls)
         {
-            Console.WriteLine(call);
+            PrintOpenCallInList(call);
         }
+    }
+    private static void PrintOpenCallInList(OpenCallInList call)
+    {
+        Console.WriteLine($"ID: {call.Id}");
+        Console.WriteLine($"Call Type: {call.callType}");
+        Console.WriteLine($"Description: {call.description ?? "N/A"}");
+        Console.WriteLine($"Address: {call.Address}");
+        Console.WriteLine($"Created: {call.Created:yyyy-MM-dd HH:mm:ss}");
+        Console.WriteLine($"Max End Treatment: {call.MaxEndTreatment?.ToString("yyyy-MM-dd HH:mm:ss") ?? "N/A"}");
+        Console.WriteLine($"Distance: {call.Distance:F2} km");
+        Console.WriteLine();
     }
 
     private static void ReadAllEndedCalls()
@@ -335,9 +440,20 @@ internal class Program
         var calls = s_bl.Call.ReadAllEndedCalls(id, (BO.callType)filter, (BO.closedCallFields)sort);
         foreach (var call in calls)
         {
-            Console.WriteLine(call);
+            PrintClosedCallInList(call);
         }
 
+    }
+    private static void PrintClosedCallInList(ClosedCallInList call)
+    {
+        Console.WriteLine($"ID: {call.Id}");
+        Console.WriteLine($"Call Type: {call.CallType}");
+        Console.WriteLine($"Address: {call.Address}");
+        Console.WriteLine($"Created: {call.Created:yyyy-MM-dd HH:mm:ss}");
+        Console.WriteLine($"Start Treatment: {call.StartTreatment:yyyy-MM-dd HH:mm:ss}");
+        Console.WriteLine($"End Treatment: {call.EndTreatment?.ToString("yyyy-MM-dd HH:mm:ss") ?? "N/A"}");
+        Console.WriteLine($"Type of End Treatment: {call.TypeOfEndTreatment?.ToString() ?? "N/A"}");
+        Console.WriteLine();
     }
 
     private static void DeleteCall()
@@ -717,6 +833,7 @@ internal class Program
         {
           
             var volunteer = s_bl.Volunteer.ReadVolunteer(myId);
+            
             PrintVolunteer(volunteer);
         }
         catch (Exception ex)
@@ -862,10 +979,31 @@ internal class Program
         Console.WriteLine($"Total Treated: {myVolunteer.Totaltreated}");
         Console.WriteLine($"Total Self-Cancellation: {myVolunteer.TotalSelfCancellation}");
         Console.WriteLine($"Total Expired: {myVolunteer.TotalExpired}");
-        Console.WriteLine($"Call In Progress: {myVolunteer.CallInProgress?.ToString() ?? "N/A"}");
+        Console.WriteLine("Call in progress:");
+        if (myVolunteer.CallInProgress != null)
+        {
+
+            PrintCallInProgress(myVolunteer.CallInProgress,"    ");
+        }
+        else
+        {
+            Console.WriteLine("No call in progress.");
+        }
 
         Console.WriteLine();
     }
+    public static void PrintCallInProgress(CallInProgress callInProgress, string indent)
+    {
 
+        Console.WriteLine($"{indent}CallId: {callInProgress.CallId}");
+        Console.WriteLine($"{indent}CallType: {callInProgress.CallType}");
+        Console.WriteLine($"{indent}Description: {callInProgress.Description ?? "No description"}");
+        Console.WriteLine($"{indent}Address: {callInProgress.Address}");
+        Console.WriteLine($"{indent}Created: {callInProgress.Created}");
+        Console.WriteLine($"{indent}MaxEndTreatment: {callInProgress.MaxEndTreatment?.ToString() ?? "Not available"}");
+        Console.WriteLine($"{indent}StartTreatment: {callInProgress.StartTreatment}");
+        Console.WriteLine($"{indent}Distance: {callInProgress.Distance} km");
+        Console.WriteLine($"{indent}Treatment: {callInProgress.Treatment}");
+    }
 
 }
