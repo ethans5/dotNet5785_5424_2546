@@ -58,9 +58,66 @@ internal class Program
 
     }
 
+    private static void adminOptions()
+    {
+        Console.WriteLine(
+            "0. Exit\n" +
+            "1. Get Risk Range\n" +
+            "2. Get System Clock\n" +
+            "3. Initialize Data\n" +
+            "4. Reset Data\n" +
+            "5. Update Clock\n" +
+            "6. Update Risk Range\n"
+            );
+        int choice = Convert.ToInt32(Console.ReadLine());
+        switch(choice)
+        {
+            case 0:
+                return;
+            case 1:
+                Console.WriteLine(s_bl.Admin.GetRiskRange());
+                break;
+            case 2:
+                Console.WriteLine(s_bl.Admin.GetSystemeClock());
+                break;
+            case 3:
+                s_bl.Admin.InitializaData();
+                Console.WriteLine("Data initialized successfully");
+                break;
+            case 4:
+                s_bl.Admin.ResetData();
+                Console.WriteLine("Data reset successfully");
+                break;
+            case 5:
+                Console.WriteLine("Enter the unit of time:\n" +
+                    "0. Minutes\n" +
+                    "1. Hours\n" +
+                    "2. Days\n" +
+                    "3. Months\n" +
+                    "4. Years");
+                int time = Convert.ToInt32(Console.ReadLine());
+                s_bl.Admin.UpdateClock((BO.UnitTime)time);
+                Console.WriteLine("Clock updated successfully");
+                break;
+            case 6:
+                Console.WriteLine("Enter the risk range:");
+                TimeSpan range = TimeSpan.Parse(Console.ReadLine()!);
+                s_bl.Admin.UpdateRiskRange(range);
+                Console.WriteLine("Risk range updated successfully");
+                break;
+            default:
+                Console.WriteLine("Invalid input");
+                break;
+
+
+        }
+
+    }
+
     private static void callsOptions()
     {
         Console.WriteLine(
+        "0. Exit\n" +
         "1. Get Call Counts by Status\n" +
         "2. Read All Calls\n" +
         "3. Read a Specific Call\n" +
@@ -75,6 +132,8 @@ internal class Program
         int choice = Convert.ToInt32(Console.ReadLine());
         switch (choice)
         {
+            case 0:
+                return;
             case 1:
                 s_bl.Call.GetCallCountsByStatus();
                 break;
@@ -444,6 +503,7 @@ internal class Program
     private static void volunteersOptions()
     {
         Console.WriteLine(
+            "0. Exit\n" +
             "1. Log In \n" +
             "2. Create Volunteer\n" +
             "3. Read All Volunteer\n" +
@@ -482,6 +542,7 @@ internal class Program
                 readVolunteer();
                 break;
             case 5:
+                updateVolunteer();
                 break;
             case 6:
                 DeleteVolunteer();
@@ -635,11 +696,11 @@ internal class Program
         try
         {
             var volunteers = s_bl.Volunteer.ReadAllVolunteers(myIsActive,
-                mySortField.HasValue ? (BO.VolunteerSortField)mySortField.Value : default);
+                mySortField.HasValue ? (BO.VolunteerSortField)mySortField.Value : null);
 
             foreach (var volunteer in volunteers)
             {
-                Console.WriteLine(volunteer);
+                PrintVolunteerInList(volunteer);
             }
         }
         catch (Exception ex)
@@ -654,8 +715,9 @@ internal class Program
         int.TryParse(id, out int myId);
         try
         {
+          
             var volunteer = s_bl.Volunteer.ReadVolunteer(myId);
-            Console.WriteLine(volunteer);
+            PrintVolunteer(volunteer);
         }
         catch (Exception ex)
         {
@@ -770,5 +832,40 @@ internal class Program
             Console.WriteLine($"Failed to delete volunteer: {ex.Message}");
         }
     }
+    private static void PrintVolunteerInList(VolunteerInList volunteer)
+    {
+        Console.WriteLine("Volunteer Details:");
+        Console.WriteLine($"ID: {volunteer.Id}");
+        Console.WriteLine($"Name: {volunteer.Name}");
+        Console.WriteLine($"Is Active: {volunteer.IsActive}");
+        Console.WriteLine($"Total Treated Cases: {volunteer.Totaltreated}");
+        Console.WriteLine($"Total Self-Cancellations: {volunteer.TotalSelfCancellation}");
+        Console.WriteLine($"Total Expired Cases: {volunteer.TotalExpired}");
+        Console.WriteLine($"Call ID: {(volunteer.IdCall.HasValue ? volunteer.IdCall.ToString() : "N/A")}");
+        Console.WriteLine($"Call Type: {volunteer.callType}");
+        Console.WriteLine();
+    }
+    private static void PrintVolunteer(Volunteer myVolunteer)
+    {
+        Console.WriteLine($"ID: {myVolunteer.Id}");
+        Console.WriteLine($"Name: {myVolunteer.Name}");
+        Console.WriteLine($"Phone: {myVolunteer.Phone}");
+        Console.WriteLine($"Mail: {myVolunteer.Mail}");
+        Console.WriteLine($"Password: {myVolunteer.Password ?? "N/A"}");
+        Console.WriteLine($"Address: {myVolunteer.Address ?? "N/A"}");
+        Console.WriteLine($"Latitude: {myVolunteer.Latitude?.ToString() ?? "N/A"}");
+        Console.WriteLine($"Longitude: {myVolunteer.Longitude?.ToString() ?? "N/A"}");
+        Console.WriteLine($"Job Type: {myVolunteer.Job}");
+        Console.WriteLine($"Is Active: {myVolunteer.IsActive}");
+        Console.WriteLine($"Max Distance: {myVolunteer.MaxDistance?.ToString() ?? "N/A"}");
+        Console.WriteLine($"Type of Distance: {myVolunteer.DistanceType}");
+        Console.WriteLine($"Total Treated: {myVolunteer.Totaltreated}");
+        Console.WriteLine($"Total Self-Cancellation: {myVolunteer.TotalSelfCancellation}");
+        Console.WriteLine($"Total Expired: {myVolunteer.TotalExpired}");
+        Console.WriteLine($"Call In Progress: {myVolunteer.CallInProgress?.ToString() ?? "N/A"}");
+
+        Console.WriteLine();
+    }
+
 
 }

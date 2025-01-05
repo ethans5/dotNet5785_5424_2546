@@ -135,7 +135,7 @@ internal class VolunteerImplementation : IVolunteer
             VolunteerSortField.TotalSelfCancellation=>volunteerList.OrderBy(v=>v.TotalSelfCancellation),
             VolunteerSortField.TotalExpired=>volunteerList.OrderBy(v=>v.TotalExpired),
             VolunteerSortField.CallType=>volunteerList.OrderBy(v=>v.callType),
-            null => volunteerList.OrderBy(v=>v.Id)
+            _ => volunteerList.OrderBy(v=>v.Id)
         };
 
 
