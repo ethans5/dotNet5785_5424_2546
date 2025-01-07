@@ -2,14 +2,16 @@
 using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
 using BO;
+using Newtonsoft.Json;
+using System.Globalization;
 
 namespace Helpers;
 
-internal class Tools
+internal static class Tools
 {
-    public IDal _dal = Factory.Get;
+    public static IDal _dal = Factory.Get;
 
-    public int totalTreated(int id)
+    public static int totalTreated(int id)
     {
         var doAssignment = _dal.Assignment.ReadAll();
         var volunteerAssignments = doAssignment.Where(a => a.VolunteerId == id);
@@ -17,7 +19,7 @@ internal class Tools
         return volunteerAssignments.Count(a => a.typeOfEnd == DO.typeOfEndTreatment.treated);
     }
 
-    public int totalSelfCancelled(int id)
+    public static int totalSelfCancelled(int id)
     {
         var doAssignment = _dal.Assignment.ReadAll();
         var volunteerAssignments = doAssignment.Where(a => a.VolunteerId == id);
@@ -25,7 +27,7 @@ internal class Tools
         return volunteerAssignments.Count(a => a.typeOfEnd == DO.typeOfEndTreatment.selfCancellation);
     }
 
-    public int totalExpired(int id)
+    public static int totalExpired(int id)
     {
         var doAssignment = _dal.Assignment.ReadAll();
         var volunteerAssignments = doAssignment.Where(a => a.VolunteerId == id);
@@ -34,7 +36,7 @@ internal class Tools
     }
 
 
-    public BO.Volunteer parseDoToBoVolunteer(DO.Volunteer volunteer)
+    public static BO.Volunteer parseDoToBoVolunteer(DO.Volunteer volunteer)
     {
         return new BO.Volunteer
         {
@@ -88,13 +90,13 @@ internal class Tools
         return Regex.IsMatch(number.ToString()!, pattern);
     }
 
-    public bool isDirector(int id)
+    public static bool isDirector(int id)
     {
         var volunteer = _dal.Volunteer.Read(id);
         return volunteer!.JobType == DO.jobType.Director;
     }
 
-    public void ValidateFieldsFormat(BO.Volunteer volunteer)
+    public static void ValidateFieldsFormat(BO.Volunteer volunteer)
     {
         if (!IsValidId(volunteer.Id)) { throw new BlInvalidInputException("Invalid ID"); }
         if (!IsValidPhone(volunteer.Phone)) { throw new BlInvalidInputException("Invalid Phone"); }
@@ -105,50 +107,143 @@ internal class Tools
 
 
 
-    private const string ApiKey = "6761782af11a3702282865asq982b03"; // Remplacez par votre clé d'API
+    //used for https://cane.marchejamais.com
+    //private static string ApiKey = "6761782af11a3702282865asq982b03"; // Remplacez par votre clé d'API
+    //used for https://geocode.maps.co/
+    private static string ApiKey = "6761782af11a3702282865asq982b03";
 
-    public async Task<(double? Latitude, double? Longitude)> GetCoordinatesAsync(string address)
+    //public async Task<(double? Latitude, double? Longitude)> GetCoordinatesAsync(string address)
+    //{
+    //    if (string.IsNullOrEmpty(address))
+    //        throw new ArgumentException("L'adresse ne peut pas être vide.");
+
+    //    // URL pour appeler l'API Maps.co ou Google Maps
+    //    string url = $"https://geocode.maps.co/search?q={Uri.EscapeDataString(address)}&api_key={ApiKey}";
+
+    //    using (HttpClient client = new HttpClient())
+    //    {
+    //        try
+    //        {
+    //            // Envoi de la requête GET
+    //            HttpResponseMessage response = await client.GetAsync(url);
+    //            response.EnsureSuccessStatusCode();
+
+    //            string jsonResponse = await response.Content.ReadAsStringAsync();
+
+    //            // Parse le JSON avec Newtonsoft.Json
+    //            JArray results = JArray.Parse(jsonResponse);
+
+    //            // Vérifie si l'API a renvoyé des résultats
+    //            if (results.Count > 0)
+    //            {
+    //                var result = results[0]; // Premier résultat retourné
+    //                double latitude = double.Parse(result["lat"]?.ToString()!);
+    //                double longitude = double.Parse(result["lon"]?.ToString()!);
+
+    //                return (latitude, longitude);
+    //            }
+
+    //            // Retourne null si aucune donnée n'est trouvée
+    //            return (null, null);
+    //        }
+    //        catch (Exception ex)
+    //        {
+    //            Console.WriteLine($"Erreur lors de la récupération des coordonnées : {ex.Message}");
+    //            return (null, null);
+    //        }
+    //    }
+    //}
+    /*
+  
+    public static async Task<(double Latitude, double Longitude)> GetCoordinatesAsync(string address)
     {
+        if (string.IsNullOrWhiteSpace(address))
+        {
+            throw new ArgumentException("The address cannot be null or empty.", nameof(address));
+        }
+
+        string url = $"https://maps.googleapis.com/maps/api/geocode/json?address={Uri.EscapeDataString(address)}&key={GoogleApiKey}";
+
+        var response = await HttpClient.GetStringAsync(url);
+        var geocodeResponse = JsonSerializer.Deserialize<GoogleGeocodeResponse>(response);
+
+        if (geocodeResponse == null  geocodeResponse.Status != "OK"  geocodeResponse.Results.Length == 0)
+        {
+            throw new Exception($"Address not found or invalid response from Google Maps API: {geocodeResponse?.Status}");
+        }
+
+        var location = geocodeResponse.Results[0].Geometry.Location;
+        return (location.Lat, location.Lng);
+    }
+}
+     
+     
+     
+     */
+
+    public static async Task<(double? Latitude, double? Longitude)> GetCoordinatesAsync(string address)
+    {
+
+        NumberFormatInfo provider = new NumberFormatInfo();
+        provider.NumberDecimalSeparator = ".";
+
+       string requestUrl = $"https://geocode.maps.co/search?q={Uri.EscapeDataString(address)}&api_key={ApiKey}";
+
         if (string.IsNullOrEmpty(address))
             throw new ArgumentException("L'adresse ne peut pas être vide.");
 
-        // URL pour appeler l'API Maps.co ou Google Maps
-        string url = $"https://geocode.maps.co/search?q={Uri.EscapeDataString(address)}&api_key={ApiKey}";
-
+   
         using (HttpClient client = new HttpClient())
         {
             try
             {
-                // Envoi de la requête GET
-                HttpResponseMessage response = await client.GetAsync(url);
-                response.EnsureSuccessStatusCode();
-
-                string jsonResponse = await response.Content.ReadAsStringAsync();
-
-                // Parse le JSON avec Newtonsoft.Json
-                JArray results = JArray.Parse(jsonResponse);
-
-                // Vérifie si l'API a renvoyé des résultats
-                if (results.Count > 0)
+                HttpResponseMessage response = await client.GetAsync(requestUrl);
+                if (response.IsSuccessStatusCode)
                 {
-                    var result = results[0]; // Premier résultat retourné
-                    double latitude = double.Parse(result["lat"]?.ToString()!);
-                    double longitude = double.Parse(result["lon"]?.ToString()!);
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    
+                    // Parse the JSON if not empty
+                    if (!string.IsNullOrWhiteSpace(jsonResponse))
+                    {
+                        JArray jsonArray = JArray.Parse(jsonResponse);
 
-                    return (latitude, longitude);
+                        if (jsonArray.Count > 0)
+                        {
+                            // Extract the first result's latitude and longitude
+                            var firstResult = jsonArray[0];
+                            double latitude = Convert.ToDouble(firstResult["lat"]!.ToString(), provider);
+                            double longitude = Convert.ToDouble(firstResult["lon"]!.ToString(), provider);
+
+                            return new (latitude, longitude); // Pas de résultats
+                        }
+                    }
                 }
-
-                // Retourne null si aucune donnée n'est trouvée
-                return (null, null);
+            }
+            catch (HttpRequestException httpEx)
+            {
+                Console.WriteLine($"Erreur HTTP : {httpEx.Message}");
+            }
+            catch (JsonException jsonEx)
+            {
+                Console.WriteLine($"Erreur de parsing JSON : {jsonEx.Message}");
+            }
+            catch (InvalidOperationException iex)
+            {
+                Console.WriteLine($"Erreur de Latitude/Longitude {iex.Message}");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Erreur lors de la récupération des coordonnées : {ex.Message}");
-                return (null, null);
+                Console.WriteLine($"Erreur inattendue : {ex.Message}");
             }
+
+            return (null, null);
         }
     }
-    public async Task<string> GetAddressAsync(double? latitude, double? longitude)
+
+
+
+
+    public static async Task<string> GetAddressAsync(double? latitude, double? longitude)
     {
         string url = $"https://geocode.maps.co/reverse?lat={latitude}&lon={longitude}&api_key={ApiKey}";
 
@@ -175,7 +270,7 @@ internal class Tools
     }
 
 
-    public void ValidateCallFieldsFormat(BO.Call call)
+    public static void ValidateCallFieldsFormat(BO.Call call)
     {
         // Vérification de l'ID
         if (call.Id <= 0)
@@ -205,7 +300,7 @@ internal class Tools
 
     }
 
-    public Status DetermineCallStatus(DateTime created, DateTime? maxEndTreatment)
+    public static Status DetermineCallStatus(DateTime created, DateTime? maxEndTreatment)
     {
         var now = ClockManager.Now;
 
@@ -237,7 +332,7 @@ internal class Tools
         return Status.InProgress;
     }
 
-    public List<CallAssignInList> CreateCallAssignListFromDo(DO.Call call, IEnumerable<DO.Assignment> assignments, IEnumerable<DO.Volunteer> volunteers)
+    public static List<CallAssignInList> CreateCallAssignListFromDo(DO.Call call, IEnumerable<DO.Assignment> assignments, IEnumerable<DO.Volunteer> volunteers)
     {
         // Filtrer les assignations qui correspondent à l'appel
         var callAssignments = assignments.Where(assign => assign.CallId == call.Id);
@@ -261,7 +356,7 @@ internal class Tools
     }
 
 
-    public BO.Call parseDoToBoCall(DO.Call call)
+    public static BO.Call parseDoToBoCall(DO.Call call)
     {
         return new BO.Call
         {
@@ -277,7 +372,7 @@ internal class Tools
         };
     }
 
-    public double CalculateDistance(double lat1, double lon1, double lat2, double lon2)
+    public static double CalculateDistance(double lat1, double lon1, double lat2, double lon2)
     {
         const double R = 6371; // Rayon de la Terre en km
         double dLat = DegreesToRadians(lat2 - lat1);
@@ -289,15 +384,15 @@ internal class Tools
         return R * c; // Distance en km
     }
 
-    public double DegreesToRadians(double degrees)
+    public static double DegreesToRadians(double degrees)
     {
         return degrees * Math.PI / 180;
     }
-    public Treatment DetermineTreatment(DO.Call call)
+    public static Treatment DetermineTreatment(DO.Call call)
     {
         if (call.MaxTime == null)
             return BO.Treatment.Intreatment;
-        else if (call.MaxTime-ClockManager.Now<_dal.Config.RiskRange)
+        else if (call.MaxTime - ClockManager.Now < _dal.Config.RiskRange)
             return BO.Treatment.Inrisktreatment;
         else
             return BO.Treatment.Intreatment;
@@ -305,7 +400,7 @@ internal class Tools
 
 
     }
-    public CallInProgress GetCallInProgress(int id)
+    public static CallInProgress GetCallInProgress(int id)
     {
         var call = _dal.Call.ReadAll();
         var callAssign = _dal.Assignment.ReadAll();
@@ -314,29 +409,35 @@ internal class Tools
             throw new BlNotFoundException("Volunteer not found");
 
 
-        var progress= (from c in call
-                join a in callAssign on c.Id equals a.CallId
-                where a.VolunteerId == id && a.endTreatment == null
-                select new CallInProgress
-                {
-                    Id = a.Id,
-                    CallId = c.Id,
-                    CallType = (BO.callType)c.CallType,
-                    Description = c.Description,
-                    Address = c.Address,
-                    Created = c.CallTime,
-                    MaxEndTreatment = c.MaxTime,
-                    StartTreatment = a.StartTreatment,
-                    Distance = (volunteer.Latitude.HasValue && volunteer.Longitude.HasValue)
-                    ? CalculateDistance(c.Latitude, c.Longitude, volunteer.Latitude.Value, volunteer.Longitude.Value)
-                    : 0,
-                    Treatment = DetermineTreatment(c)
-                }).FirstOrDefault();
-        
+        var progress = (from c in call
+                        join a in callAssign on c.Id equals a.CallId
+                        where a.VolunteerId == id && a.endTreatment == null
+                        select new CallInProgress
+                        {
+                            Id = a.Id,
+                            CallId = c.Id,
+                            CallType = (BO.callType)c.CallType,
+                            Description = c.Description,
+                            Address = c.Address,
+                            Created = c.CallTime,
+                            MaxEndTreatment = c.MaxTime,
+                            StartTreatment = a.StartTreatment,
+                            Distance = (volunteer.Latitude.HasValue && volunteer.Longitude.HasValue)
+                            ? CalculateDistance(c.Latitude, c.Longitude, volunteer.Latitude.Value, volunteer.Longitude.Value)
+                            : 0,
+                            Treatment = DetermineTreatment(c)
+                        }).FirstOrDefault();
+
         return progress;
-        
+
 
     }
+    public class GeocodeResult
+    {
+        public string Lat { get; set; }
+        public string Lon { get; set; }
+    }
+
 }
 
 

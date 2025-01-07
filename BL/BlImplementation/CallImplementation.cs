@@ -10,7 +10,6 @@ namespace BlImplementation;
 internal class CallImplementation : ICall
 {
     private DalApi.IDal _dal = Factory.Get;
-    static readonly Tools toolsInstance = new Tools();
     public void ChoiceCall(int volunteerId, int callId)
     {
         // Retrieve the volunteer data
@@ -28,7 +27,7 @@ internal class CallImplementation : ICall
         }
 
         // Convert the call to BO entity to include the status field
-        var boCall = toolsInstance.parseDoToBoCall(call);
+        var boCall = Tools.parseDoToBoCall(call);
 
         // Validate the call
         if (boCall.Status != Status.Open)
@@ -70,7 +69,7 @@ internal class CallImplementation : ICall
         try
         {
             // 1. Validation du format des champs
-            toolsInstance.ValidateCallFieldsFormat(call);
+            Tools.ValidateCallFieldsFormat(call);
 
             // 2. Vérifier si l'appel existe déjà dans la couche DAL
             try
@@ -92,7 +91,7 @@ internal class CallImplementation : ICall
                 Id = call.Id,
                 CallType = (DO.callType)call.CallType,
                 Description = call.Description,
-                Address = await toolsInstance.GetAddressAsync(call.Latitude, call.Longitude),
+                Address = await Tools.GetAddressAsync(call.Latitude, call.Longitude),
                 Latitude = call.Latitude ?? 0,
                 Longitude = call.Longitude ?? 0,
                 CallTime = call.Created,
@@ -116,11 +115,11 @@ internal class CallImplementation : ICall
     public void DeleteCall(int id)
     {
         BO.Call myCall = ReadCall(id);
-        var assign = _dal.Assignment.ReadAll().Where(a=>a.CallId==id).FirstOrDefault();
+        var assign = _dal.Assignment.ReadAll().Where(a => a.CallId == id).FirstOrDefault();
         int voulunteerAssigned = assign!.VolunteerId;
         try
         {
-            if (myCall == null || myCall.Status!=Status.Open|| !toolsInstance.isDirector(voulunteerAssigned)) 
+            if (myCall == null || myCall.Status != Status.Open || !Tools.isDirector(voulunteerAssigned))
             {
                 throw new BlDeletionImpossible($"The coditions to delete the call Id: {id} are not match");
             }
@@ -128,8 +127,8 @@ internal class CallImplementation : ICall
             _dal.Call.Delete(id);
 
         }
-        catch 
-        { 
+        catch
+        {
             throw new BlDeletionImpossible($"The coditions to delete the call Id: {id} are not match");
         }
     }
@@ -144,7 +143,7 @@ internal class CallImplementation : ICall
         // Convertir les objets DO en BO tout en calculant le statut
         var boCalls = doCalls.Select(doCall =>
         {
-            var boCall = toolsInstance.parseDoToBoCall(doCall);
+            var boCall = Tools.parseDoToBoCall(doCall);
             return boCall;
         });
 
@@ -200,7 +199,7 @@ internal class CallImplementation : ICall
                              duration = lastAssignment?.endTreatment.HasValue == true
                                  ? lastAssignment.endTreatment - lastAssignment.StartTreatment
                                  : null,
-                             Status = toolsInstance.DetermineCallStatus(call.CallTime, call.MaxTime),
+                             Status = Tools.DetermineCallStatus(call.CallTime, call.MaxTime),
                              TotalAssignmentAllocations = validAssignments.Count()
                          };
 
@@ -293,7 +292,7 @@ internal class CallImplementation : ICall
         var closedCalls = calls.Where(call => assignClosedCalls.Any(assignClosedCalls => assignClosedCalls.CallId == call.Id));
         var sortByCallType = filter switch
         {
-            
+
             callType.BuyingFood => closedCalls.Where(c => c.CallType == (DO.callType)callType.BuyingFood),
             callType.BuyingMedicine => closedCalls.Where(c => c.CallType == (DO.callType)callType.BuyingMedicine),
             callType.BuyingClothes => closedCalls.Where(c => c.CallType == (DO.callType)callType.BuyingClothes),
@@ -349,7 +348,7 @@ internal class CallImplementation : ICall
 
         // Lire tous les appels et les convertir en BO
         var doCalls = _dal.Call.ReadAll();
-        var boCalls = doCalls.Select(call => toolsInstance.parseDoToBoCall(call));
+        var boCalls = doCalls.Select(call => Tools.parseDoToBoCall(call));
 
         // Filtrer les appels ouverts
         var openCalls = boCalls.Where(call => call.Status == Status.Open);
@@ -358,7 +357,7 @@ internal class CallImplementation : ICall
         var nearbyCalls = openCalls.Where(call =>
         {
             if (call.Latitude == null || call.Longitude == null) return false;
-            double distance = toolsInstance.CalculateDistance(
+            double distance = Tools.CalculateDistance(
                 myVolunteer.Latitude.Value,
                 myVolunteer.Longitude.Value,
                 call.Latitude.Value,
@@ -374,10 +373,10 @@ internal class CallImplementation : ICall
             Id = call.Id,
             callType = call.CallType,
             description = call.Description,
-            Address = toolsInstance.GetAddressAsync(call.Latitude, call.Longitude).Result,
+            Address = Tools.GetAddressAsync(call.Latitude, call.Longitude).Result,
             Created = call.Created,
             MaxEndTreatment = call.MaxEndTreatment,
-            Distance = toolsInstance.CalculateDistance(
+            Distance = Tools.CalculateDistance(
                 myVolunteer.Latitude.Value,
                 myVolunteer.Longitude.Value,
                 call.Latitude!.Value,
@@ -417,7 +416,7 @@ internal class CallImplementation : ICall
             {
                 throw new BlDoesNotExistException("Call not found");
             }
-            var boCall = toolsInstance.parseDoToBoCall(call);
+            var boCall = Tools.parseDoToBoCall(call);
             return boCall;
 
         }
@@ -433,8 +432,8 @@ internal class CallImplementation : ICall
     {
         try
         {
-            toolsInstance.ValidateCallFieldsFormat(call);
-            toolsInstance.GetAddressAsync(call.Latitude, call.Longitude).Wait();
+            Tools.ValidateCallFieldsFormat(call);
+            Tools.GetAddressAsync(call.Latitude, call.Longitude).Wait();
 
 
         }
@@ -464,7 +463,7 @@ internal class CallImplementation : ICall
             }
 
             // Check if the requester has permission to cancel
-            bool isManager = toolsInstance.isDirector(requesterId); // Hypothetical check for manager status
+            bool isManager = Tools.isDirector(requesterId); // Hypothetical check for manager status
             bool isVolunteerAssigned = assign.VolunteerId == requesterId;
 
             if (!isManager && !isVolunteerAssigned)
@@ -531,7 +530,7 @@ internal class CallImplementation : ICall
             // Update the record in the data layer
             _dal.Assignment.Update(updatedAssignment);
         }
-        
+
         catch (Exception ex)
         {
             // Catch other exceptions and rethrow them with meaningful messages

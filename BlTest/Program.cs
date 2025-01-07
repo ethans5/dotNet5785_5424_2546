@@ -741,22 +741,7 @@ internal class Program
             Int32.TryParse(distanceType, out myDistanceType);
         } while (distanceType != "0" && distanceType != "1" && distanceType != "2");
         
-        Console.WriteLine("Do you want to assign a call to the volunteer?\n"+
-            "0. No\n" +
-            "1. Yes"
-            );
-        int? idcall;
-        if (Console.ReadLine() == "1")
-        {
-            Console.WriteLine("Please enter the ID of the call you want to assign:");
-             idcall = Convert.ToInt32(Console.ReadLine());
-
-        }
-        else
-        {
-            idcall = null;
-        }
-
+       
 
         try
             {
@@ -773,7 +758,7 @@ internal class Program
                 MaxDistance = myDistance,
                 DistanceType = (BO.distanceType)myDistanceType,
                 CallInProgress = null
-            },idcall);
+            });
             Console.WriteLine("Volunteer created successfully");
         }
         catch (Exception ex)
