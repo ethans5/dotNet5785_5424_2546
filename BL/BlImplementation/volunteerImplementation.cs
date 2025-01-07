@@ -10,7 +10,7 @@ internal class VolunteerImplementation : IVolunteer
     private DalApi.IDal _dal = Factory.Get;
     static readonly Tools toolsInstance = new Tools();
 
-    public async void CreateVolunteer(BO.Volunteer volunteer)
+    public async void CreateVolunteer(BO.Volunteer volunteer,int?id)
     {
 
         try
@@ -31,6 +31,40 @@ internal class VolunteerImplementation : IVolunteer
             {
                 throw new BlAlreadyExistsException("Volunteer already exists", ex);
             }
+            try
+            {
+                if (id != null)
+                {
+                    var call = _dal.Call.Read((int)id);
+                    if (call == null)
+                    {
+                        throw new BlDoesNotExistException("Call does not exist");
+                    }
+                    else if (_dal.Assignment.ReadAll().Any(a => a.CallId == id))
+                    {
+                        throw new BlAlreadyExistsException("Call already assigned");
+
+                    }
+                    
+
+                }
+            }
+            catch ( DO.DalAlreadyExistException ex)
+            {
+                    throw new BlAlreadyExistsException("Call already assigned", ex);
+                }
+            catch (DO.DalDoesNotExistException ex)
+            {
+                throw new BlDoesNotExistException("Call does not exist", ex);
+            }
+            DO.Assignment assignment = new DO.Assignment
+            {
+                CallId = (int)id!,
+                VolunteerId = volunteer.Id,
+                StartTreatment = DateTime.Now,
+                endTreatment = null,
+                typeOfEnd = null
+            };
             DO.Volunteer doVolunteer = new DO.Volunteer
             {
                 Id = volunteer.Id,
