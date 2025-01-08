@@ -8,63 +8,23 @@ namespace BlImplementation;
 internal class VolunteerImplementation : IVolunteer
 {
     private DalApi.IDal _dal = Factory.Get;
-    static readonly Tools toolsInstance = new Tools();
 
-    public async void CreateVolunteer(BO.Volunteer volunteer,int?id)
+    public async void CreateVolunteer(BO.Volunteer volunteer)
     {
 
         try
         {
-            toolsInstance.ValidateFieldsFormat(volunteer);
-            var coordinate = await toolsInstance.GetCoordinatesAsync(volunteer.Address!);
-            volunteer.Latitude = coordinate.Latitude;
-            volunteer.Longitude = coordinate.Longitude;
             try
             {
-                var testVolunteer = _dal.Volunteer.Read(volunteer.Id);
-                if (testVolunteer != null)
-                {
-                    throw new BlAlreadyExistsException("Volunteer already exists");
-                }
+                Tools.ValidateFieldsFormat(volunteer);
+                var coordinateS = await Tools.GetCoordinatesAsync(volunteer.Address!);
+                volunteer.Latitude = coordinateS.Latitude;
+                volunteer.Longitude = coordinateS.Longitude;
             }
-            catch (DO.DalAlreadyExistException ex)
+            catch (BO.BlInvalidInputException ex)
             {
-                throw new BlAlreadyExistsException("Volunteer already exists", ex);
+                throw new BlInvalidInputException("Invalid input", ex);
             }
-            try
-            {
-                if (id != null)
-                {
-                    var call = _dal.Call.Read((int)id);
-                    if (call == null)
-                    {
-                        throw new BlDoesNotExistException("Call does not exist");
-                    }
-                    else if (_dal.Assignment.ReadAll().Any(a => a.CallId == id))
-                    {
-                        throw new BlAlreadyExistsException("Call already assigned");
-
-                    }
-                    
-
-                }
-            }
-            catch ( DO.DalAlreadyExistException ex)
-            {
-                    throw new BlAlreadyExistsException("Call already assigned", ex);
-                }
-            catch (DO.DalDoesNotExistException ex)
-            {
-                throw new BlDoesNotExistException("Call does not exist", ex);
-            }
-            DO.Assignment assignment = new DO.Assignment
-            {
-                CallId = (int)id!,
-                VolunteerId = volunteer.Id,
-                StartTreatment = DateTime.Now,
-                endTreatment = null,
-                typeOfEnd = null
-            };
             DO.Volunteer doVolunteer = new DO.Volunteer
             {
                 Id = volunteer.Id,
@@ -83,9 +43,9 @@ internal class VolunteerImplementation : IVolunteer
             };
             _dal.Volunteer.Create(doVolunteer);
         }
-        catch
+        catch(DO.DalAlreadyExistException ex)
         {
-            throw new BlInvalidInputException("Invalid input");
+            throw new BlAlreadyExistsException("already exist", ex);
         }
     }
 
@@ -180,8 +140,8 @@ internal class VolunteerImplementation : IVolunteer
         try
         {
             DO.Volunteer doVolunteer = _dal.Volunteer.Read(id)!;
-            var volunter= toolsInstance.parseDoToBoVolunteer(doVolunteer)  ;
-            volunter.CallInProgress = toolsInstance.GetCallInProgress(id);
+            var volunter= Tools.parseDoToBoVolunteer(doVolunteer)  ;
+            volunter.CallInProgress = Tools.GetCallInProgress(id);
             return volunter  ;
         }
         catch
@@ -197,8 +157,8 @@ internal class VolunteerImplementation : IVolunteer
         {
             try
             {
-                toolsInstance.ValidateFieldsFormat(volunteer);
-                var coordinate =   await toolsInstance.GetCoordinatesAsync(volunteer.Address!);
+                Tools.ValidateFieldsFormat(volunteer);
+                var coordinate = await Tools.GetCoordinatesAsync(volunteer.Address!);
                 volunteer.Latitude = coordinate.Latitude;
                 volunteer.Longitude = coordinate.Longitude;
             }
