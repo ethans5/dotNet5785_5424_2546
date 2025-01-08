@@ -1,5 +1,6 @@
 ﻿
 using BO;
+using DalTest;
 using System;
 
 namespace BlTest;
@@ -38,6 +39,10 @@ internal class Program
 
                     case 3:
                         adminOptions();
+                        break;
+                        
+                    case 4:
+                        Initialization.Do(); 
                         break;
 
 
@@ -645,7 +650,8 @@ internal class Program
                 try
                 {
                     s_bl.Volunteer.LogIn(myId, password);
-                    Console.WriteLine("Login successful");
+                    Console.WriteLine("\nLogin successful\n");
+                    Console.WriteLine($"your job position is : {s_bl.Volunteer.ReadVolunteer(myId).Job}\n");
                 }
                 catch (Exception ex)
                 {
@@ -759,7 +765,7 @@ internal class Program
                 DistanceType = (BO.distanceType)myDistanceType,
                 CallInProgress = null
             });
-            Console.WriteLine("Volunteer created successfully");
+            Console.WriteLine("\nVolunteer created successfully\n");
         }
         catch (Exception ex)
         {
@@ -862,6 +868,12 @@ internal class Program
         string idToUpdate = Console.ReadLine()!;
         int.TryParse(idToUpdate, out int myIdToUpdate);
 
+        if (myId != myIdToUpdate && s_bl.Volunteer.ReadVolunteer(myId).Job != BO.jobType.Director)
+        {
+            Console.WriteLine("You can only update your own volunteer details.");
+            return;
+        }
+
         Console.Write("Please enter your name :\t");
         string name = Console.ReadLine()!;
 
@@ -936,7 +948,7 @@ internal class Program
                 MaxDistance = myDistance,
                 DistanceType = (BO.distanceType)myDistanceType
             });
-            Console.WriteLine("Volunteer updated successfully");
+            Console.WriteLine("\nVolunteer updated successfully\n");
         }
         catch (Exception ex)
         {
@@ -952,7 +964,7 @@ internal class Program
         try
         {
             s_bl.Volunteer.DeleteVolunteer(myId);
-            Console.WriteLine("Volunteer deleted successfully");
+            Console.WriteLine("\nVolunteer deleted successfully\n");
         }
         catch (Exception ex)
         {
@@ -978,7 +990,7 @@ internal class Program
         Console.WriteLine($"Name: {myVolunteer.Name}");
         Console.WriteLine($"Phone: {myVolunteer.Phone}");
         Console.WriteLine($"Mail: {myVolunteer.Mail}");
-        Console.WriteLine($"Password: {myVolunteer.Password ?? "N/A"}");
+        //Console.WriteLine($"Password: {myVolunteer.Password ?? "N/A"}");
         Console.WriteLine($"Address: {myVolunteer.Address ?? "N/A"}");
         Console.WriteLine($"Latitude: {myVolunteer.Latitude?.ToString() ?? "N/A"}");
         Console.WriteLine($"Longitude: {myVolunteer.Longitude?.ToString() ?? "N/A"}");

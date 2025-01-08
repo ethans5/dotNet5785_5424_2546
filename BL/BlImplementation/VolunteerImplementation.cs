@@ -16,7 +16,7 @@ internal class VolunteerImplementation : IVolunteer
         {
             try
             {
-              //Tools.ValidateFieldsFormat(volunteer);
+                Tools.ValidateFieldsFormat(volunteer);
                 var coordinateS = await Tools.GetCoordinatesAsync(volunteer.Address!);
                 volunteer.Latitude = coordinateS.Latitude;
                 volunteer.Longitude = coordinateS.Longitude;
