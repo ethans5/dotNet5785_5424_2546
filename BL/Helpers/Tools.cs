@@ -272,9 +272,7 @@ internal static class Tools
 
     public static void ValidateCallFieldsFormat(BO.Call call)
     {
-        // Vérification de l'ID
-        if (call.Id <= 0)
-            throw new BlInvalidInputException("The ID must be geater than 0 and not null");
+
 
         // Vérification des coordonnées géographiques
         if (call.Latitude != null && (call.Latitude < -90 || call.Latitude > 90))

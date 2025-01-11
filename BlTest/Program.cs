@@ -125,10 +125,10 @@ internal class Program
     {
         Console.WriteLine(
         "0. Exit\n" +
-        "1. Get Call Counts by Status\n" +
-        "2. Read All Calls\n" +
-        "3. Read a Specific Call\n" +
-        "4. Create Call\n" +
+        "1. Create Call\n" +
+        "2. Read a Specific Calls\n" +
+        "3. Read All Call\n" +
+        "4. Get Call Counts by Status\n" +
         "5. Update Call\n" +
         "6. Delete Call\n" +
         "7. Read All Ended Calls\n" +
@@ -142,19 +142,23 @@ internal class Program
             case 0:
                 return;
             case 1:
-                s_bl.Call.GetCallCountsByStatus();
+                CreateCall();
                 break;
             case 2:
-               ReadAllCall();
-                break;
-            case 3:
                 Console.WriteLine("Enter Call ID:");
                 int id = Convert.ToInt32(Console.ReadLine());
                 var call = s_bl.Call.ReadCall(id);
                 PrintCall(call);
                 break;
+            case 3:
+                ReadAllCall();
+                break;
             case 4:
-                CreateCall();
+                var statut=s_bl.Call.GetCallCountsByStatus();
+                for(int i = 0; i < 5; i++)
+                {
+                    Console.WriteLine($"Status {i}: {statut[i]}");
+                }
                 break;
             case 5:
                 UpdateCall();
@@ -375,32 +379,23 @@ internal class Program
         int id = Convert.ToInt32(Console.ReadLine());
         Console.WriteLine("Please enter a filter (optional):");
         int filter;
-        while (true)
-        {
+        
             string? filter1 = Console.ReadLine();
             if (Int32.TryParse(filter1, out filter))
             {
                 break; // L'entrée est correcte, on sort de la boucle
             }
-            else
-            {
-                Console.WriteLine("Invalid input. Please enter a number.\n");
-            }
-        }
+            
+        
         Console.WriteLine("Please enter a sort (optional):");
         int sort;
-        while (true)
-        {
+        
             string? sort1 = Console.ReadLine();
             if (Int32.TryParse(sort1, out sort))
             {
                 break; // L'entrée est correcte, on sort de la boucle
             }
-            else
-            {
-                Console.WriteLine("Invalid input. Please enter a number.\n");
-            }
-        }
+         
         var calls = s_bl.Call.ReadAllOpenCalls(id, (BO.callType)filter, (BO.OpenCallFields)sort);
         foreach (var call in calls)
         {
@@ -517,38 +512,23 @@ internal class Program
         Console.WriteLine("please enter a descrpition");
         string description = Console.ReadLine()!;
         Console.WriteLine("Please enter a latitude");
-        int latitude = Convert.ToInt32(Console.ReadLine());
+        double latitude = Convert.ToDouble(Console.ReadLine());
         Console.WriteLine("Please enter a longitude");
-        int longitude = Convert.ToInt32(Console.ReadLine());
-        Console.WriteLine("Please enter a created date");
-        DateTime created = Convert.ToDateTime(Console.ReadLine());
+        double longitude = Convert.ToDouble(Console.ReadLine());
         Console.WriteLine("Please enter a max end treatment");
         DateTime maxEndTreatment = Convert.ToDateTime(Console.ReadLine());
-        Console.WriteLine("Please enter a status");
-        int status;
-        while (true)
-        {
-            string status1 = Console.ReadLine()!;
-            if (Int32.TryParse(status1, out status) && (status >= 0 && status <= 3))
-            {
-                break; // L'entrée est correcte, on sort de la boucle
-            }
-            else
-            {
-                Console.WriteLine("Invalid input. Please enter a number between 0 and 3.\n");
-            }
-        }
-       
+        var call = s_bl.Call.ReadCall(id);
+
         try { s_bl.Call.UpdateCall(new BO.Call
         {
-            Id = id,
+            Id = call.Id,
             CallType = (BO.callType)type,
             Description = description,
             Latitude = latitude,
             Longitude = longitude,
-            Created = created,
+            Created = call.Created,
             MaxEndTreatment = maxEndTreatment,
-            Status = (BO.Status)status
+            Status = call.Status
         });
             Console.WriteLine("Call updated successfully");
         }
@@ -588,26 +568,12 @@ internal class Program
         Console.WriteLine("please enter a descrpition");
         string description = Console.ReadLine()!;
         Console.WriteLine("Please enter a latitude");
-        int latitude = Convert.ToInt32(Console.ReadLine());
+        double latitude = Convert.ToDouble(Console.ReadLine());
         Console.WriteLine("Please enter a longitude");
-        int longitude = Convert.ToInt32(Console.ReadLine());
+        double longitude = Convert.ToDouble(Console.ReadLine());
         Console.WriteLine("Please enter a max end treatment");
         DateTime maxEndTreatment = Convert.ToDateTime(Console.ReadLine());
-        Console.WriteLine("Please enter a status");
-        int status;
-        while (true)
-        {
-            string status1 = Console.ReadLine()!;
-            if (Int32.TryParse(status1, out status) && (status >= 0 && status <= 3))
-            {
-                break; // L'entrée est correcte, on sort de la boucle
-            }
-            else
-            {
-                Console.WriteLine("Invalid input. Please enter a number between 0 and 3.\n");
-            }
-        }
-
+       
         try
         {
             s_bl.Call.CreateCall(new BO.Call
@@ -618,7 +584,7 @@ internal class Program
                 Longitude = longitude,
                 Created = s_bl.Admin.GetSystemeClock(),
                 MaxEndTreatment = maxEndTreatment,
-                Status = (BO.Status)status
+                Status = Status.Open
             });
             Console.WriteLine("Call created successfully");
         }
@@ -766,6 +732,7 @@ internal class Program
                 CallInProgress = null
             });
             Console.WriteLine("\nVolunteer created successfully\n");
+
         }
         catch (Exception ex)
         {
@@ -935,9 +902,9 @@ internal class Program
 
         try
         {
-            s_bl.Volunteer.UpdateVolunteer(myIdToUpdate, new BO.Volunteer
+            s_bl.Volunteer.UpdateVolunteer(myId, new BO.Volunteer
             {
-                Id = myId,
+                Id = myIdToUpdate,
                 Name = name,
                 Phone = phone,
                 Mail = mail,

@@ -10,6 +10,90 @@ namespace BlImplementation;
 internal class CallImplementation : ICall
 {
     private DalApi.IDal _dal = Factory.Get;
+    public async void CreateCall(BO.Call call)
+    {
+        try
+        {
+
+            Tools.ValidateCallFieldsFormat(call);
+
+
+
+            // 3. Conversion de BO.Call en DO.Call
+            DO.Call doCall = new DO.Call
+            {
+                CallType = (DO.callType)call.CallType,
+                Description = call.Description,
+                Address = await Tools.GetAddressAsync(call.Latitude, call.Longitude),
+                Latitude = call.Latitude ?? 0,
+                Longitude = call.Longitude ?? 0,
+                CallTime = call.Created,
+                MaxTime = call.MaxEndTreatment
+            };
+
+            // 4. Ajout de l'appel dans la base de données via DAL
+            _dal.Call.Create(doCall);
+        }
+
+        catch
+        {
+            // Gestion des erreurs générales
+            throw new BlInvalidInputException("Invalid inputs");
+        }
+    }
+    public Call ReadCall(int id)
+    {
+        try
+        {
+            var call = _dal.Call.Read(id);
+            if (call == null)
+            {
+                throw new BlDoesNotExistException("Call not found");
+            }
+            var boCall = Tools.parseDoToBoCall(call);
+            return boCall;
+
+        }
+
+        catch (DO.DalDoesNotExistException ex)
+        {
+            throw new BlNotFoundException("Call not found", ex);
+        }
+    }
+    public int[] GetCallCountsByStatus()
+    {
+        // Lire tous les appels depuis la couche DAL
+        var doCalls = _dal.Call.ReadAll();
+
+        // Convertir les objets DO en BO tout en calculant le statut
+        var boCalls = doCalls.Select(doCall =>
+        {
+            var boCall = Tools.parseDoToBoCall(doCall);
+            return boCall;
+        });
+
+        // Grouper les appels par leur statut
+        var groupedByStatus = boCalls
+            .GroupBy(call => (int)call.Status) // Utilise l'index numérique du statut
+            .ToDictionary(group => group.Key, group => group.Count());
+
+        // Trouver le nombre maximal de statuts (par exemple, Status peut aller de 0 à 4)
+        int maxStatusIndex = Enum.GetValues(typeof(Status)).Cast<int>().Max();
+
+        // Initialiser un tableau pour stocker les résultats
+        int[] callCounts = new int[maxStatusIndex + 1];
+
+        // Remplir le tableau avec les quantités pour chaque statut
+        foreach (var kvp in groupedByStatus)
+        {
+            callCounts[kvp.Key] = kvp.Value;
+        }
+
+        return callCounts;
+    }
+
+
+
     public void ChoiceCall(int volunteerId, int callId)
     {
         // Retrieve the volunteer data
@@ -64,54 +148,6 @@ internal class CallImplementation : ICall
     }
 
 
-    public async void CreateCall(BO.Call call)
-    {
-        try
-        {
-            // 1. Validation du format des champs
-            Tools.ValidateCallFieldsFormat(call);
-
-            // 2. Vérifier si l'appel existe déjà dans la couche DAL
-            try
-            {
-                var existingCall = _dal.Call.Read(call.Id);
-                if (existingCall != null)
-                {
-                    throw new BlAlreadyExistsException("The call already exist");
-                }
-            }
-            catch (DO.DalAlreadyExistException ex)
-            {
-                throw new BlAlreadyExistsException("The call already exist", ex);
-            }
-
-            // 3. Conversion de BO.Call en DO.Call
-            DO.Call doCall = new DO.Call
-            {
-                Id = call.Id,
-                CallType = (DO.callType)call.CallType,
-                Description = call.Description,
-                Address = await Tools.GetAddressAsync(call.Latitude, call.Longitude),
-                Latitude = call.Latitude ?? 0,
-                Longitude = call.Longitude ?? 0,
-                CallTime = call.Created,
-                MaxTime = call.MaxEndTreatment
-            };
-
-            // 4. Ajout de l'appel dans la base de données via DAL
-            _dal.Call.Create(doCall);
-        }
-        catch (BlAlreadyExistsException)
-        {
-            throw; // Relance l'exception pour que la couche d'affichage la capture
-        }
-        catch
-        {
-            // Gestion des erreurs générales
-            throw new BlInvalidInputException("Invalid inputs");
-        }
-    }
-
     public void DeleteCall(int id)
     {
         BO.Call myCall = ReadCall(id);
@@ -135,37 +171,6 @@ internal class CallImplementation : ICall
 
 
 
-    public int[] GetCallCountsByStatus()
-    {
-        // Lire tous les appels depuis la couche DAL
-        var doCalls = _dal.Call.ReadAll();
-
-        // Convertir les objets DO en BO tout en calculant le statut
-        var boCalls = doCalls.Select(doCall =>
-        {
-            var boCall = Tools.parseDoToBoCall(doCall);
-            return boCall;
-        });
-
-        // Grouper les appels par leur statut
-        var groupedByStatus = boCalls
-            .GroupBy(call => (int)call.Status) // Utilise l'index numérique du statut
-            .ToDictionary(group => group.Key, group => group.Count());
-
-        // Trouver le nombre maximal de statuts (par exemple, Status peut aller de 0 à 4)
-        int maxStatusIndex = Enum.GetValues(typeof(Status)).Cast<int>().Max();
-
-        // Initialiser un tableau pour stocker les résultats
-        int[] callCounts = new int[maxStatusIndex + 1];
-
-        // Remplir le tableau avec les quantités pour chaque statut
-        foreach (var kvp in groupedByStatus)
-        {
-            callCounts[kvp.Key] = kvp.Value;
-        }
-
-        return callCounts;
-    }
 
     public IEnumerable<CallInList> ReadAllCalls(CallFields? filter, object? obj, CallFields? sort)
     {
@@ -407,33 +412,31 @@ internal class CallImplementation : ICall
 
 
 
-    public Call ReadCall(int id)
+
+
+    public async void UpdateCall(BO.Call call)
     {
         try
         {
-            var call = _dal.Call.Read(id);
-            if (call == null)
+            var updatedCall = _dal.Call.Read(call.Id);
+            if (updatedCall == null)
             {
-                throw new BlDoesNotExistException("Call not found");
+                throw new BlNotFoundException("Call not found");
             }
-            var boCall = Tools.parseDoToBoCall(call);
-            return boCall;
-
-        }
-
-        catch (DO.DalDoesNotExistException ex)
-        {
-            throw new BlNotFoundException("Call not found", ex);
-        }
-    }
-
-
-    public void UpdateCall(BO.Call call)
-    {
-        try
-        {
             Tools.ValidateCallFieldsFormat(call);
-            Tools.GetAddressAsync(call.Latitude, call.Longitude).Wait();
+            DO.Call doCall = new DO.Call
+            {
+                Id = call.Id,
+                CallType = (DO.callType)call.CallType,
+                Description = call.Description,
+                Address = await Tools.GetAddressAsync(call.Latitude, call.Longitude),
+                Latitude = call.Latitude ?? 0,
+                Longitude = call.Longitude ?? 0,
+                CallTime = call.Created,
+                MaxTime = call.MaxEndTreatment
+            };
+            _dal.Call.Update(doCall);
+
 
 
         }

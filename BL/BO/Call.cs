@@ -3,7 +3,7 @@ namespace BO
 {
     public class Call
     {
-        public int Id { get; init; }
+        public int Id { get; set; }
         public callType CallType { get; set; }
         public string? Description { get; set; }
         public double? Latitude { get; set; }
