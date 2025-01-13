@@ -203,7 +203,7 @@ internal class CallImplementation : ICall
                              callType = (BO.callType)call.CallType,
                              startingTime = call.CallTime,
                              remainingTime = call.MaxTime.HasValue
-                                 ? call.MaxTime.Value - ClockManager.Now
+                                 ? call.MaxTime!.Value - ClockManager.Now
                                  : null,
                              LastVolunteerName = lastVolunteer?.Name,
                              duration = hasAssignments && lastAssignment?.endTreatment.HasValue == true
