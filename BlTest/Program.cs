@@ -378,25 +378,40 @@ internal class Program
         Console.WriteLine("Please enter your id");
         int id = Convert.ToInt32(Console.ReadLine());
         Console.WriteLine("Please enter a filter (optional):");
-        int filter;
-        
-            string? filter1 = Console.ReadLine();
-            if (Int32.TryParse(filter1, out filter))
-            {
-                break; // L'entrée est correcte, on sort de la boucle
-            }
-            
-        
-        Console.WriteLine("Please enter a sort (optional):");
-        int sort;
-        
-            string? sort1 = Console.ReadLine();
-            if (Int32.TryParse(sort1, out sort))
-            {
-                break; // L'entrée est correcte, on sort de la boucle
-            }
+        string? filter1 = Console.ReadLine();
+        int? filter;
+        if (string.IsNullOrWhiteSpace(filter1))
+        {
+            filter = null;
+        }
+        else
+        {
+            filter = Convert.ToInt32(filter1);
+        }
+
+
          
-        var calls = s_bl.Call.ReadAllOpenCalls(id, (BO.callType)filter, (BO.OpenCallFields)sort);
+
+
+
+
+        Console.WriteLine("Please enter a sort (optional):");
+        string? sort1=Console.ReadLine();
+        int? sort;
+        if (string.IsNullOrWhiteSpace(sort1))
+        {
+            sort = null;
+        }
+        else
+        {
+            sort = Convert.ToInt32(sort1);
+        }
+
+
+
+
+
+        var calls = s_bl.Call.ReadAllOpenCalls(id, (BO.callType?)filter, (BO.OpenCallFields?)sort);
         foreach (var call in calls)
         {
             PrintOpenCallInList(call);

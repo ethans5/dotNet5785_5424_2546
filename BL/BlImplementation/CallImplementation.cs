@@ -1,9 +1,11 @@
 ﻿
 using BlApi;
 using BO;
+using DO;
 using Helpers;
 using System.Net.Http.Headers;
 using System.Security.Cryptography;
+using callType = BO.callType;
 
 namespace BlImplementation;
 
@@ -41,7 +43,7 @@ internal class CallImplementation : ICall
             throw new BlInvalidInputException("Invalid inputs");
         }
     }
-    public Call ReadCall(int id)
+    public BO.Call ReadCall(int id)
     {
         try
         {
@@ -181,31 +183,34 @@ internal class CallImplementation : ICall
 
         // Build the query to generate CallInList objects
         var callInList = from call in calls
-                         let validAssignments = assignments.Where(a => a.CallId == call.Id).OrderByDescending(a => a.StartTreatment)
-                         let lastAssignment = assignments.Where(a => a.CallId == call.Id &&
-                             (a.typeOfEnd == DO.typeOfEndTreatment.treated ||
-                              a.typeOfEnd == DO.typeOfEndTreatment.Expired ||
-                              a.typeOfEnd == null)).FirstOrDefault()
-                         let lastVolunteer = lastAssignment != null
+                         let hasAssignments = assignments.Any(a => a.CallId == call.Id)
+                         let validAssignments = hasAssignments
+                          ? assignments.Where(a => a.CallId == call.Id).OrderByDescending(a => a.StartTreatment)
+                          : Enumerable.Empty<Assignment>()
+                         let lastAssignment = hasAssignments
+                             ? assignments.Where(a => a.CallId == call.Id &&
+                                 (a.typeOfEnd == DO.typeOfEndTreatment.treated ||
+                                  a.typeOfEnd == DO.typeOfEndTreatment.Expired ||
+                                  a.typeOfEnd == null)).FirstOrDefault()
+                             : null
+                         let lastVolunteer = hasAssignments && lastAssignment != null
                              ? volunteers.FirstOrDefault(v => v.Id == lastAssignment.VolunteerId)
-                             : (validAssignments.Any()
-                                 ? volunteers.FirstOrDefault(v => v.Id == validAssignments.FirstOrDefault()!.VolunteerId)
-                                 : null)
+                             : null
                          select new CallInList
                          {
                              Id = call.Id,
                              callId = call.Id,
                              callType = (BO.callType)call.CallType,
-                             startingTime = lastAssignment.StartTreatment,
+                             startingTime = call.CallTime,
                              remainingTime = call.MaxTime.HasValue
                                  ? call.MaxTime.Value - ClockManager.Now
                                  : null,
                              LastVolunteerName = lastVolunteer?.Name,
-                             duration = lastAssignment?.endTreatment.HasValue == true
-                                 ? lastAssignment.endTreatment - lastAssignment.StartTreatment
-                                 : null,
+                             duration = hasAssignments && lastAssignment?.endTreatment.HasValue == true
+                             ? lastAssignment.endTreatment - lastAssignment.StartTreatment
+                             : null,
                              Status = Tools.DetermineCallStatus(call.CallTime, call.MaxTime),
-                             TotalAssignmentAllocations = validAssignments.Count()
+                             TotalAssignmentAllocations = hasAssignments ? validAssignments.Count() : 0
                          };
 
         // Apply filtering based on the given field and value
@@ -286,8 +291,10 @@ internal class CallImplementation : ICall
         return callInList;
     }
 
+    
 
-    public IEnumerable<ClosedCallInList> ReadAllEndedCalls(int id, callType? filter, closedCallFields? sort)
+
+    public IEnumerable<ClosedCallInList> ReadAllEndedCalls(int id, BO.callType? filter, closedCallFields? sort)
     {
         var assign = _dal.Assignment.ReadAll().Where(c => c.VolunteerId == id);
         var assignClosedCalls = assign.Where(a => a.typeOfEnd != null);
@@ -344,7 +351,7 @@ internal class CallImplementation : ICall
 
 
 
-    public IEnumerable<OpenCallInList> ReadAllOpenCalls(int id, callType? filter, OpenCallFields? sort)
+    public IEnumerable<OpenCallInList> ReadAllOpenCalls(int id, BO.callType? filter, OpenCallFields? sort)
     {
         // Lire les informations sur le volontaire
         var myVolunteer = _dal.Volunteer.Read(id);
