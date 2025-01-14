@@ -301,6 +301,19 @@ internal static class Tools
         };
     }
 
+    public static DO.Call parseBoToDoCall(BO.Call call)
+    {
+        return new DO.Call
+        {
+            Id = call.Id,
+            CallType = (DO.callType)call.CallType,
+            Description = call.Description,
+            Latitude = call.Latitude ?? 0,
+            Longitude = call.Longitude ?? 0,
+            CallTime = call.Created,
+            MaxTime = call.MaxEndTreatment
+        };
+    }
 
 
     public static double CalculateDistance(double lat1, double lon1, double lat2, double lon2)
@@ -375,9 +388,8 @@ internal static class Tools
         if (call == null)
             throw new BlNotFoundException("Call not found.");
 
-        // Mettre à jour uniquement le champ de statut dans la base de données
-        // Supposons que votre base de données a une colonne "Status"
-        call.Status = newStatus.ToString(); // Convertir en chaîne si nécessaire
+        var myCall = parseDoToBoCall(call);
+        myCall.Status = newStatus; // Mettre à jour le statut
 
         // Sauvegarder les changements dans la base de données
         _dal.Call.Update(call);

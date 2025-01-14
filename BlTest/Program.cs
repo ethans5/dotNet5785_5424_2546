@@ -42,9 +42,9 @@ internal class Program
                     case 3:
                         adminOptions();
                         break;
-                        
+
                     case 4:
-                        Initialization.Do(); 
+                        Initialization.Do();
                         break;
 
 
@@ -79,7 +79,7 @@ internal class Program
             "6. Update Risk Range\n"
             );
         int choice = Convert.ToInt32(Console.ReadLine());
-        switch(choice)
+        switch (choice)
         {
             case 0:
                 return;
@@ -156,8 +156,8 @@ internal class Program
                 ReadAllCall();
                 break;
             case 4:
-                var statut=s_bl.Call.GetCallCountsByStatus();
-                for(int i = 0; i < 5; i++)
+                var statut = s_bl.Call.GetCallCountsByStatus();
+                for (int i = 0; i < 5; i++)
                 {
                     Console.WriteLine($"Status {i}: {statut[i]}");
                 }
@@ -205,7 +205,7 @@ internal class Program
             Console.WriteLine("Call Assignments:");
             foreach (var assignment in call.callAssignInLists)
             {
-               PrintCallAssignInList(assignment, "  ");
+                PrintCallAssignInList(assignment, "  ");
 
             }
         }
@@ -216,7 +216,7 @@ internal class Program
 
         Console.WriteLine();
     }
-    private static void PrintCallAssignInList(CallAssignInList callAssign, string indent )
+    private static void PrintCallAssignInList(CallAssignInList callAssign, string indent)
     {
         Console.WriteLine($"{indent}Volunteer ID: {callAssign.volounteerId}");
         Console.WriteLine($"{indent}Volunteer Name: {callAssign.volounteerName ?? "N/A"}");
@@ -326,7 +326,7 @@ internal class Program
 
     private static void ChoiceCall()
     {
-        Console.WriteLine("Enter yout Id:");
+        Console.WriteLine("Enter your Id:");
         int id = Convert.ToInt32(Console.ReadLine());
         Console.WriteLine("Enter the ID of the call you want to choose:");
         int idC = Convert.ToInt32(Console.ReadLine());
@@ -345,7 +345,7 @@ internal class Program
     {
         Console.WriteLine("Enter your ID:");
         int id = Convert.ToInt32(Console.ReadLine());
-        Console.WriteLine("Enter the ID of the assignement :");
+        Console.WriteLine("Enter the ID of the call :");
         int idA = Convert.ToInt32(Console.ReadLine());
         try
         {
@@ -379,7 +379,7 @@ internal class Program
     {
         Console.WriteLine("Please enter your id");
         int id = Convert.ToInt32(Console.ReadLine());
-        Console.WriteLine("Please enter a filter (optional):");
+        Console.WriteLine("Please enter a filter (optional):0-9 type de call");
         string? filter1 = Console.ReadLine();
         int? filter;
         if (string.IsNullOrWhiteSpace(filter1))
@@ -392,13 +392,8 @@ internal class Program
         }
 
 
-         
-
-
-
-
-        Console.WriteLine("Please enter a sort (optional):");
-        string? sort1=Console.ReadLine();
+        Console.WriteLine("Please enter a sort (optional): 0-6 sadé");
+        string? sort1 = Console.ReadLine();
         int? sort;
         if (string.IsNullOrWhiteSpace(sort1))
         {
@@ -408,9 +403,6 @@ internal class Program
         {
             sort = Convert.ToInt32(sort1);
         }
-
-
-
 
 
         var calls = s_bl.Call.ReadAllOpenCalls(id, (BO.callType?)filter, (BO.OpenCallFields?)sort);
@@ -536,17 +528,19 @@ internal class Program
         DateTime maxEndTreatment = Convert.ToDateTime(Console.ReadLine());
         var call = s_bl.Call.ReadCall(id);
 
-        try { s_bl.Call.UpdateCall(new BO.Call
+        try
         {
-            Id = call.Id,
-            CallType = (BO.callType)type,
-            Description = description,
-            Latitude = latitude,
-            Longitude = longitude,
-            Created = call.Created,
-            MaxEndTreatment = maxEndTreatment,
-            Status = call.Status
-        });
+            s_bl.Call.UpdateCall(new BO.Call
+            {
+                Id = call.Id,
+                CallType = (BO.callType)type,
+                Description = description,
+                Latitude = latitude,
+                Longitude = longitude,
+                Created = call.Created,
+                MaxEndTreatment = maxEndTreatment,
+                Status = call.Status
+            });
             Console.WriteLine("Call updated successfully");
         }
         catch (Exception ex)
@@ -557,12 +551,12 @@ internal class Program
 
     private static void CreateCall()
     {
-        Console.WriteLine("Enter the call type:\n"+
-            "0.Buying Food\n"+
-            "1.Buying Medicine\n"+
-            "2.Buying Clothes\n"+
+        Console.WriteLine("Enter the call type:\n" +
+            "0.Buying Food\n" +
+            "1.Buying Medicine\n" +
+            "2.Buying Clothes\n" +
             "3.Buying Cartoons\n" +
-            "4.Packing Food\n"+
+            "4.Packing Food\n" +
             "5.Packing Medicine\n" +
             "6.Packing Clothes\n" +
             "7.Packing Cartoons in the trucks\n" +
@@ -590,7 +584,7 @@ internal class Program
         double longitude = Convert.ToDouble(Console.ReadLine());
         Console.WriteLine("Please enter a max end treatment");
         DateTime maxEndTreatment = Convert.ToDateTime(Console.ReadLine());
-       
+
         try
         {
             s_bl.Call.CreateCall(new BO.Call
@@ -729,11 +723,11 @@ internal class Program
             distanceType = Console.ReadLine()!;
             Int32.TryParse(distanceType, out myDistanceType);
         } while (distanceType != "0" && distanceType != "1" && distanceType != "2");
-        
-       
+
+
 
         try
-            {
+        {
             s_bl.Volunteer.CreateVolunteer(new BO.Volunteer
             {
                 Id = myId,
@@ -831,9 +825,9 @@ internal class Program
         int.TryParse(id, out int myId);
         try
         {
-          
+
             var volunteer = s_bl.Volunteer.ReadVolunteer(myId);
-            
+
             PrintVolunteer(volunteer);
         }
         catch (Exception ex)
@@ -989,7 +983,7 @@ internal class Program
         if (myVolunteer.CallInProgress != null)
         {
 
-            PrintCallInProgress(myVolunteer.CallInProgress,"    ");
+            PrintCallInProgress(myVolunteer.CallInProgress, "    ");
         }
         else
         {

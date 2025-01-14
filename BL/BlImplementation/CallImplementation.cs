@@ -158,9 +158,8 @@ internal class CallImplementation : ICall
         // Update the call's status to InProgress
         boCall.Status = Status.InProgress;
 
-        // Convert back to DO and save the updated call
-        Tools.UpdateStatus(boCall.Id, Status.InProgress);
-        
+        UpdateCall(boCall);
+
     }
 
     public void DeleteCall(int id)
@@ -404,7 +403,10 @@ internal class CallImplementation : ICall
         if (filter.HasValue)
         {
             result = result.Where(call => call.callType == filter.Value);
+            if (result.Count() == 0)
+                Console.WriteLine("Any calls with this filter exist");
         }
+        
 
 
         // Appliquer le tri, si nécessaire
