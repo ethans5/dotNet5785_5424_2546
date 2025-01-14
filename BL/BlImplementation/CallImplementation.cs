@@ -6,12 +6,14 @@ using Helpers;
 using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using callType = BO.callType;
+using System.Globalization;
 
 namespace BlImplementation;
 
 internal class CallImplementation : ICall
 {
     private DalApi.IDal _dal = Factory.Get;
+    CultureInfo culture = CultureInfo.InvariantCulture;
     public async void CreateCall(BO.Call call)
     {
         try
@@ -94,8 +96,6 @@ internal class CallImplementation : ICall
         return callCounts;
     }
 
-
-
     public void ChoiceCall(int volunteerId, int callId)
     {
         // Retrieve the volunteer data
@@ -104,6 +104,13 @@ internal class CallImplementation : ICall
         {
             throw new BlNotFoundException("Volunteer not found.");
         }
+        var myVolunteer = Tools.parseDoToBoVolunteer(volunteer);
+        if (myVolunteer.CallInProgress != null || _dal.Assignment.ReadAll()
+        .Any(a => a.VolunteerId == volunteerId && a.endTreatment == null))
+        {
+            throw new BlUnauthorizedException("The volunteer is already assigned to another call.");
+        }
+
 
         // Retrieve the call data
         var call = _dal.Call.Read(callId);
@@ -147,8 +154,14 @@ internal class CallImplementation : ICall
 
         // Add the new assignment to the data layer
         _dal.Assignment.Create(newAssignment);
-    }
 
+        // Update the call's status to InProgress
+        boCall.Status = Status.InProgress;
+
+        // Convert back to DO and save the updated call
+        Tools.UpdateStatus(boCall.Id, Status.InProgress);
+        
+    }
 
     public void DeleteCall(int id)
     {
@@ -170,9 +183,6 @@ internal class CallImplementation : ICall
             throw new BlDeletionImpossible($"The coditions to delete the call Id: {id} are not match");
         }
     }
-
-
-
 
     public IEnumerable<CallInList> ReadAllCalls(CallFields? filter, object? obj, CallFields? sort)
     {
@@ -291,9 +301,6 @@ internal class CallImplementation : ICall
         return callInList;
     }
 
-    
-
-
     public IEnumerable<ClosedCallInList> ReadAllEndedCalls(int id, BO.callType? filter, closedCallFields? sort)
     {
         var assign = _dal.Assignment.ReadAll().Where(c => c.VolunteerId == id);
@@ -348,8 +355,6 @@ internal class CallImplementation : ICall
 
 
     }
-
-
 
     public IEnumerable<OpenCallInList> ReadAllOpenCalls(int id, BO.callType? filter, OpenCallFields? sort)
     {
@@ -416,11 +421,6 @@ internal class CallImplementation : ICall
         };
     }
 
-
-
-
-
-
     public async void UpdateCall(BO.Call call)
     {
         try
@@ -452,7 +452,6 @@ internal class CallImplementation : ICall
             throw new BlNotFoundException("Call not found", ex);
         }
     }
-
 
     public void UpdateCallCancel(int requesterId, int assignmentId)
     {
@@ -502,7 +501,6 @@ internal class CallImplementation : ICall
             throw new BlInvalidInputException("An error occurred while canceling the call.", ex);
         }
     }
-
 
     public void UpdateCallEnd(int volunteerId, int assignmentId)
     {

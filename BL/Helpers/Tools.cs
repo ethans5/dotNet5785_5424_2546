@@ -112,75 +112,6 @@ internal static class Tools
     //used for https://geocode.maps.co/
     private static string ApiKey = "6761782af11a3702282865asq982b03";
 
-    //public async Task<(double? Latitude, double? Longitude)> GetCoordinatesAsync(string address)
-    //{
-    //    if (string.IsNullOrEmpty(address))
-    //        throw new ArgumentException("L'adresse ne peut pas être vide.");
-
-    //    // URL pour appeler l'API Maps.co ou Google Maps
-    //    string url = $"https://geocode.maps.co/search?q={Uri.EscapeDataString(address)}&api_key={ApiKey}";
-
-    //    using (HttpClient client = new HttpClient())
-    //    {
-    //        try
-    //        {
-    //            // Envoi de la requête GET
-    //            HttpResponseMessage response = await client.GetAsync(url);
-    //            response.EnsureSuccessStatusCode();
-
-    //            string jsonResponse = await response.Content.ReadAsStringAsync();
-
-    //            // Parse le JSON avec Newtonsoft.Json
-    //            JArray results = JArray.Parse(jsonResponse);
-
-    //            // Vérifie si l'API a renvoyé des résultats
-    //            if (results.Count > 0)
-    //            {
-    //                var result = results[0]; // Premier résultat retourné
-    //                double latitude = double.Parse(result["lat"]?.ToString()!);
-    //                double longitude = double.Parse(result["lon"]?.ToString()!);
-
-    //                return (latitude, longitude);
-    //            }
-
-    //            // Retourne null si aucune donnée n'est trouvée
-    //            return (null, null);
-    //        }
-    //        catch (Exception ex)
-    //        {
-    //            Console.WriteLine($"Erreur lors de la récupération des coordonnées : {ex.Message}");
-    //            return (null, null);
-    //        }
-    //    }
-    //}
-    /*
-  
-    public static async Task<(double Latitude, double Longitude)> GetCoordinatesAsync(string address)
-    {
-        if (string.IsNullOrWhiteSpace(address))
-        {
-            throw new ArgumentException("The address cannot be null or empty.", nameof(address));
-        }
-
-        string url = $"https://maps.googleapis.com/maps/api/geocode/json?address={Uri.EscapeDataString(address)}&key={GoogleApiKey}";
-
-        var response = await HttpClient.GetStringAsync(url);
-        var geocodeResponse = JsonSerializer.Deserialize<GoogleGeocodeResponse>(response);
-
-        if (geocodeResponse == null  geocodeResponse.Status != "OK"  geocodeResponse.Results.Length == 0)
-        {
-            throw new Exception($"Address not found or invalid response from Google Maps API: {geocodeResponse?.Status}");
-        }
-
-        var location = geocodeResponse.Results[0].Geometry.Location;
-        return (location.Lat, location.Lng);
-    }
-}
-     
-     
-     
-     */
-
     public static async Task<(double? Latitude, double? Longitude)> GetCoordinatesAsync(string address)
     {
 
@@ -370,6 +301,8 @@ internal static class Tools
         };
     }
 
+
+
     public static double CalculateDistance(double lat1, double lon1, double lat2, double lon2)
     {
         const double R = 6371; // Rayon de la Terre en km
@@ -435,6 +368,21 @@ internal static class Tools
         public string Lat { get; set; }
         public string Lon { get; set; }
     }
+
+    public static void UpdateStatus(int callId, Status newStatus)
+    {
+        var call = _dal.Call.Read(callId); // Récupérer le call existant
+        if (call == null)
+            throw new BlNotFoundException("Call not found.");
+
+        // Mettre à jour uniquement le champ de statut dans la base de données
+        // Supposons que votre base de données a une colonne "Status"
+        call.Status = newStatus.ToString(); // Convertir en chaîne si nécessaire
+
+        // Sauvegarder les changements dans la base de données
+        _dal.Call.Update(call);
+    }
+
 
 }
 
