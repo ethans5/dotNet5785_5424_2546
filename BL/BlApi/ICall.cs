@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace BlApi;
 
-public interface ICall
+public interface ICall:IObservable
 {
     public int[] GetCallCountsByStatus(); // groupBy
     public IEnumerable<BO.CallInList> ReadAllCalls(CallFields? filter, Object? obj,CallFields? sort);

@@ -15,7 +15,7 @@ internal class VolunteerImplementation : IVolunteer
         {
             try
             {
-                //Tools.ValidateFieldsFormat(volunteer);
+                Tools.ValidateFieldsFormat(volunteer);
                 var coordinateS = await Tools.GetCoordinatesAsync(volunteer.Address!);
                 volunteer.Latitude = coordinateS.Latitude;
                 volunteer.Longitude = coordinateS.Longitude;
@@ -172,7 +172,7 @@ internal class VolunteerImplementation : IVolunteer
         }
         try
         {
-            //Tools.ValidateFieldsFormat(volunteer);
+            Tools.ValidateFieldsFormat(volunteer);
             var coordinate = await Tools.GetCoordinatesAsync(volunteer.Address!);
             volunteer.Latitude = coordinate.Latitude;
             volunteer.Longitude = coordinate.Longitude;

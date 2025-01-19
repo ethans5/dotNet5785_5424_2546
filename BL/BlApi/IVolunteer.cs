@@ -3,7 +3,7 @@ using BO;
 
 namespace BlApi;
 
-public interface IVolunteer
+public interface IVolunteer: IObservable
 {
     public jobType LogIn(int id, string password);
     public void CreateVolunteer(BO.Volunteer volunteer);
