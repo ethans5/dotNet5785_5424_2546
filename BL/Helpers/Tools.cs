@@ -229,37 +229,100 @@ internal static class Tools
 
     }
 
-    public static Status DetermineCallStatus(DateTime created, DateTime? maxEndTreatment)
+    //public static Status DetermineCallStatus(int id,DateTime created, DateTime? maxEndTreatment)
+    //{
+    //    var now = ClockManager.Now;
+    //    var myAssignments = _dal.Assignment.ReadAll().Where(assign => assign.CallId == id);
+
+    //    // Vérifie si maxEndTreatment est défini et compare avec la date actuelle
+    //    if (maxEndTreatment.HasValue)
+    //    {
+    //        if (now > maxEndTreatment.Value)
+    //        {
+    //            return Status.Expired; // Si la date actuelle dépasse maxEndTreatment
+    //        }
+
+    //        // Vérifie si la date est proche d'expirer (par exemple, dans les 2 heures)
+    //        var timeUntilExpiration = maxEndTreatment.Value - now;
+    //        if (timeUntilExpiration.TotalHours <= 2)
+    //        {
+    //            return Status.AlmostExpired;
+    //        }
+    //    }
+
+    //    // Si la date actuelle est proche de la création mais pas encore expirée
+    //    var elapsedTimeSinceCreation = now - created;
+
+    //    if (elapsedTimeSinceCreation.TotalHours <= 1)
+    //    {
+    //        return Status.Open; // Statut ouvert pour les appels récents
+    //    }
+
+    //    // Appel en cours si aucune autre condition ne s'applique
+    //    return Status.InProgress;
+    //}
+    public static Status DetermineCallStatus(int id, DateTime created, DateTime? maxEndTreatment)
     {
         var now = ClockManager.Now;
+        var myAssignments = _dal.Assignment.ReadAll().Where(assign => assign.CallId == id);
 
-        // Vérifie si maxEndTreatment est défini et compare avec la date actuelle
+        // Vérifie si l'appel n'a pas encore été assigné
+        if (!myAssignments.Any())
+        {
+            return DetermineOpenStatus(now, maxEndTreatment);
+        }
+
+
+        // L'appel a été assigné à au moins un volunteer
+        return DetermineAssignedStatus(id,now, maxEndTreatment);
+    }
+
+    private static Status DetermineOpenStatus(DateTime now, DateTime? maxEndTreatment)
+    {
         if (maxEndTreatment.HasValue)
         {
             if (now > maxEndTreatment.Value)
             {
-                return Status.Expired; // Si la date actuelle dépasse maxEndTreatment
+                return Status.Expired; // Appel expiré
             }
 
-            // Vérifie si la date est proche d'expirer (par exemple, dans les 2 heures)
             var timeUntilExpiration = maxEndTreatment.Value - now;
-            if (timeUntilExpiration.TotalHours <= 2)
+            if (timeUntilExpiration <= _dal.Config.RiskRange)
             {
-                return Status.AlmostExpired;
+                return Status.OpenAlmostExpired; // Appel ouvert, proche d'expirer
             }
         }
 
-        // Si la date actuelle est proche de la création mais pas encore expirée
-        var elapsedTimeSinceCreation = now - created;
+        return Status.Open; // Appel ouvert sans risque immédiat
+    }
 
-        if (elapsedTimeSinceCreation.TotalHours <= 1)
+    private static Status DetermineAssignedStatus(int id,DateTime now, DateTime? maxEndTreatment)
+    {
+       var myAssignments = _dal.Assignment.ReadAll().Where(assign => assign.CallId == id).FirstOrDefault();
+    //    if (myAssignments.typeOfEnd)
+        if (maxEndTreatment.HasValue)
         {
-            return Status.Open; // Statut ouvert pour les appels récents
+            if (now > maxEndTreatment.Value)
+            {
+                return Status.Expired; // Appel expiré
+            }
+
+            var timeUntilExpiration = maxEndTreatment.Value - now;
+             if (timeUntilExpiration <= _dal.Config.RiskRange)
+            {
+                return Status.AlmostExpired; // Assigné et proche d'expirer
+            }
+            else if (myAssignments!.endTreatment.HasValue)
+            {
+                return Status.Closed; // Assigné et terminé
+            }
         }
 
-        // Appel en cours si aucune autre condition ne s'applique
-        return Status.InProgress;
+        return Status.InProgress; // Assigné et en cours
     }
+
+
+
 
     public static List<CallAssignInList> CreateCallAssignListFromDo(DO.Call call, IEnumerable<DO.Assignment> assignments, IEnumerable<DO.Volunteer> volunteers)
     {
@@ -296,7 +359,7 @@ internal static class Tools
             Longitude = call.Longitude,
             Created = call.CallTime,
             MaxEndTreatment = call.MaxTime,
-            Status = DetermineCallStatus(call.CallTime, call.MaxTime),
+            Status = DetermineCallStatus(call.Id,call.CallTime, call.MaxTime),
             callAssignInLists = CreateCallAssignListFromDo(call, _dal.Assignment.ReadAll(), _dal.Volunteer.ReadAll())
         };
     }
@@ -344,7 +407,7 @@ internal static class Tools
 
 
     }
-    public static CallInProgress GetCallInProgress(int id)
+    public static CallInProgress ?GetCallInProgress(int id)
     {
         var call = _dal.Call.ReadAll();
         var callAssign = _dal.Assignment.ReadAll();
@@ -371,29 +434,13 @@ internal static class Tools
                             : 0,
                             Treatment = DetermineTreatment(c)
                         }).FirstOrDefault();
-
+        
+        
         return progress;
 
-
     }
-    public class GeocodeResult
-    {
-        public string Lat { get; set; }
-        public string Lon { get; set; }
-    }
+ 
 
-    public static void UpdateStatus(int callId, Status newStatus)
-    {
-        var call = _dal.Call.Read(callId); // Récupérer le call existant
-        if (call == null)
-            throw new BlNotFoundException("Call not found.");
-
-        var myCall = parseDoToBoCall(call);
-        myCall.Status = newStatus; // Mettre à jour le statut
-
-        // Sauvegarder les changements dans la base de données
-        _dal.Call.Update(call);
-    }
 
 
 }

@@ -66,7 +66,7 @@ public static class Initialization
             string address = "address" + s_rand.Next(1000);
             double latitude = s_rand.NextDouble() * 180 - 90;
             double longitude = s_rand.NextDouble() * 360 - 180;
-            DateTime start = new DateTime(s_dal.Config.Clock.Year - 2, 1, 1); //stage 1
+            DateTime start = new DateTime(s_dal!.Config.Clock.Year - 2, 1, 1); //stage 1
             int range = (s_dal.Config.Clock - start).Days; //stage 1
             DateTime time = start.AddDays(s_rand.Next(range));
             Boolean datelimite = s_rand.Next(2) == 0;

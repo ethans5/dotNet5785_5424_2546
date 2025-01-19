@@ -7,10 +7,11 @@ using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using callType = BO.callType;
 using System.Globalization;
+using DalApi;
 
 namespace BlImplementation;
 
-internal class CallImplementation : ICall
+internal class CallImplementation : BlApi.ICall
 {
     private DalApi.IDal _dal = Factory.Get;
     CultureInfo culture = CultureInfo.InvariantCulture;
@@ -20,7 +21,9 @@ internal class CallImplementation : ICall
         {
 
             Tools.ValidateCallFieldsFormat(call);
-
+            var coordinateS = await Tools.GetCoordinatesAsync(call.Address!);
+            call.Latitude = coordinateS.Latitude;
+            call.Longitude = coordinateS.Longitude;
 
 
             // 3. Conversion de BO.Call en DO.Call
@@ -28,7 +31,7 @@ internal class CallImplementation : ICall
             {
                 CallType = (DO.callType)call.CallType,
                 Description = call.Description,
-                Address = await Tools.GetAddressAsync(call.Latitude, call.Longitude),
+                Address = call.Address!,
                 Latitude = call.Latitude ?? 0,
                 Longitude = call.Longitude ?? 0,
                 CallTime = call.Created,
@@ -218,7 +221,7 @@ internal class CallImplementation : ICall
                              duration = hasAssignments && lastAssignment?.endTreatment.HasValue == true
                              ? lastAssignment.endTreatment - lastAssignment.StartTreatment
                              : null,
-                             Status = Tools.DetermineCallStatus(call.CallTime, call.MaxTime),
+                             Status = Tools.DetermineCallStatus(call.Id,call.CallTime, call.MaxTime),
                              TotalAssignmentAllocations = hasAssignments ? validAssignments.Count() : 0
                          };
 
@@ -494,8 +497,11 @@ internal class CallImplementation : ICall
                 endTreatment = ClockManager.Now
             };
 
+
+
             // Update the record in the data layer
             _dal.Assignment.Update(updatedAssignment);
+            Tools.DetermineCallStatus(assign.CallId, assign.StartTreatment, assign.endTreatment);
         }
         catch (Exception ex)
         {

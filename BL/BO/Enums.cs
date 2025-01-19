@@ -44,6 +44,7 @@ public enum Status
     InProgress,
     Closed,
     Expired,
+    OpenAlmostExpired,
     AlmostExpired
 
 }

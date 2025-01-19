@@ -193,6 +193,7 @@ internal class Program
         Console.WriteLine($"ID: {call.Id}");
         Console.WriteLine($"Call Type: {call.CallType}");
         Console.WriteLine($"Description: {call.Description ?? "N/A"}");
+        Console.WriteLine($"Address: {call.Address ?? "N/A"}");
         Console.WriteLine($"Latitude: {call.Latitude?.ToString() ?? "N/A"}");
         Console.WriteLine($"Longitude: {call.Longitude?.ToString() ?? "N/A"}");
         Console.WriteLine($"Created: {call.Created:yyyy-MM-dd HH:mm:ss}");
@@ -345,12 +346,13 @@ internal class Program
     {
         Console.WriteLine("Enter your ID:");
         int id = Convert.ToInt32(Console.ReadLine());
-        Console.WriteLine("Enter the ID of the call :");
+        Console.WriteLine("Enter the ID of the assignment :");
         int idA = Convert.ToInt32(Console.ReadLine());
         try
         {
             s_bl.Call.UpdateCallCancel(id, idA);
             Console.WriteLine("Call updated successfully");
+
         }
         catch (Exception ex)
         {
@@ -520,10 +522,8 @@ internal class Program
         }
         Console.WriteLine("please enter a descrpition");
         string description = Console.ReadLine()!;
-        Console.WriteLine("Please enter a latitude");
-        double latitude = Convert.ToDouble(Console.ReadLine());
-        Console.WriteLine("Please enter a longitude");
-        double longitude = Convert.ToDouble(Console.ReadLine());
+        Console.WriteLine("please enter the new call's address :");
+        string address = Console.ReadLine()!;
         Console.WriteLine("Please enter a max end treatment");
         DateTime maxEndTreatment = Convert.ToDateTime(Console.ReadLine());
         var call = s_bl.Call.ReadCall(id);
@@ -535,8 +535,7 @@ internal class Program
                 Id = call.Id,
                 CallType = (BO.callType)type,
                 Description = description,
-                Latitude = latitude,
-                Longitude = longitude,
+                Address = address,
                 Created = call.Created,
                 MaxEndTreatment = maxEndTreatment,
                 Status = call.Status
@@ -578,10 +577,8 @@ internal class Program
         }
         Console.WriteLine("please enter a descrpition");
         string description = Console.ReadLine()!;
-        Console.WriteLine("Please enter a latitude");
-        double latitude = Convert.ToDouble(Console.ReadLine());
-        Console.WriteLine("Please enter a longitude");
-        double longitude = Convert.ToDouble(Console.ReadLine());
+        Console.WriteLine("please enter the call's address:");
+        string address = Console.ReadLine()!;
         Console.WriteLine("Please enter a max end treatment");
         DateTime maxEndTreatment = Convert.ToDateTime(Console.ReadLine());
 
@@ -591,8 +588,7 @@ internal class Program
             {
                 CallType = (BO.callType)type,
                 Description = description,
-                Latitude = latitude,
-                Longitude = longitude,
+                Address = address,
                 Created = s_bl.Admin.GetSystemeClock(),
                 MaxEndTreatment = maxEndTreatment,
                 Status = Status.Open
@@ -994,7 +990,7 @@ internal class Program
     }
     public static void PrintCallInProgress(CallInProgress callInProgress, string indent)
     {
-
+        Console.WriteLine($"{indent}Assignment Id: {callInProgress.Id}");
         Console.WriteLine($"{indent}CallId: {callInProgress.CallId}");
         Console.WriteLine($"{indent}CallType: {callInProgress.CallType}");
         Console.WriteLine($"{indent}Description: {callInProgress.Description ?? "No description"}");
