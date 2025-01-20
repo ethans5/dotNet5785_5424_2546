@@ -1,5 +1,4 @@
-﻿
-using BlApi;
+﻿using BlApi;
 using BO;
 using DO;
 using Helpers;
@@ -39,7 +38,8 @@ internal class CallImplementation : BlApi.ICall
             };
 
             // 4. Ajout de l'appel dans la base de données via DAL
-            _dal.Call.Create(doCall);
+            _dal.Call.Create(doCall); //stage 4
+            CallManager.Observers.NotifyListUpdated();   
         }
 
         catch
@@ -162,6 +162,8 @@ internal class CallImplementation : BlApi.ICall
         boCall.Status = Status.InProgress;
 
         UpdateCall(boCall);
+        CallManager.Observers.NotifyItemUpdated(callId);
+        CallManager.Observers.NotifyListUpdated();
 
     }
 
@@ -178,6 +180,7 @@ internal class CallImplementation : BlApi.ICall
             }
 
             _dal.Call.Delete(id);
+            CallManager.Observers.NotifyListUpdated();
 
         }
         catch
@@ -449,6 +452,8 @@ internal class CallImplementation : BlApi.ICall
             };
             _dal.Call.Update(doCall);
 
+            CallManager.Observers.NotifyItemUpdated(call.Id);
+            CallManager.Observers.NotifyListUpdated();
 
 
         }
@@ -502,6 +507,9 @@ internal class CallImplementation : BlApi.ICall
             // Update the record in the data layer
             _dal.Assignment.Update(updatedAssignment);
             Tools.DetermineCallStatus(assign.CallId, assign.StartTreatment, assign.endTreatment);
+            CallManager.Observers.NotifyItemUpdated(assign.CallId);
+            CallManager.Observers.NotifyListUpdated();
+
         }
         catch (Exception ex)
         {
@@ -545,6 +553,9 @@ internal class CallImplementation : BlApi.ICall
 
             // Update the record in the data layer
             _dal.Assignment.Update(updatedAssignment);
+            CallManager.Observers.NotifyItemUpdated(assign.CallId);
+            CallManager.Observers.NotifyListUpdated();
+
         }
 
         catch (Exception ex)
@@ -553,4 +564,13 @@ internal class CallImplementation : BlApi.ICall
             throw new BlInvalidInputException("An error occurred while updating the call.", ex);
         }
     }
+
+    public void AddObserver(Action listObserver) => CallManager.Observers.AddListObserver(listObserver);
+
+     public void AddObserver(int id, Action observer) => CallManager.Observers.AddObserver(id, observer);
+
+    public void RemoveObserver(Action listObserver) => CallManager.Observers.RemoveListObserver(listObserver);
+
+    public void RemoveObserver(int id, Action observer) => CallManager.Observers.RemoveObserver(id, observer);
+
 }

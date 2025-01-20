@@ -42,7 +42,8 @@ internal class VolunteerImplementation : IVolunteer
                 distanceType = (DO.distanceType)volunteer.DistanceType
             };
 
-            _dal.Volunteer.Create(doVolunteer);
+            _dal.Volunteer.Create(doVolunteer); // stage 4
+            VolunteerManager.Observers.NotifyListUpdated();
         }
         catch (DO.DalAlreadyExistException ex)
         {
@@ -65,6 +66,7 @@ internal class VolunteerImplementation : IVolunteer
         try
         {
             _dal.Volunteer.Delete(id);
+            VolunteerManager.Observers.NotifyListUpdated();
         }
         catch (DO.DalDoesNotExistException ex)
         {
@@ -206,7 +208,20 @@ internal class VolunteerImplementation : IVolunteer
         };
 
         _dal.Volunteer.Update(doVolunteer2);
+        VolunteerManager.Observers.NotifyItemUpdated(id);
+        VolunteerManager.Observers.NotifyListUpdated();
 
     }
+
+    public void AddObserver(Action listObserver) => VolunteerManager.Observers.AddListObserver(listObserver);
+
+
+    public void AddObserver(int id, Action observer) => VolunteerManager.Observers.AddObserver(id, observer);
+    
+
+    public void RemoveObserver(Action listObserver) => VolunteerManager.Observers.RemoveListObserver(listObserver);
+
+    public void RemoveObserver(int id, Action observer) => VolunteerManager.Observers.RemoveObserver(id, observer);
+
 }
 
