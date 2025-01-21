@@ -57,7 +57,7 @@ internal class CallImplementation : BlApi.ICall
             {
                 throw new BlDoesNotExistException("Call not found");
             }
-            var boCall = Tools.parseDoToBoCall(call);
+            var boCall = CallManager.parseDoToBoCall(call);
             return boCall;
 
         }
@@ -75,7 +75,7 @@ internal class CallImplementation : BlApi.ICall
         // Convertir les objets DO en BO tout en calculant le statut
         var boCalls = doCalls.Select(doCall =>
         {
-            var boCall = Tools.parseDoToBoCall(doCall);
+            var boCall = CallManager.parseDoToBoCall(doCall);
             return boCall;
         });
 
@@ -123,7 +123,7 @@ internal class CallImplementation : BlApi.ICall
         }
 
         // Convert the call to BO entity to include the status field
-        var boCall = Tools.parseDoToBoCall(call);
+        var boCall = CallManager.parseDoToBoCall(call);
 
         // Validate the call
         if (boCall.Status != Status.Open)
@@ -370,7 +370,7 @@ internal class CallImplementation : BlApi.ICall
 
         // Lire tous les appels et les convertir en BO
         var doCalls = _dal.Call.ReadAll();
-        var boCalls = doCalls.Select(call => Tools.parseDoToBoCall(call));
+        var boCalls = doCalls.Select(call => CallManager.parseDoToBoCall(call));
 
         // Filtrer les appels ouverts
         var openCalls = boCalls.Where(call => call.Status == Status.Open);

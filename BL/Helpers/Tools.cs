@@ -35,29 +35,6 @@ internal static class Tools
         return volunteerAssignments.Count(a => a.typeOfEnd == DO.typeOfEndTreatment.Expired);
     }
 
-
-    public static BO.Volunteer parseDoToBoVolunteer(DO.Volunteer volunteer)
-    {
-        return new BO.Volunteer
-        {
-            Id = volunteer.Id,
-            Name = volunteer.Name,
-            Phone = volunteer.Phone,
-            Mail = volunteer.Email,
-            Password = volunteer.Password,
-            Address = volunteer.Address,
-            Latitude = volunteer.Latitude,
-            Longitude = volunteer.Longitude,
-            Job = (BO.jobType)volunteer.JobType,
-            IsActive = volunteer.isActive,
-            MaxDistance = volunteer.MaxDistance,
-            DistanceType = (BO.distanceType)volunteer.distanceType,
-            Totaltreated = totalTreated(volunteer.Id),
-            TotalSelfCancellation = totalSelfCancelled(volunteer.Id),
-            TotalExpired = totalExpired(volunteer.Id)
-        };
-    }
-
     public static bool IsValidEmail(string email)
     {
         // pattern of a valid email
@@ -107,9 +84,7 @@ internal static class Tools
 
 
 
-    //used for https://cane.marchejamais.com
-    //private static string ApiKey = "6761782af11a3702282865asq982b03"; // Remplacez par votre clé d'API
-    //used for https://geocode.maps.co/
+  
     private static string ApiKey = "6761782af11a3702282865asq982b03";
 
     public static async Task<(double? Latitude, double? Longitude)> GetCoordinatesAsync(string address)
@@ -168,35 +143,6 @@ internal static class Tools
             }
 
             return (null, null);
-        }
-    }
-
-
-
-
-    public static async Task<string> GetAddressAsync(double? latitude, double? longitude)
-    {
-        string url = $"https://geocode.maps.co/reverse?lat={latitude}&lon={longitude}&api_key={ApiKey}";
-
-        using (HttpClient client = new HttpClient())
-        {
-            try
-            {
-                HttpResponseMessage response = await client.GetAsync(url);
-                response.EnsureSuccessStatusCode();
-
-                string jsonResponse = await response.Content.ReadAsStringAsync();
-                JObject result = JObject.Parse(jsonResponse);
-
-                string? address = result["display_name"]?.ToString();
-
-                return address ?? "Adresse introuvable";
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Erreur lors de la récupération de l'adresse : {ex.Message}");
-                return "Erreur lors de la récupération de l'adresse";
-            }
         }
     }
 
@@ -347,36 +293,6 @@ internal static class Tools
         }).ToList();
     }
 
-
-    public static BO.Call parseDoToBoCall(DO.Call call)
-    {
-        return new BO.Call
-        {
-            Id = call.Id,
-            CallType = (BO.callType)call.CallType,
-            Description = call.Description,
-            Latitude = call.Latitude,
-            Longitude = call.Longitude,
-            Created = call.CallTime,
-            MaxEndTreatment = call.MaxTime,
-            Status = DetermineCallStatus(call.Id,call.CallTime, call.MaxTime),
-            callAssignInLists = CreateCallAssignListFromDo(call, _dal.Assignment.ReadAll(), _dal.Volunteer.ReadAll())
-        };
-    }
-
-    public static DO.Call parseBoToDoCall(BO.Call call)
-    {
-        return new DO.Call
-        {
-            Id = call.Id,
-            CallType = (DO.callType)call.CallType,
-            Description = call.Description,
-            Latitude = call.Latitude ?? 0,
-            Longitude = call.Longitude ?? 0,
-            CallTime = call.Created,
-            MaxTime = call.MaxEndTreatment
-        };
-    }
 
 
     public static double CalculateDistance(double lat1, double lon1, double lat2, double lon2)
