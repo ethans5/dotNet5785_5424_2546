@@ -150,7 +150,7 @@ internal class CallImplementation : BlApi.ICall
         {
             VolunteerId = volunteerId,
             CallId = callId,
-            StartTreatment = ClockManager.Now,
+            StartTreatment = AdminManager.Now,
             endTreatment = null,
             typeOfEnd = null
         };
@@ -218,7 +218,7 @@ internal class CallImplementation : BlApi.ICall
                              callType = (BO.callType)call.CallType,
                              startingTime = call.CallTime,
                              remainingTime = call.MaxTime.HasValue
-                                 ? call.MaxTime!.Value - ClockManager.Now
+                                 ? call.MaxTime!.Value - AdminManager.Now
                                  : null,
                              LastVolunteerName = lastVolunteer?.Name,
                              duration = hasAssignments && lastAssignment?.endTreatment.HasValue == true
@@ -499,7 +499,7 @@ internal class CallImplementation : BlApi.ICall
             var updatedAssignment = assign with
             {
                 typeOfEnd = cancellationType,
-                endTreatment = ClockManager.Now
+                endTreatment = AdminManager.Now
             };
 
 
@@ -548,7 +548,7 @@ internal class CallImplementation : BlApi.ICall
             var updatedAssignment = assign with
             {
                 typeOfEnd = DO.typeOfEndTreatment.treated,
-                endTreatment = ClockManager.Now
+                endTreatment = AdminManager.Now
             };
 
             // Update the record in the data layer

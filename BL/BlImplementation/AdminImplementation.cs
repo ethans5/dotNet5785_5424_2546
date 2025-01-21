@@ -15,13 +15,13 @@ internal class AdminImplementation : IAdmin
 
     public DateTime GetSystemeClock()
     {
-        return ClockManager.Now;
+        return AdminManager.Now;
     }
 
     public void InitializaData()
     {
         DalTest.Initialization.Do();
-        ClockManager.UpdateClock(DateTime.Now);
+        AdminManager.UpdateClock(DateTime.Now);
     }
 
     public void ResetData()
@@ -34,23 +34,23 @@ internal class AdminImplementation : IAdmin
     {
         if(time == UnitTime.Minutes)
         {
-            ClockManager.UpdateClock(ClockManager.Now.AddMinutes(1));
+            AdminManager.UpdateClock(AdminManager.Now.AddMinutes(1));
         }
         else if(time == UnitTime.Hours)
         {
-            ClockManager.UpdateClock(ClockManager.Now.AddHours(1));
+            AdminManager.UpdateClock(AdminManager.Now.AddHours(1));
         }
         else if (time == UnitTime.Days)
         {
-            ClockManager.UpdateClock(ClockManager.Now.AddDays(1));
+            AdminManager.UpdateClock(AdminManager.Now.AddDays(1));
         }
         else if (time == UnitTime.Months)
         {
-            ClockManager.UpdateClock(ClockManager.Now.AddMonths(1));
+            AdminManager.UpdateClock(AdminManager.Now.AddMonths(1));
         }
         else if (time == UnitTime.Years)
         {
-            ClockManager.UpdateClock(ClockManager.Now.AddYears(1));
+            AdminManager.UpdateClock(AdminManager.Now.AddYears(1));
         }
     }
 

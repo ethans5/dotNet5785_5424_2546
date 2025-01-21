@@ -213,7 +213,7 @@ internal static class Tools
             throw new BlInvalidInputException("The Longitude must be between -180 and 180 degree");
 
         // Vérification des dates
-        if (call.Created > ClockManager.Now)
+        if (call.Created > AdminManager.Now)
             throw new BlInvalidInputException("The creation date cannot be in the futur");
 
         if (call.MaxEndTreatment != null && call.MaxEndTreatment <= call.Created)
@@ -231,7 +231,7 @@ internal static class Tools
 
     //public static Status DetermineCallStatus(int id,DateTime created, DateTime? maxEndTreatment)
     //{
-    //    var now = ClockManager.Now;
+    //    var now = AdminManager.Now;
     //    var myAssignments = _dal.Assignment.ReadAll().Where(assign => assign.CallId == id);
 
     //    // Vérifie si maxEndTreatment est défini et compare avec la date actuelle
@@ -263,7 +263,7 @@ internal static class Tools
     //}
     public static Status DetermineCallStatus(int id, DateTime created, DateTime? maxEndTreatment)
     {
-        var now = ClockManager.Now;
+        var now = AdminManager.Now;
         var myAssignments = _dal.Assignment.ReadAll().Where(assign => assign.CallId == id);
 
         // Vérifie si l'appel n'a pas encore été assigné
@@ -399,7 +399,7 @@ internal static class Tools
     {
         if (call.MaxTime == null)
             return BO.Treatment.Intreatment;
-        else if (call.MaxTime - ClockManager.Now < _dal.Config.RiskRange)
+        else if (call.MaxTime - AdminManager.Now < _dal.Config.RiskRange)
             return BO.Treatment.Inrisktreatment;
         else
             return BO.Treatment.Intreatment;
