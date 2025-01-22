@@ -19,7 +19,7 @@ internal class CallImplementation : BlApi.ICall
         try
         {
 
-            Tools.ValidateCallFieldsFormat(call);
+            //Tools.ValidateCallFieldsFormat(call);
             var coordinateS = await Tools.GetCoordinatesAsync(call.Address!);
             call.Latitude = coordinateS.Latitude;
             call.Longitude = coordinateS.Longitude;
@@ -107,7 +107,7 @@ internal class CallImplementation : BlApi.ICall
         {
             throw new BlNotFoundException("Volunteer not found.");
         }
-        var myVolunteer = Tools.parseDoToBoVolunteer(volunteer);
+        var myVolunteer = VolunteerManager.parseDoToBoVolunteer(volunteer);
         if (myVolunteer.CallInProgress != null || _dal.Assignment.ReadAll()
         .Any(a => a.VolunteerId == volunteerId && a.endTreatment == null))
         {
@@ -395,7 +395,7 @@ internal class CallImplementation : BlApi.ICall
             Id = call.Id,
             callType = call.CallType,
             description = call.Description,
-            Address = Tools.GetAddressAsync(call.Latitude, call.Longitude).Result,
+            Address = call.Address!,
             Created = call.Created,
             MaxEndTreatment = call.MaxEndTreatment,
             Distance = Tools.CalculateDistance(
@@ -439,12 +439,16 @@ internal class CallImplementation : BlApi.ICall
                 throw new BlNotFoundException("Call not found");
             }
             Tools.ValidateCallFieldsFormat(call);
+            var coordinates=await Tools.GetCoordinatesAsync(call.Address!);
+            call.Latitude = coordinates.Latitude;
+            call.Longitude = coordinates.Longitude;
+
             DO.Call doCall = new DO.Call
             {
                 Id = call.Id,
                 CallType = (DO.callType)call.CallType,
                 Description = call.Description,
-                Address = await Tools.GetAddressAsync(call.Latitude, call.Longitude),
+                Address = call.Address!,
                 Latitude = call.Latitude ?? 0,
                 Longitude = call.Longitude ?? 0,
                 CallTime = call.Created,

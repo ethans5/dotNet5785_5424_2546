@@ -1,4 +1,5 @@
-﻿using DalApi;
+﻿using BO;
+using DalApi;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,7 @@ internal static class CallManager
 {
     private static IDal _dal = Factory.Get; //stage 4
     internal static ObserverManager Observers = new();
+
     public static BO.Call parseDoToBoCall(DO.Call call)
     {
         return new BO.Call
@@ -39,6 +41,33 @@ internal static class CallManager
             CallTime = call.Created,
             MaxTime = call.MaxEndTreatment
         };
+    }
+
+    public static void CheckCallStatuses(DateTime currentSystemTime)
+    {
+        var _calls = _dal.Call.ReadAll();
+
+        foreach (var doCall in _calls)
+        {
+            var boCall = parseDoToBoCall(doCall);
+
+            if (boCall.Status == Status.Open || boCall.Status == Status.InProgress ||
+                boCall.Status == Status.OpenAlmostExpired || boCall.Status==Status.AlmostExpired)
+            {
+                if (currentSystemTime >= boCall.MaxEndTreatment)
+                {
+                    boCall.Status = Status.Expired;
+                }
+                else if ((currentSystemTime - _dal.Config.RiskRange) < boCall.MaxEndTreatment && boCall.Status == Status.Open)
+                {
+                    boCall.Status = Status.OpenAlmostExpired;
+                }
+                else if ((currentSystemTime - _dal.Config.RiskRange) < boCall.MaxEndTreatment && boCall.Status == Status.InProgress)
+                {
+                    boCall.Status = Status.AlmostExpired;
+                }
+            }
+        }
     }
 
 }

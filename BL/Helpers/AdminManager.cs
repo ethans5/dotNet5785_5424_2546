@@ -21,15 +21,15 @@ internal static class AdminManager //stage 4
     /// <summary>
     /// Property for providing/setting current configuration variable value for any BL class that may need it
     /// </summary>
-    internal static int MaxRange
-    {
-        get => s_dal.Config.MaxRange;
-        set
-        {
-            s_dal.Config.MaxRange = value;
-            ConfigUpdatedObservers?.Invoke(); // stage 5
-        }
-    }
+    //internal static int MaxRange
+    //{
+    //    get => s_dal.Config.MaxRange;
+    //    set
+    //    {
+    //        s_dal.Config.MaxRange = value;
+    //        ConfigUpdatedObservers?.Invoke(); // stage 5
+    //    }
+    //}
 
     /// <summary>
     /// Property for providing current application's clock value for any BL class that may need it
@@ -52,17 +52,7 @@ internal static class AdminManager //stage 4
         var oldClock = s_dal.Config.Clock; //stage 4
         s_dal.Config.Clock = newClock; //stage 4
 
-        //TO_DO:
-        //Add calls here to any logic method that should be called periodically,
-        //after each clock update
-        //for example, Periodic students' updates:
-        //Go through all students to update properties that are affected by the clock update
-        //(students becomes not active after 5 years etc.)
-
-        //StudentManager.PeriodicStudentsUpdates(oldClock, newClock); //stage 4
-        //etc ...
-
-        //Calling all the observers of clock update
+        CallManager.CheckCallStatuses(newClock);
         ClockUpdatedObservers?.Invoke(); //prepared for stage 5
     }
     #endregion Stage 4

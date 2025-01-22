@@ -15,7 +15,7 @@ internal class VolunteerImplementation : IVolunteer
         {
             try
             {
-                Tools.ValidateFieldsFormat(volunteer);
+               //Tools.ValidateFieldsFormat(volunteer);
                 var coordinateS = await Tools.GetCoordinatesAsync(volunteer.Address!);
                 volunteer.Latitude = coordinateS.Latitude;
                 volunteer.Longitude = coordinateS.Longitude;
@@ -149,7 +149,7 @@ internal class VolunteerImplementation : IVolunteer
         try
         {
             DO.Volunteer doVolunteer = _dal.Volunteer.Read(id)!;
-            var volunter = Tools.parseDoToBoVolunteer(doVolunteer);
+            var volunter = VolunteerManager.parseDoToBoVolunteer(doVolunteer);
             volunter.CallInProgress = Tools.GetCallInProgress(id);
             return volunter;
         }
