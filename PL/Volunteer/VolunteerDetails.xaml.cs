@@ -22,6 +22,7 @@ namespace PL.Volunteer
     public partial class VolunteerDetails : Window
     {
         private int? _volunteerId;
+        static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
 
         public VolunteerDetails(int? volunteerId)
         {
@@ -48,11 +49,17 @@ namespace PL.Volunteer
             {
                 Id = _volunteerId ?? 0,
                 Name = NameTextBox.Text,
+                Password = PasswordBox.Password,
                 Phone = PhoneTextBox.Text,
-                Mail = MailTextBox.Text
+                Mail = MailTextBox.Text,
+                Address = AddressTextBox.Text,
+                IsActive = IsActiveCheckBox.IsChecked ?? false,
+                MaxDistance = double.Parse(MaxDistanceTextBox.Text),
+                DistanceType = (BO.distanceType)DistanceTypeComboBox.SelectedIndex,
+                Job = (BO.jobType)JobTypeComboBox.SelectedIndex
             };
 
-            SaveVolunteer(volunteer);
+            s_bl.Volunteer.CreateVolunteer(volunteer);
             MessageBox.Show("Les détails ont été sauvegardés avec succès !", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
             Close();
         }
@@ -63,19 +70,19 @@ namespace PL.Volunteer
         }
         private BO.Volunteer GetVolunteerById(int id)
         {
+            var volunteer=s_bl.Volunteer.ReadVolunteer(id);
             return new BO.Volunteer
             {
                 Id = id,
-                Name = "Jean Dupont",
-                Phone = "0102030405",
+                Name = NameTextBox.Text,
+                Password = PasswordBox.Password,
+                Phone = PhoneTextBox.Text,
                 Mail = "jean.dupont@example.com"
             };
         }
 
-        private void SaveVolunteer(BO.Volunteer volunteer)
-        {
-            // Logique de sauvegarde
-        }
+
+      
     }
 }
 

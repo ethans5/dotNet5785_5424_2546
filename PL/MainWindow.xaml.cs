@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using PL.Volunteer;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -16,9 +17,17 @@ namespace PL
     /// </summary>
     public partial class MainWindow : Window
     {
+        static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
+
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            s_bl.Admin.InitializaData();
+            new VolunteerList().Show();
         }
     }
 }

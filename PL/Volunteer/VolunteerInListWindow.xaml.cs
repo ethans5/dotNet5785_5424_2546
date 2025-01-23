@@ -11,26 +11,24 @@ namespace PL.Volunteer
     {
         private List<VolunteerInList> _volunteers;
         private List<VolunteerInList> _filteredVolunteers;
+        static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
+        private BO.Volunteer _volunteer;
 
         public VolunteerList()
         {
             InitializeComponent();
+            VolunteerDataGrid.MouseDoubleClick += VolunteerDataGrid_MouseDoubleClick;
             LoadVolunteers();
         }
 
-        private void LoadVolunteers()
+        private void LoadVolunteers(bool? isActive = null, VolunteerSortField? sortBy = null)
         {
-            // Exemple de données fictives
-            _volunteers = new List<VolunteerInList>
-            {
-                new VolunteerInList { Id = 1, Name = "Jean Dupont", IsActive = true, Totaltreated = 15, TotalSelfCancellation = 2, TotalExpired = 1, callType = callType.BuyingFood },
-                new VolunteerInList { Id = 2, Name = "Marie Curie", IsActive = false, Totaltreated = 20, TotalSelfCancellation = 3, TotalExpired = 0, callType = callType.Deliveries },
-                new VolunteerInList { Id = 3, Name = "Albert Einstein", IsActive = true, Totaltreated = 30, TotalSelfCancellation = 1, TotalExpired = 2, callType = callType.PackingClothes }
-            };
-
-            _filteredVolunteers = _volunteers;
+            // Appel de la méthode ReadAllVolunteers pour charger les données
+            var _volunteers = s_bl.Volunteer.ReadAllVolunteers(isActive, sortBy);
+            var _filteredVolunteers = _volunteers;
             VolunteerDataGrid.ItemsSource = _filteredVolunteers;
         }
+
 
         private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -41,18 +39,25 @@ namespace PL.Volunteer
             VolunteerDataGrid.ItemsSource = _filteredVolunteers;
         }
 
-        private void VolunteerDataGrid_DoubleClick(object sender, MouseButtonEventArgs e)
+        private void VolunteerDataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (VolunteerDataGrid.SelectedItem is VolunteerInList selectedVolunteer)
+            if (VolunteerDataGrid.SelectedItem is BO.VolunteerInList selectedVolunteer)
             {
+                // Ouvre VolunteerDetails avec l'ID du volontaire sélectionné
                 var detailsWindow = new VolunteerDetails(selectedVolunteer.Id);
                 detailsWindow.ShowDialog();
-                LoadVolunteers(); // Recharger la liste après modifications
+
+                // Recharge la liste après modification
+                LoadVolunteers();
             }
         }
 
+     
+
+
         private void AddVolunteer_Click(object sender, RoutedEventArgs e)
         {
+
             var detailsWindow = new VolunteerDetails(null); // Ajouter un nouveau volontaire
             detailsWindow.ShowDialog();
             LoadVolunteers(); // Recharger la liste après ajout
@@ -62,5 +67,7 @@ namespace PL.Volunteer
         {
             LoadVolunteers(); // Rafraîchir les données
         }
+
+       
     }
 }

@@ -5,7 +5,7 @@
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
@@ -19,8 +19,14 @@
                 <!-- Section Identité -->
                 <GroupBox Header="Identité" Margin="0,10" Padding="10">
                     <StackPanel>
+                        <TextBlock Text="ID :" Margin="0,5"/>
+                        <TextBox Name="IdTextBox" Margin="0,5" Height="30" IsReadOnly="True"/>
+
                         <TextBlock Text="Nom :" Margin="0,5"/>
-                        <TextBox Name="NameTextBox" Margin="0,5" Height="30" AutomationProperties.Name="NameTextBox"/>
+                        <TextBox Name="NameTextBox" Margin="0,5" Height="30"/>
+
+                        <TextBlock Text="Mot de passe :" Margin="0,5"/>
+                        <PasswordBox Name="PasswordBox" Margin="0,5" Height="30"/>
 
                         <TextBlock Text="Téléphone :" Margin="0,5"/>
                         <TextBox Name="PhoneTextBox" Margin="0,5" Height="30"/>
@@ -34,13 +40,13 @@
                 <GroupBox Header="Localisation" Margin="0,10" Padding="10">
                     <StackPanel>
                         <TextBlock Text="Adresse :" Margin="0,5"/>
-                        <TextBox Name="AddressTextBox" Margin="0,5" Height="30"/>
+                        <TextBox Name="AddressTextBox" Margin="0,5" Height="30" />
 
                         <TextBlock Text="Latitude :" Margin="0,5"/>
-                        <TextBox Name="LatitudeTextBox" Margin="0,5" Height="30"/>
+                        <TextBox Name="LatitudeTextBox" Margin="0,5" Height="30" IsReadOnly="True"/>
 
                         <TextBlock Text="Longitude :" Margin="0,5"/>
-                        <TextBox Name="LongitudeTextBox" Margin="0,5" Height="30"/>
+                        <TextBox Name="LongitudeTextBox" Margin="0,5" Height="30" IsReadOnly="True"/>
                     </StackPanel>
                 </GroupBox>
 
@@ -55,15 +61,15 @@
 
                         <TextBlock Text="Type de Distance :" Margin="0,5"/>
                         <ComboBox Name="DistanceTypeComboBox" Margin="0,5" Height="30">
-                            <ComboBoxItem Content="Km"/>
-                            <ComboBoxItem Content="Miles"/>
+                            <ComboBoxItem Content="Aérien" Tag="aerial"/>
+                            <ComboBoxItem Content="À pied" Tag="walking"/>
+                            <ComboBoxItem Content="En voiture" Tag="driving"/>
                         </ComboBox>
 
                         <TextBlock Text="Type d'Emploi :" Margin="0,5"/>
                         <ComboBox Name="JobTypeComboBox" Margin="0,5" Height="30">
-                            <ComboBoxItem Content="Temps plein"/>
-                            <ComboBoxItem Content="Temps partiel"/>
-                            <ComboBoxItem Content="Bénévole"/>
+                            <ComboBoxItem Content="Bénévole" Tag="Volunteer"/>
+                            <ComboBoxItem Content="Directeur" Tag="Director"/>
                         </ComboBox>
                     </StackPanel>
                 </GroupBox>
@@ -75,7 +81,7 @@
             <Button Content="Annuler" Width="100" Height="40" Margin="5"
                     Background="#e74c3c" Foreground="White" FontWeight="Bold" 
                     Click="CancelButton_Click"/>
-            <Button Content="Sauvegarder" Width="100" Height="40" Margin="5"
+            <Button Name="SaveUpdateButton" Content="Sauvegarder" Width="100" Height="40" Margin="5"
                     Background="#2ecc71" Foreground="White" FontWeight="Bold"
                     Click="SaveButton_Click"/>
         </StackPanel>
