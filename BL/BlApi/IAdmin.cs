@@ -10,4 +10,10 @@ public interface IAdmin
     public void UpdateRiskRange(TimeSpan range);
     public void ResetData();
     public void InitializaData();
+    void AddConfigObserver(Action configObserver);
+    void RemoveConfigObserver(Action configObserver);
+    void AddClockObserver(Action clockObserver);
+    void RemoveClockObserver(Action clockObserver);
+    
+
 }

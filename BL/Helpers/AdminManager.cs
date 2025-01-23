@@ -30,6 +30,15 @@ internal static class AdminManager //stage 4
     //        ConfigUpdatedObservers?.Invoke(); // stage 5
     //    }
     //}
+    internal static TimeSpan RiskRange
+    {
+        get => s_dal.Config.RiskRange;
+        set
+        {
+            s_dal.Config.RiskRange = value;
+            ConfigUpdatedObservers?.Invoke(); // stage 5
+        }
+    }
 
     /// <summary>
     /// Property for providing current application's clock value for any BL class that may need it
@@ -53,6 +62,7 @@ internal static class AdminManager //stage 4
         s_dal.Config.Clock = newClock; //stage 4
 
         CallManager.CheckCallStatuses(newClock);
+        AssignmentManager.UpdateEndTreatment(newClock);
         ClockUpdatedObservers?.Invoke(); //prepared for stage 5
     }
     #endregion Stage 4

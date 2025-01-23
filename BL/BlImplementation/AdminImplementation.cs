@@ -10,7 +10,7 @@ internal class AdminImplementation : IAdmin
     private DalApi.IDal _dal = Factory.Get;   
     public TimeSpan GetRiskRange()
     {
-        return _dal.Config.RiskRange;
+        return AdminManager.RiskRange;
     }
 
     public DateTime GetSystemeClock()
@@ -22,12 +22,16 @@ internal class AdminImplementation : IAdmin
     {
         DalTest.Initialization.Do();
         AdminManager.UpdateClock(DateTime.Now);
+        AdminManager.RiskRange=AdminManager.RiskRange;
+
     }
 
     public void ResetData()
     {
         
         _dal.ResetDB();
+        AdminManager.RiskRange = AdminManager.RiskRange;
+
     }
 
     public void UpdateClock(UnitTime time)
@@ -56,6 +60,17 @@ internal class AdminImplementation : IAdmin
 
     public void UpdateRiskRange(TimeSpan range)
     {
-        _dal.Config.RiskRange = range;
+       AdminManager.RiskRange = range;
     }
+    
+    public void AddClockObserver(Action clockObserver) =>
+    AdminManager.ClockUpdatedObservers += clockObserver;
+    public void RemoveClockObserver(Action clockObserver) =>
+    AdminManager.ClockUpdatedObservers -= clockObserver;
+    public void AddConfigObserver(Action configObserver) =>
+   AdminManager.ConfigUpdatedObservers += configObserver;
+    public void RemoveConfigObserver(Action configObserver) =>
+    AdminManager.ConfigUpdatedObservers -= configObserver;
+
+
 }
