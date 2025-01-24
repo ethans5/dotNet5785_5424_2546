@@ -1,0 +1,49 @@
+﻿<Window x:Class="PL.HomePage"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Page d'Accueil"
+        WindowState="Maximized"
+        WindowStyle="None"
+        Background="#FAFAFA">
+    <Grid>
+        <!-- En-tête -->
+        <Border Background="#2196F3" Height="70" VerticalAlignment="Top">
+            <TextBlock Text="Gestion du Système" FontSize="28" FontWeight="Bold" Foreground="White"
+                       VerticalAlignment="Center" HorizontalAlignment="Center" />
+        </Border>
+
+        <!-- Contenu principal -->
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+            <!-- Horloge -->
+            <Border Background="White" CornerRadius="10" Padding="20" Margin="10" Style="{StaticResource DropShadowEffect}">
+                <StackPanel HorizontalAlignment="Center">
+                    <TextBlock Name="ClockText" Text="Horloge : 00:00:00" FontSize="48" FontWeight="Bold"
+                               Foreground="#333" HorizontalAlignment="Center" />
+                    <TextBlock Text="Temps actuel du système" FontSize="16" Foreground="#666"
+                               HorizontalAlignment="Center" />
+                </StackPanel>
+            </Border>
+
+            <!-- Boutons d'horloge -->
+            <WrapPanel HorizontalAlignment="Center">
+                <Button Content="+1 Minute" Width="120" Height="40" Style="{StaticResource PrimaryButton}" Click="AddMinute_Click" />
+                <Button Content="+1 Heure" Width="120" Height="40" Style="{StaticResource PrimaryButton}" Click="AddHour_Click" />
+                <Button Content="+1 Jour" Width="120" Height="40" Style="{StaticResource PrimaryButton}" Click="AddDay_Click" />
+                <Button Content="+1 Mois" Width="120" Height="40" Style="{StaticResource PrimaryButton}" Click="AddMonth_Click" />
+                <Button Content="+1 Année" Width="120" Height="40" Style="{StaticResource PrimaryButton}" Click="AddYear_Click" />
+            </WrapPanel>
+
+            <!-- Boutons de gestion -->
+            <WrapPanel HorizontalAlignment="Center">
+                <Button Content="Gérer Volontaires" Width="200" Height="50" Style="{StaticResource SecondaryButton}" Click="ManageVolunteers_Click" />
+                <Button Content="Gérer Appels" Width="200" Height="50" Style="{StaticResource SecondaryButton}" Click="ManageCalls_Click" />
+                <Button Content="Initialiser DB" Width="200" Height="50" Style="{StaticResource SecondaryButton}" Click="InitializeDB_Click" />
+                <Button Content="Réinitialiser DB" Width="200" Height="50" Style="{StaticResource SecondaryButton}" Click="ResetDB_Click" />
+            </WrapPanel>
+        </StackPanel>
+
+        <!-- Bouton Quitter -->
+        <Button Content="Quitter" Width="100" Height="40" HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                Margin="10" Style="{StaticResource DangerButton}" Click="ExitApp_Click" />
+    </Grid>
+</Window>

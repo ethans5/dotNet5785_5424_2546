@@ -93,138 +93,234 @@ public static class Initialization
 
 
     }
+    //    private static void createVolunteer()
+    //    {
+    //        int[] ids = {
+    //    346915424, 339762723, 358113614, 340485311, 206371723,
+    //    224008181, 263061435, 339366513, 342943374, 360309029,
+    //    232357019, 353009284, 374360423, 392492475, 255402454
+    //};
+    //        string[] names =
+    //        {
+    //            "Bensimon Ruben",
+    //            "Sarfati Ethan",
+    //            "Martin Lucas",
+    //            "Dubois Léa",
+    //            "Lefevre Antoine",
+    //            "Garnier Camille",
+    //            "Morel Julien",
+    //            "Mercier Clara",
+    //            "Dupont Arthur",
+    //            "Laurent Inès",
+    //            "Simon Hugo",
+    //            "Caron Emma",
+    //            "Richard Thomas",
+    //            "Rousseau Alice",
+    //            "Girard Louis"
+    //        };
+
+    //        string[] mails =
+    //        {
+    //            "rubenaar@g.jct.ac.il",
+    //            "sarfati@g.jct.ac.il",
+    //            "martin.lucas@email.com",
+    //            "dubois.lea@email.com",
+    //            "lefevre.antoine@email.com",
+    //            "garnier.camille@email.com",
+    //            "morel.julien@email.com",
+    //            "mercier.clara@email.com",
+    //            "dupont.arthur@email.com",
+    //            "laurent.ines@email.com",
+    //            "simon.hugo@email.com",
+    //            "caron.emma@email.com",
+    //            "richard.thomas@email.com",
+    //            "rousseau.alice@email.com",
+    //            "girard.louis@email.com",
+    //        };
+
+    //        string[] phones =
+    //        {
+    //            "0534703587",
+    //            "0584741216",
+    //            "0501234567",
+    //            "0549876543",
+    //            "0522345678",
+    //            "0587654321",
+    //            "0503456789",
+    //            "0548765432",
+    //            "0524567890",
+    //            "0586781234",
+    //            "0505678901",
+    //            "0547890123",
+    //            "0526789012",
+    //            "0581234567",
+    //            "0508901234",
+    //        };
+
+    //        string[] addresses =
+    //        {
+    //            "48 King George Street, Jerusalem",
+    //            "12 Yafo Street, Jerusalem",
+    //            "25 Ben Yehuda Street, Jerusalem",
+    //            "17 Agron Street, Jerusalem",
+    //            "33 Shlomtzion Hamalka Street, Jerusalem",
+    //            "9 Hillel Street, Jerusalem",
+    //            "56 Emek Refaim Street, Jerusalem",
+    //            "22 Azza Street, Jerusalem",
+    //            "67 Beit Lehem Street, Jerusalem",
+    //            "41 Hanevi'im Street, Jerusalem",
+    //            "10 Ramban Street, Jerusalem",
+    //            "3 Nachlaot Street, Jerusalem",
+    //            "29 Rachel Imenu Street, Jerusalem",
+    //            "15 Derech Hevron Street, Jerusalem",
+    //            "78 Hapalmah Street, Jerusalem",
+    //        };
+
+    //        double[] longitudes = new double[]
+    //        {
+    //            35.2132, // Longitude pour 48 King George Street, Jerusalem
+    //            35.2137, // Longitude pour 12 Yafo Street, Jerusalem
+    //            35.2110, // Longitude pour 25 Ben Yehuda Street, Jerusalem
+    //            35.2178, // Longitude pour 17 Agron Street, Jerusalem
+    //            35.2129, // Longitude pour 33 Shlomtzion Hamalka Street, Jerusalem
+    //            35.2105, // Longitude pour 9 Hillel Street, Jerusalem
+    //            35.2098, // Longitude pour 56 Emek Refaim Street, Jerusalem
+    //            35.2154, // Longitude pour 22 Azza Street, Jerusalem
+    //            35.2123, // Longitude pour 67 Beit Lehem Street, Jerusalem
+    //            35.2091, // Longitude pour 41 Hanevi'im Street, Jerusalem
+    //            35.2187, // Longitude pour 10 Ramban Street, Jerusalem
+    //            35.2165, // Longitude pour 3 Nachlaot Street, Jerusalem
+    //            35.2140, // Longitude pour 29 Rachel Imenu Street, Jerusalem
+    //            35.2158, // Longitude pour 15 Derech Hevron Street, Jerusalem
+    //            35.2170  // Longitude pour 78 Hapalmah Street, Jerusalem
+    //        };
+
+    //        double[] latitudes = new double[]
+    //        {
+    //            31.7815, // Latitude pour 48 King George Street, Jerusalem
+    //            31.7780, // Latitude pour 12 Yafo Street, Jerusalem
+    //            31.7712, // Latitude pour 25 Ben Yehuda Street, Jerusalem
+    //            31.7819, // Latitude pour 17 Agron Street, Jerusalem
+    //            31.7797, // Latitude pour 33 Shlomtzion Hamalka Street, Jerusalem
+    //            31.7731, // Latitude pour 9 Hillel Street, Jerusalem
+    //            31.7720, // Latitude pour 56 Emek Refaim Street, Jerusalem
+    //            31.7765, // Latitude pour 22 Azza Street, Jerusalem
+    //            31.7742, // Latitude pour 67 Beit Lehem Street, Jerusalem
+    //            31.7708, // Latitude pour 41 Hanevi'im Street, Jerusalem
+    //            31.7800, // Latitude pour 10 Ramban Street, Jerusalem
+    //            31.7755, // Latitude pour 3 Nachlaot Street, Jerusalem
+    //            31.7735, // Latitude pour 29 Rachel Imenu Street, Jerusalem
+    //            31.7775, // Latitude pour 15 Derech Hevron Street, Jerusalem
+    //            31.7790  // Latitude pour 78 Hapalmah Street, Jerusalem
+    //        };
+
+
+    //        for (int i = 0; i < 15; i++)
+    //        {
+
+    //            Array values = Enum.GetValues(typeof(jobType));
+    //            jobType type = (jobType)values.GetValue(s_rand.Next(values.Length))!;
+    //            Boolean isActive = s_rand.Next(2) == 0;
+    //            values = Enum.GetValues(typeof(distanceType));
+    //            distanceType distanceType = (distanceType)values.GetValue(s_rand.Next(values.Length))!;
+    //            double? distance = s_rand.NextDouble() * 1000;
+    //            string password = "password" + s_rand.Next(1000);
+    //            s_dal!.Volunteer!.Create(new Volunteer
+    //            {
+    //                Id = ids[i],
+    //                Name = names[i],
+    //                Phone = phones[i],
+    //                Email = mails[i],
+    //                JobType = type,
+    //                isActive = isActive,
+    //                distanceType = distanceType,
+    //                MaxDistance = distance,
+    //                Password = password,
+    //                Address = addresses[i],
+    //                Latitude = latitudes[i],
+    //                Longitude = longitudes[i]
+    //            });
+    //        }
+    //    }
+
     private static void createVolunteer()
     {
         int[] ids = {
-    346915424, 339762723, 358113614, 340485311, 206371723,
-    224008181, 263061435, 339366513, 342943374, 360309029,
-    232357019, 353009284, 374360423, 392492475, 255402454
-};
+        346915424, 339762723, 358113614, 340485311, 206371723,
+        224008181, 263061435, 339366513, 342943374, 360309029,
+        232357019, 353009284, 374360423, 392492475, 255402454
+    };
+
         string[] names =
         {
-            "Bensimon Ruben",
-            "Sarfati Ethan",
-            "Martin Lucas",
-            "Dubois Léa",
-            "Lefevre Antoine",
-            "Garnier Camille",
-            "Morel Julien",
-            "Mercier Clara",
-            "Dupont Arthur",
-            "Laurent Inès",
-            "Simon Hugo",
-            "Caron Emma",
-            "Richard Thomas",
-            "Rousseau Alice",
-            "Girard Louis"
-        };
+        "Bensimon Ruben", "Sarfati Ethan", "Martin Lucas", "Dubois Léa", "Lefevre Antoine",
+        "Garnier Camille", "Morel Julien", "Mercier Clara", "Dupont Arthur", "Laurent Inès",
+        "Simon Hugo", "Caron Emma", "Richard Thomas", "Rousseau Alice", "Girard Louis"
+    };
 
         string[] mails =
         {
-            "rubenaar@g.jct.ac.il",
-            "sarfati@g.jct.ac.il",
-            "martin.lucas@email.com",
-            "dubois.lea@email.com",
-            "lefevre.antoine@email.com",
-            "garnier.camille@email.com",
-            "morel.julien@email.com",
-            "mercier.clara@email.com",
-            "dupont.arthur@email.com",
-            "laurent.ines@email.com",
-            "simon.hugo@email.com",
-            "caron.emma@email.com",
-            "richard.thomas@email.com",
-            "rousseau.alice@email.com",
-            "girard.louis@email.com",
-        };
+        "rubenaar@g.jct.ac.il", "sarfati@g.jct.ac.il", "martin.lucas@email.com", "dubois.lea@email.com",
+        "lefevre.antoine@email.com", "garnier.camille@email.com", "morel.julien@email.com",
+        "mercier.clara@email.com", "dupont.arthur@email.com", "laurent.ines@email.com",
+        "simon.hugo@email.com", "caron.emma@email.com", "richard.thomas@email.com",
+        "rousseau.alice@email.com", "girard.louis@email.com"
+    };
 
         string[] phones =
         {
-            "0534703587",
-            "0584741216",
-            "0501234567",
-            "0549876543",
-            "0522345678",
-            "0587654321",
-            "0503456789",
-            "0548765432",
-            "0524567890",
-            "0586781234",
-            "0505678901",
-            "0547890123",
-            "0526789012",
-            "0581234567",
-            "0508901234",
-        };
+        "0534703587", "0584741216", "0501234567", "0549876543", "0522345678",
+        "0587654321", "0503456789", "0548765432", "0524567890", "0586781234",
+        "0505678901", "0547890123", "0526789012", "0581234567", "0508901234"
+    };
 
         string[] addresses =
         {
-            "48 King George Street, Jerusalem",
-            "12 Yafo Street, Jerusalem",
-            "25 Ben Yehuda Street, Jerusalem",
-            "17 Agron Street, Jerusalem",
-            "33 Shlomtzion Hamalka Street, Jerusalem",
-            "9 Hillel Street, Jerusalem",
-            "56 Emek Refaim Street, Jerusalem",
-            "22 Azza Street, Jerusalem",
-            "67 Beit Lehem Street, Jerusalem",
-            "41 Hanevi'im Street, Jerusalem",
-            "10 Ramban Street, Jerusalem",
-            "3 Nachlaot Street, Jerusalem",
-            "29 Rachel Imenu Street, Jerusalem",
-            "15 Derech Hevron Street, Jerusalem",
-            "78 Hapalmah Street, Jerusalem",
-        };
+        "48 King George Street, Jerusalem", "12 Yafo Street, Jerusalem", "25 Ben Yehuda Street, Jerusalem",
+        "17 Agron Street, Jerusalem", "33 Shlomtzion Hamalka Street, Jerusalem", "9 Hillel Street, Jerusalem",
+        "56 Emek Refaim Street, Jerusalem", "22 Azza Street, Jerusalem", "67 Beit Lehem Street, Jerusalem",
+        "41 Hanevi'im Street, Jerusalem", "10 Ramban Street, Jerusalem", "3 Nachlaot Street, Jerusalem",
+        "29 Rachel Imenu Street, Jerusalem", "15 Derech Hevron Street, Jerusalem", "78 Hapalmah Street, Jerusalem"
+    };
 
-        double[] longitudes = new double[]
-        {
-            35.2132, // Longitude pour 48 King George Street, Jerusalem
-            35.2137, // Longitude pour 12 Yafo Street, Jerusalem
-            35.2110, // Longitude pour 25 Ben Yehuda Street, Jerusalem
-            35.2178, // Longitude pour 17 Agron Street, Jerusalem
-            35.2129, // Longitude pour 33 Shlomtzion Hamalka Street, Jerusalem
-            35.2105, // Longitude pour 9 Hillel Street, Jerusalem
-            35.2098, // Longitude pour 56 Emek Refaim Street, Jerusalem
-            35.2154, // Longitude pour 22 Azza Street, Jerusalem
-            35.2123, // Longitude pour 67 Beit Lehem Street, Jerusalem
-            35.2091, // Longitude pour 41 Hanevi'im Street, Jerusalem
-            35.2187, // Longitude pour 10 Ramban Street, Jerusalem
-            35.2165, // Longitude pour 3 Nachlaot Street, Jerusalem
-            35.2140, // Longitude pour 29 Rachel Imenu Street, Jerusalem
-            35.2158, // Longitude pour 15 Derech Hevron Street, Jerusalem
-            35.2170  // Longitude pour 78 Hapalmah Street, Jerusalem
-        };
+        double[] longitudes = {
+        35.2132, 35.2137, 35.2110, 35.2178, 35.2129,
+        35.2105, 35.2098, 35.2154, 35.2123, 35.2091,
+        35.2187, 35.2165, 35.2140, 35.2158, 35.2170
+    };
 
-        double[] latitudes = new double[]
-        {
-            31.7815, // Latitude pour 48 King George Street, Jerusalem
-            31.7780, // Latitude pour 12 Yafo Street, Jerusalem
-            31.7712, // Latitude pour 25 Ben Yehuda Street, Jerusalem
-            31.7819, // Latitude pour 17 Agron Street, Jerusalem
-            31.7797, // Latitude pour 33 Shlomtzion Hamalka Street, Jerusalem
-            31.7731, // Latitude pour 9 Hillel Street, Jerusalem
-            31.7720, // Latitude pour 56 Emek Refaim Street, Jerusalem
-            31.7765, // Latitude pour 22 Azza Street, Jerusalem
-            31.7742, // Latitude pour 67 Beit Lehem Street, Jerusalem
-            31.7708, // Latitude pour 41 Hanevi'im Street, Jerusalem
-            31.7800, // Latitude pour 10 Ramban Street, Jerusalem
-            31.7755, // Latitude pour 3 Nachlaot Street, Jerusalem
-            31.7735, // Latitude pour 29 Rachel Imenu Street, Jerusalem
-            31.7775, // Latitude pour 15 Derech Hevron Street, Jerusalem
-            31.7790  // Latitude pour 78 Hapalmah Street, Jerusalem
-        };
-      
+        double[] latitudes = {
+        31.7815, 31.7780, 31.7712, 31.7819, 31.7797,
+        31.7731, 31.7720, 31.7765, 31.7742, 31.7708,
+        31.7800, 31.7755, 31.7735, 31.7775, 31.7790
+    };
 
         for (int i = 0; i < 15; i++)
         {
-
             Array values = Enum.GetValues(typeof(jobType));
             jobType type = (jobType)values.GetValue(s_rand.Next(values.Length))!;
-            Boolean isActive = s_rand.Next(2) == 0;
+            bool isActive = s_rand.Next(2) == 0;
             values = Enum.GetValues(typeof(distanceType));
             distanceType distanceType = (distanceType)values.GetValue(s_rand.Next(values.Length))!;
             double? distance = s_rand.NextDouble() * 1000;
             string password = "password" + s_rand.Next(1000);
+
+            // Gestion des appels actifs
+            int activeCallId = 0; // Pas d'appel actif par défaut
+            string? callType = null; // Pas de type d'appel par défaut
+            var assign = s_dal!.Assignment.ReadAll();
+            if (isActive)/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            {
+                var callList = s_dal!.Call!.ReadAll().ToList();
+                if (callList.Any())
+                {
+                    // Si le volontaire est actif, on lui attribue un appel au hasard
+                    var activeCall = callList[s_rand.Next(callList.Count)];
+                    activeCallId = activeCall.Id;
+                    callType = activeCall.CallType.ToString(); // Définit le type d'appel
+                }
+            }
+
             s_dal!.Volunteer!.Create(new Volunteer
             {
                 Id = ids[i],
@@ -239,9 +335,12 @@ public static class Initialization
                 Address = addresses[i],
                 Latitude = latitudes[i],
                 Longitude = longitudes[i]
+              
             });
         }
     }
+
+
     private static void createAssignment()
     {
         for (int i = 0; i < 50; i++)

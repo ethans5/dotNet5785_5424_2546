@@ -39,6 +39,11 @@ namespace PL.Volunteer
                 NameTextBox.Text = volunteer.Name;
                 PhoneTextBox.Text = volunteer.Phone;
                 MailTextBox.Text = volunteer.Mail;
+                AddressTextBox.Text = volunteer.Address;
+                IsActiveCheckBox.IsChecked = volunteer.IsActive;
+                MaxDistanceTextBox.Text = volunteer.MaxDistance.ToString();
+                DistanceTypeComboBox.SelectedIndex = (int)volunteer.DistanceType;
+                JobTypeComboBox.SelectedIndex = (int)volunteer.Job;
             }
         }
 
@@ -68,21 +73,32 @@ namespace PL.Volunteer
         {
             Close();
         }
+
         private BO.Volunteer GetVolunteerById(int id)
         {
-            var volunteer=s_bl.Volunteer.ReadVolunteer(id);
+            // Appelle le service pour récupérer le volontaire à partir de l'ID
+            var volunteer = s_bl.Volunteer.ReadVolunteer(id);
+
             return new BO.Volunteer
             {
-                Id = id,
-                Name = NameTextBox.Text,
-                Password = PasswordBox.Password,
-                Phone = PhoneTextBox.Text,
-                Mail = "jean.dupont@example.com"
+                Id = volunteer.Id,
+                Name = volunteer.Name,
+                Password = volunteer.Password, // Assure-toi que l'API renvoie le mot de passe s'il est nécessaire
+                Phone = volunteer.Phone,
+                Mail = volunteer.Mail,
+                Address = volunteer.Address,
+                Latitude = volunteer.Latitude,
+                Longitude = volunteer.Longitude,
+                IsActive = volunteer.IsActive,
+                MaxDistance = volunteer.MaxDistance,
+                DistanceType = volunteer.DistanceType,
+                Job = volunteer.Job
             };
         }
 
 
-      
+
+
     }
 }
 
