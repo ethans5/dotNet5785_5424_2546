@@ -551,16 +551,16 @@ internal class Program
     private static void CreateCall()
     {
         Console.WriteLine("Enter the call type:\n" +
-            "0.Buying Food\n" +
-            "1.Buying Medicine\n" +
-            "2.Buying Clothes\n" +
-            "3.Buying Cartoons\n" +
-            "4.Packing Food\n" +
-            "5.Packing Medicine\n" +
-            "6.Packing Clothes\n" +
-            "7.Packing Cartoons in the trucks\n" +
-            "8.Deliveries\n" +
-            "9.Delivries To The Door\n"
+            "1.Buying Food\n" +
+            "2.Buying Medicine\n" +
+            "3.Buying Clothes\n" +
+            "4.Buying Cartoons\n" +
+            "5.Packing Food\n" +
+            "6.Packing Medicine\n" +
+            "7.Packing Clothes\n" +
+            "8.Packing Cartoons in the trucks\n" +
+            "9.Deliveries\n" +
+            "10.Delivries To The Door\n"
             );
         int type;
         while (true)

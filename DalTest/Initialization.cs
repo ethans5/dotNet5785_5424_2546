@@ -357,7 +357,7 @@ public static class Initialization
             {
                 DateTime callStartTime = callList.First(c => c.Id == myCallId).CallTime;
                 DateTime? maxEndTime = callList.First(c => c.Id == myCallId).MaxTime;
-                var volunteerList = s_dal.Volunteer!.ReadAll().ToList();
+                var volunteerList = s_dal.Volunteer!.ReadAll().Where(c=>c.isActive==true).ToList();
                 int volunteerId = volunteerList[s_rand.Next(volunteerList.Count)].Id;
                 DateTime time;
                 typeOfEndTreatment? typeOfEnd = null;

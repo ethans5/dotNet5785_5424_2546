@@ -13,6 +13,7 @@ public enum distanceType
 }
 public enum callType
 {
+    None,
     BuyingFood ,
     BuyingMedicine,
     BuyingClothes,

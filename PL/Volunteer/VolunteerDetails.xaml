@@ -20,13 +20,18 @@
                 <GroupBox Header="Identité" Margin="0,10" Padding="10">
                     <StackPanel>
                         <TextBlock Text="ID :" Margin="0,5"/>
-                        <TextBox Name="IdTextBox" Margin="0,5" Height="30" />
+                        <TextBox Name="IdTextBox" Margin="0,5" Height="30" IsEnabled="False" />
 
                         <TextBlock Text="Nom :" Margin="0,5"/>
                         <TextBox Name="NameTextBox" Margin="0,5" Height="30"/>
 
                         <TextBlock Text="Mot de passe :" Margin="0,5"/>
-                        <PasswordBox Name="PasswordBox" Margin="0,5" Height="30"/>
+                        <Grid>
+                            <PasswordBox Name="PasswordBox" Visibility="Visible" Margin="0,0,40,0" Height="30" />
+                            <TextBox Name="PasswordTextBox" Visibility="Collapsed" Margin="0,0,40,0" Height="30" />
+                            <Button Content="👁️" Width="30" Height="30" HorizontalAlignment="Right"
+                                    Click="TogglePasswordVisibility_Click"/>
+                        </Grid>
 
                         <TextBlock Text="Téléphone :" Margin="0,5"/>
                         <TextBox Name="PhoneTextBox" Margin="0,5" Height="30"/>

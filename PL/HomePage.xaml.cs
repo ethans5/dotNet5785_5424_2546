@@ -72,6 +72,7 @@ namespace PL
         private void InitializeDB_Click(object sender, RoutedEventArgs e)
         {
             s_bl.Admin.InitializaData();
+            UpdateClockText();
             MessageBox.Show("Base de données initialisée avec succès.", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
@@ -85,5 +86,7 @@ namespace PL
         {
             Close();
         }
+       
+
     }
 }

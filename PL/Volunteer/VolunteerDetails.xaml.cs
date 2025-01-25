@@ -36,6 +36,9 @@ namespace PL.Volunteer
             if (_volunteerId.HasValue)
             {
                 BO.Volunteer volunteer = GetVolunteerById(_volunteerId.Value);
+                IdTextBox.Text = volunteer.Id.ToString();
+                IdTextBox.IsEnabled = false;
+                PasswordBox.Password = volunteer.Password;
                 NameTextBox.Text = volunteer.Name;
                 PhoneTextBox.Text = volunteer.Phone;
                 MailTextBox.Text = volunteer.Mail;
@@ -94,6 +97,24 @@ namespace PL.Volunteer
                 DistanceType = volunteer.DistanceType,
                 Job = volunteer.Job
             };
+        }
+
+        private void TogglePasswordVisibility_Click(object sender, RoutedEventArgs e)
+        {
+            if (PasswordBox.Visibility == Visibility.Visible)
+            {
+                // Afficher le mot de passe en clair
+                PasswordTextBox.Text = PasswordBox.Password;
+                PasswordTextBox.Visibility = Visibility.Visible;
+                PasswordBox.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                // Réafficher le mot de passe flouté
+                PasswordBox.Password = PasswordTextBox.Text;
+                PasswordBox.Visibility = Visibility.Visible;
+                PasswordTextBox.Visibility = Visibility.Collapsed;
+            }
         }
 
 
