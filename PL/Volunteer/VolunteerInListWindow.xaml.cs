@@ -21,6 +21,7 @@ namespace PL.Volunteer
             LoadVolunteers();
         }
 
+     
         private void LoadVolunteers(bool? isActive = null, VolunteerSortField? sortBy = null)
         {
             // Appel de la méthode ReadAllVolunteers pour charger les données
@@ -30,14 +31,14 @@ namespace PL.Volunteer
         }
 
 
-        private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            var query = SearchTextBox.Text.ToLower();
-            _filteredVolunteers = _volunteers
-                .Where(v => v.Name.ToLower().Contains(query))
-                .ToList();
-            VolunteerDataGrid.ItemsSource = _filteredVolunteers;
-        }
+        //private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        //{
+        //    var query = SearchTextBox.Text.ToLower();
+        //    _filteredVolunteers = _volunteers
+        //        .Where(v => v.Name.ToLower().Contains(query))
+        //        .ToList();
+        //    VolunteerDataGrid.ItemsSource = _filteredVolunteers;
+        //}
 
         private void VolunteerDataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
@@ -52,15 +53,14 @@ namespace PL.Volunteer
             }
         }
 
-     
-
+  
 
         private void AddVolunteer_Click(object sender, RoutedEventArgs e)
         {
-
             var detailsWindow = new VolunteerDetails(null); // Ajouter un nouveau volontaire
             detailsWindow.ShowDialog();
             LoadVolunteers(); // Recharger la liste après ajout
+
         }
 
         private void RefreshButton_Click(object sender, RoutedEventArgs e)
