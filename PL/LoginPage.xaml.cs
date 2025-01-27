@@ -30,15 +30,15 @@ namespace PL
             // Authentification (exemple simplifié)
             if (id == "12345" && password == "admin123")
             {
-                MessageBox.Show("Connexion réussie !", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
                 HomePage homePage = new HomePage();
                 homePage.Show();
+                this.Close();
             }
             else if (id == "54321" && password == "volunteer123")
             {
-                MessageBox.Show("Connexion réussie !", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
                 Volunteer.VolunteerWindow volunteerWindow = new Volunteer.VolunteerWindow();
                 volunteerWindow.Show();
+                this.Close();
             }
             else
             {

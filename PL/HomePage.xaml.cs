@@ -7,6 +7,7 @@ using System.Windows.Threading;
 using BlApi;
 using BO;
 
+
 namespace PL
 {
     public partial class HomePage : Window
@@ -83,7 +84,9 @@ namespace PL
 
         private void ManageCalls_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Gestion des appels (non implémentée)", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+            //Call.CallInList callInList = new Call.CallInList();
+            //callInList.ShowDialog();
+            MessageBox.Show("aa");
         }
 
         private void InitializeDB_Click(object sender, RoutedEventArgs e)
