@@ -58,10 +58,10 @@
                     <TextBox Name="AddressTextBox" Margin="0,5" Height="30" Background="#ecf0f1" />
 
                     <TextBlock Text="Latitude :" FontWeight="SemiBold" Margin="0,5" Foreground="#34495e" />
-                    <TextBox Name="LatitudeTextBox" Margin="0,5" Height="30" Background="#ecf0f1" />
+                    <TextBox Name="LatitudeTextBox" Margin="0,5" Height="30" Background="#ecf0f1" IsReadOnly="True"/>
 
                     <TextBlock Text="Longitude :" FontWeight="SemiBold" Margin="0,5" Foreground="#34495e" />
-                    <TextBox Name="LongitudeTextBox" Margin="0,5" Height="30" Background="#ecf0f1" />
+                    <TextBox Name="LongitudeTextBox" Margin="0,5" Height="30" Background="#ecf0f1" IsReadOnly="True"/>
 
                     <!-- Section Statut -->
                     <TextBlock Text="Statut Actif :" FontWeight="SemiBold" Margin="0,5" Foreground="#34495e" />
@@ -86,14 +86,16 @@
 
                 <!-- Boutons d'Action -->
                 <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+                    <Button Name="DeleteButton" Content="Supprimer" Width="120" Height="40" Margin="10,0,0,0" Background="#e74c3c"
+        Foreground="White" FontWeight="Bold" Click="DeleteButton_Click"
+        Visibility="{Binding IsDeleteButtonVisible}" />
+
                     <Button Content="Annuler" Width="120" Height="40" Margin="10,0,0,0" Background="#e74c3c"
-                    Foreground="White" FontWeight="Bold" Click="CancelButton_Click" />
+                            Foreground="White" FontWeight="Bold" Click="CancelButton_Click" />
                     <Button Content="Sauvegarder" Width="120" Height="40" Margin="10,0,0,0" Background="#2ecc71"
-                    Foreground="White" FontWeight="Bold" Click="SaveButton_Click" />
+                            Foreground="White" FontWeight="Bold" Click="SaveButton_Click" />
                 </StackPanel>
             </Grid>
         </Border>
-
-
     </Grid>
 </Window>

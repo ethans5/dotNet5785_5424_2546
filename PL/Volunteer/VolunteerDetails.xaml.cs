@@ -16,14 +16,50 @@ namespace PL.Volunteer
         public VolunteerDetails(int? volunteerId = null)
         {
             InitializeComponent();
-            _volunteerId = volunteerId;
-            _isCreating = !_volunteerId.HasValue; // Mode création si pas d'ID fourni
 
-            // Si en mode création, le champ ID est activé ; sinon, il est désactivé
-            IdTextBox.IsEnabled = _isCreating;
+            if (volunteerId.HasValue)
+            {
+                // Charger les informations du volontaire existant
+                LoadVolunteerDetails(volunteerId.Value);
 
+                // Rendre le bouton "Supprimer" visible
+                IsDeleteButtonVisible = true;
+            }
+            else
+            {
+                // Nouvelle création, masquer le bouton "Supprimer"
+                IsDeleteButtonVisible = false;
+            }
+        }
 
-            LoadVolunteer();
+        private void LoadVolunteerDetails(int volunteerId)
+        {
+            try
+            {
+                var volunteer = s_bl.Volunteer.ReadVolunteer(volunteerId); // Récupérer les données du volontaire
+
+                // Charger les détails dans les contrôles
+                IdTextBox.Text = volunteer.Id.ToString();
+                NameTextBox.Text = volunteer.Name;
+                PasswordBox.Password = volunteer.Password;
+                PhoneTextBox.Text = volunteer.Phone;
+                MailTextBox.Text = volunteer.Mail;
+                AddressTextBox.Text = volunteer.Address;
+                LatitudeTextBox.Text = volunteer.Latitude.ToString();
+                LongitudeTextBox.Text = volunteer.Longitude.ToString();
+                IsActiveCheckBox.IsChecked = volunteer.IsActive;
+                MaxDistanceTextBox.Text = volunteer.MaxDistance.ToString();
+
+                // Sélectionner les options dans les ComboBox
+                DistanceTypeComboBox.SelectedValue = volunteer.DistanceType;
+                JobTypeComboBox.SelectedValue = volunteer.Job;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erreur lors du chargement des détails du volontaire : {ex.Message}",
+                                "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
+                Close();
+            }
         }
 
         private void LoadVolunteer()
@@ -97,7 +133,7 @@ namespace PL.Volunteer
                 }
                 else
                 {
-                    
+
                     MessageBox.Show("Les détails ont été sauvegardés avec succès !", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
 
@@ -151,5 +187,54 @@ namespace PL.Volunteer
             }
         }
 
+        private void DeleteButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Récupérer l'ID du volontaire
+            if (int.TryParse(IdTextBox.Text, out int volunteerId))
+            {
+                // Demander confirmation
+                var result = MessageBox.Show("Êtes-vous sûr de vouloir supprimer ce volontaire ?",
+                                             "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                if (result == MessageBoxResult.Yes)
+                {
+                    try
+                    {
+                        // Appeler la méthode de suppression dans la couche BL
+                        s_bl.Volunteer.DeleteVolunteer(volunteerId);
+
+                        MessageBox.Show("Le volontaire a été supprimé avec succès.", "Succès",
+                                        MessageBoxButton.OK, MessageBoxImage.Information);
+
+                        // Fermer la fenêtre après suppression
+                        this.Close();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Erreur lors de la suppression : {ex.Message}", "Erreur",
+                                        MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("ID du volontaire invalide.", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private bool _isDeleteButtonVisible;
+
+        public bool IsDeleteButtonVisible
+        {
+            get => _isDeleteButtonVisible;
+            set
+            {
+                _isDeleteButtonVisible = value;
+                DeleteButton.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+
     }
+
+
+
 }

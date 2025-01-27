@@ -23,12 +23,12 @@
         <!-- Définition de la grille -->
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <!-- En-tête et filtre -->
+            <!-- En-tête et filtres -->
             <RowDefinition Height="*" />
             <!-- Tableau -->
         </Grid.RowDefinitions>
 
-        <!-- En-tête avec titre et filtre -->
+        <!-- En-tête avec titre et filtres -->
         <StackPanel Grid.Row="0" Orientation="Vertical" Margin="0,0,0,20">
             <TextBlock Text="Gestion des Volontaires" FontSize="32" FontWeight="Bold" Foreground="#2c3e50"
                        HorizontalAlignment="Center" />
@@ -36,12 +36,33 @@
 
             <!-- Filtrage -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="20,0,0,20">
-                <TextBlock Text="Filtrer par : " VerticalAlignment="Center" FontSize="16" Margin="0,0,10,0" />
-                <ComboBox ItemsSource="{Binding Source={StaticResource VolunteerSortFields}}"
-                          SelectedValue="{Binding SelectedFilter, Mode=TwoWay}"
-                          Width="200" Margin="0,0,10,0" />
-                <Button Content="Appliquer" Width="100" Height="30" Background="#2980b9" Foreground="White" 
-                        Click="FilterButton_Click"/>
+                <!-- Filtrer par champ -->
+                <StackPanel Orientation="Vertical" Margin="0,0,20,0">
+                    <TextBlock Text="Filtrer par :" VerticalAlignment="Center" FontSize="16" Margin="0,0,0,5" />
+                    <ComboBox ItemsSource="{Binding Source={StaticResource VolunteerSortFields}}"
+                              SelectedValue="{Binding SelectedFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              Width="200" Margin="0,0,0,0" />
+                </StackPanel>
+
+                <!-- Statut actif/inactif -->
+                <StackPanel Orientation="Vertical" Margin="0,0,20,0">
+                    <TextBlock Text="Statut :" VerticalAlignment="Center" FontSize="16" Margin="0,0,0,5" />
+                    <ComboBox Name="StatusComboBox" Width="200" Margin="0,0,0,0"
+                              SelectedValue="{Binding SelectedStatus, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              SelectedValuePath="Tag">
+                        <ComboBoxItem Content="Tous" Tag="{x:Null}" />
+                        <ComboBoxItem Content="Actif" Tag="True" />
+                        <ComboBoxItem Content="Inactif" Tag="False" />
+                    </ComboBox>
+                </StackPanel>
+
+                <!-- Boutons d'action -->
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
+                    <Button Content="Appliquer" Width="100" Height="30" Background="#2980b9" Foreground="White" 
+                            Click="FilterButton_Click" Margin="0,0,10,0"/>
+                    <Button Content="Réinitialiser" Width="120" Height="30" Background="#e74c3c" Foreground="White"
+                            Click="ResetFilterButton_Click"/>
+                </StackPanel>
             </StackPanel>
         </StackPanel>
 
@@ -67,6 +88,17 @@
                         <DataGridTextColumn Header="Expirés" Binding="{Binding TotalExpired}" Width="*" />
                         <DataGridTextColumn Header="ID Appel Actif" Binding="{Binding IdCall}" Width="*" />
                         <DataGridTextColumn Header="Type d'Appel" Binding="{Binding callType}" Width="2*" />
+
+                        <!-- Colonne pour la suppression -->
+                        <DataGridTemplateColumn Header="Supprimer" Width="Auto">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="🗑️" Background="Transparent" Foreground="Red" BorderThickness="0"
+                                            ToolTip="Supprimer le volontaire" Click="DeleteVolunteerButton_Click"
+                                            CommandParameter="{Binding Id}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
                     </DataGrid.Columns>
                 </DataGrid>
 

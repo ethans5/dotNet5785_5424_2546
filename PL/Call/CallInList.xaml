@@ -1,0 +1,66 @@
+﻿<Window x:Class="PL.Call.CallInList" 
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+        xmlns:sys="clr-namespace:System;assembly=mscorlib" 
+        xmlns:BO="clr-namespace:BO;assembly=BL" 
+        Title="Liste des Appels" 
+        WindowState="Maximized" 
+        Background="#f8f9fa" 
+        Loaded="Window_Loaded" 
+        Closed="Window_Closed">
+
+    <Grid Margin="20">
+        <!-- Définition de la grille -->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <!-- En-tête et filtre -->
+            <RowDefinition Height="*" />
+            <!-- Tableau -->
+        </Grid.RowDefinitions>
+
+        <!-- En-tête avec titre -->
+        <StackPanel Grid.Row="0" Orientation="Vertical" Margin="0,0,0,20">
+            <TextBlock Text="Gestion des Appels" FontSize="32" FontWeight="Bold" Foreground="#2c3e50" 
+                       HorizontalAlignment="Center" />
+            <Rectangle Height="2" Fill="#3498db" Margin="100,10,100,20" HorizontalAlignment="Stretch" />
+        </StackPanel>
+
+        <!-- Tableau des Appels -->
+        <Border Grid.Row="1" Background="White" CornerRadius="10" BorderBrush="#bdc3c7" BorderThickness="1">
+            <StackPanel>
+                <!-- Sous-titre -->
+                <TextBlock Text="Liste des Appels" FontSize="20" FontWeight="SemiBold" Foreground="#7f8c8d" 
+                           Margin="20,10,0,10" />
+
+                <!-- ScrollViewer ajouté autour du DataGrid -->
+                <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="600">
+                    <!-- Tableau -->
+                    <DataGrid Name="CallDataGrid" AutoGenerateColumns="False" CanUserAddRows="False" 
+                              IsReadOnly="True" SelectionMode="Single" Margin="20" 
+                              Background="White" BorderBrush="#dcdcdc" BorderThickness="1" 
+                              RowBackground="#ecf0f1" AlternatingRowBackground="#dfe6e9" 
+                              MouseDoubleClick="CallDataGrid_MouseDoubleClick">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="ID Appel" Binding="{Binding callId}" Width="*" />
+                            <DataGridTextColumn Header="Type d'Appel" Binding="{Binding callType}" Width="2*" />
+                            <DataGridTextColumn Header="Heure de Début" Binding="{Binding startingTime}" Width="2*" />
+                            <DataGridTextColumn Header="Temps Restant" Binding="{Binding remainingTime}" Width="2*" />
+                            <DataGridTextColumn Header="Dernier Volontaire" Binding="{Binding LastVolunteerName}" Width="2*" />
+                            <DataGridTextColumn Header="Durée" Binding="{Binding duration}" Width="*" />
+                            <DataGridTextColumn Header="Statut" Binding="{Binding Status}" Width="*" />
+                            <DataGridTextColumn Header="Total Allocations" Binding="{Binding TotalAssignmentAllocations}" Width="2*" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </ScrollViewer>
+
+                <!-- Footer avec des boutons d'action -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,20,10">
+                    <Button Content="Ajouter" Width="120" Height="40" Margin="10,0,0,0" Background="#2ecc71" 
+                            Foreground="White" FontWeight="Bold" Click="AddCall_Click"/>
+                    <Button Content="Rafraîchir" Width="120" Height="40" Margin="10,0,0,0" Background="#3498db" 
+                            Foreground="White" FontWeight="Bold" Click="RefreshButton_Click"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

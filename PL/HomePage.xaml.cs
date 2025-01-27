@@ -102,18 +102,16 @@ namespace PL
 
         private void ExitApp_Click(object sender, RoutedEventArgs e)
         {
-            Close();
+            // Ouvrir la fenêtre de connexion avant de fermer la fenêtre actuelle
+            LoginPage loginPage = new LoginPage();
+            loginPage.Show();
+
+            // Fermer la fenêtre actuelle
+            this.Close();
         }
 
-        private void IncrementValue_Click(object sender, RoutedEventArgs e)
-        {
-            ConfigValue++;
-        }
 
-        private void DecrementValue_Click(object sender, RoutedEventArgs e)
-        {
-            ConfigValue--;
-        }
+
 
         private void UpdateConfigValue_Click(object sender, RoutedEventArgs e)
         {

@@ -15,10 +15,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Call\**" />
-    <EmbeddedResource Remove="Call\**" />
-    <None Remove="Call\**" />
-    <Page Remove="Call\**" />
+    <PackageReference Include="MailKit" Version="4.10.0" />
+    <PackageReference Include="MimeKit" Version="4.10.0" />
   </ItemGroup>
 
   <ItemGroup>
