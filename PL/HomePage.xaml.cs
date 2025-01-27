@@ -90,6 +90,7 @@ namespace PL
         {
             s_bl.Admin.InitializaData();
             UpdateClockText();
+            riskTxtBox.Text = s_bl.Admin.GetRiskRange().TotalMinutes.ToString();
             MessageBox.Show("Base de données initialisée avec succès.", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 

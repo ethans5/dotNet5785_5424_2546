@@ -1,29 +1,54 @@
 ﻿<Window x:Class="PL.Volunteer.VolunteerList"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:BO="clr-namespace:BO;assembly=BL"
         Title="Liste des Volontaires"
         WindowState="Maximized"
-        Background="#f8f9fa">
+        Background="#f8f9fa"
+        Loaded="Window_Loaded"
+        Closed="Window_Closed">
+
+    <Window.Resources>
+        <!-- Définition locale de la ressource pour l'enum VolunteerSortField -->
+        <ObjectDataProvider x:Key="VolunteerSortFields" MethodName="GetValues"
+                            ObjectType="{x:Type sys:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="BO:VolunteerSortField" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+    </Window.Resources>
+
     <Grid Margin="20">
         <!-- Définition de la grille -->
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <!-- En-tête -->
+            <!-- En-tête et filtre -->
             <RowDefinition Height="*" />
             <!-- Tableau -->
         </Grid.RowDefinitions>
 
-        <!-- En-tête avec un titre et une barre décorative -->
-        <StackPanel Grid.Row="0" Margin="0,0,0,20">
+        <!-- En-tête avec titre et filtre -->
+        <StackPanel Grid.Row="0" Orientation="Vertical" Margin="0,0,0,20">
             <TextBlock Text="Gestion des Volontaires" FontSize="32" FontWeight="Bold" Foreground="#2c3e50"
                        HorizontalAlignment="Center" />
-            <Rectangle Height="2" Fill="#3498db" Margin="100,10,100,0" HorizontalAlignment="Stretch" />
+            <Rectangle Height="2" Fill="#3498db" Margin="100,10,100,20" HorizontalAlignment="Stretch" />
+
+            <!-- Filtrage -->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="20,0,0,20">
+                <TextBlock Text="Filtrer par : " VerticalAlignment="Center" FontSize="16" Margin="0,0,10,0" />
+                <ComboBox ItemsSource="{Binding Source={StaticResource VolunteerSortFields}}"
+                          SelectedValue="{Binding SelectedFilter, Mode=TwoWay}"
+                          Width="200" Margin="0,0,10,0" />
+                <Button Content="Appliquer" Width="100" Height="30" Background="#2980b9" Foreground="White" 
+                        Click="FilterButton_Click"/>
+            </StackPanel>
         </StackPanel>
 
         <!-- Tableau des Volontaires -->
         <Border Grid.Row="1" Background="White" CornerRadius="10" BorderBrush="#bdc3c7" BorderThickness="1">
             <StackPanel>
-                <!-- Sous-titre au-dessus du tableau -->
+                <!-- Sous-titre -->
                 <TextBlock Text="Liste des Volontaires" FontSize="20" FontWeight="SemiBold" Foreground="#7f8c8d"
                            Margin="20,10,0,10" />
 
@@ -49,7 +74,7 @@
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,20,10">
                     <Button Content="Ajouter" Width="120" Height="40" Margin="10,0,0,0" Background="#2ecc71"
                             Foreground="White" FontWeight="Bold" Click="AddVolunteer_Click"/>
-                    <Button Content="Rafraîchir" Width="120" Height="40"  Margin="10,0,0,0" Background="#3498db"
+                    <Button Content="Rafraîchir" Width="120" Height="40" Margin="10,0,0,0" Background="#3498db"
                             Foreground="White" FontWeight="Bold" Click="RefreshButton_Click"/>
                 </StackPanel>
             </StackPanel>
