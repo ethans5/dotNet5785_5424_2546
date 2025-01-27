@@ -57,11 +57,9 @@ namespace PL.Call
         }
         private void AddCall_Click(object sender, RoutedEventArgs e)
         {
-            //{
-            //    CallDetails window = new CallDetails();
-            //    window.ShowDialog();
-            //    LoadCalls();
-            MessageBox.Show("Fonctionnalité non implémentée", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
+           CallDetails window = new CallDetails();
+           window.ShowDialog();
+           LoadCalls();
         }
         private void RefreshButton_Click(object sender, RoutedEventArgs e)
         {
@@ -70,12 +68,11 @@ namespace PL.Call
         }
         private void CallDataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            //if (CallDataGrid.SelectedItem is BO.CallInList call)
-            //{
-            //    CallDetails window = new CallDetails(call.Id);
-            //    window.ShowDialog();
-            //}
-            MessageBox.Show("Fonctionnalité non implémentée", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
+            if (CallDataGrid.SelectedItem is BO.CallInList call)
+            {
+                CallDetails window = new CallDetails();
+                window.ShowDialog();
+            }
         }
 
     }

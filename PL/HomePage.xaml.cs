@@ -84,9 +84,8 @@ namespace PL
 
         private void ManageCalls_Click(object sender, RoutedEventArgs e)
         {
-            //Call.CallInList callInList = new Call.CallInList();
-            //callInList.ShowDialog();
-            MessageBox.Show("aa");
+            Call.CallInList callInList = new Call.CallInList();
+            callInList.ShowDialog();
         }
 
         private void InitializeDB_Click(object sender, RoutedEventArgs e)

@@ -28,9 +28,23 @@ namespace PL.Call
         }
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            // Perform validation if necessary
-            DialogResult = true;
-            Close();
+           try
+           {
+                var call = new BO.Call
+                {
+                    Description = DescriptionTextBox.Text,
+                    Address = AddressTextBox.Text,
+                    //MaxEndTreatment = MaxEndTreatmentDatePicker.Text,
+                    //Status = StatusComboBox.Text,
+                    //CallType = CallTypeComboBox.ItemsSource= Enum.GetValues(typeof(callType)),
+                    //endtime
+                    //status 
+                    //type dappelle
+
+                };
+
+            }
+            catch { }
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
