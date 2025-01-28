@@ -15,10 +15,10 @@ internal class VolunteerImplementation : IVolunteer
         {
             try
             {
-               //Tools.ValidateFieldsFormat(volunteer);
-                var coordinateS = await Tools.GetCoordinatesAsync(volunteer.Address!);
-                volunteer.Latitude = coordinateS.Latitude;
-                volunteer.Longitude = coordinateS.Longitude;
+                Tools.ValidateFieldsFormat(volunteer);
+                var coordinates = await Tools.GetCoordinatesAsync(volunteer.Address!);
+                volunteer.Latitude = coordinates.Latitude;
+                volunteer.Longitude = coordinates.Longitude;
             }
             catch (BO.BlInvalidInputException ex)
             {
@@ -149,7 +149,7 @@ internal class VolunteerImplementation : IVolunteer
         try
         {
             DO.Volunteer doVolunteer = _dal.Volunteer.Read(id)!;
-            var volunter = VolunteerManager.parseDoToBoVolunteer(doVolunteer);
+            var volunter = VolunteerManager.ParseDoToBoVolunteer(doVolunteer);
             volunter.CallInProgress = Tools.GetCallInProgress(id);
             return volunter;
         }
