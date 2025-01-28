@@ -3,6 +3,7 @@ using System.Windows;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using MimeKit;
+using PL.Volunteer;
 
 namespace PL
 {
@@ -13,7 +14,7 @@ namespace PL
         public LoginPage()
         {
             InitializeComponent();
-            s_bl.Admin.InitializaData();
+         
         }
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
@@ -27,23 +28,28 @@ namespace PL
                 return;
             }
 
-            // Authentification (exemple simplifié)
-            if (id == "12345" && password == "admin123")
+            var volunteer = s_bl.Volunteer.ReadVolunteer(int.Parse(id));
+            string myPassword = volunteer.Password!;
+            if (myPassword == password)
             {
-                HomePage homePage = new HomePage();
-                homePage.Show();
-                this.Close();
-            }
-            else if (id == "54321" && password == "volunteer123")
-            {
-                Volunteer.VolunteerWindow volunteerWindow = new Volunteer.VolunteerWindow();
-                volunteerWindow.Show();
-                this.Close();
+                if (volunteer.Job == BO.jobType.Director)
+                {
+                    var adminWindow = new HomePage();
+                    adminWindow.Show();
+                }
+                else
+                {
+                    var volunteerWindow = new VolunteerWindow(volunteer);
+                    volunteerWindow.Show();
+                }
+                Close();
             }
             else
             {
                 MessageBox.Show("ID ou mot de passe incorrect.", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+
+
         }
 
         private void ForgotPasswordButton_Click(object sender, RoutedEventArgs e)

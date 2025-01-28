@@ -19,7 +19,7 @@ internal class CallImplementation : BlApi.ICall
         try
         {
 
-            //Tools.ValidateCallFieldsFormat(call);
+            Tools.ValidateCallFieldsFormat(call);
             var coordinateS = await Tools.GetCoordinatesAsync(call.Address!);
             call.Latitude = coordinateS.Latitude;
             call.Longitude = coordinateS.Longitude;

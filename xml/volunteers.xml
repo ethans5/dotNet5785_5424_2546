@@ -1,2 +1,198 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Volunteers />
+<Volunteers>
+  <Volunteer Id="346915424">
+    <Name>Bensimon Ruben</Name>
+    <Phone>0534703587</Phone>
+    <Email>rubenaar@g.jct.ac.il</Email>
+    <JobType>Director</JobType>
+    <isActive>true</isActive>
+    <DistanceType>aerial</DistanceType>
+    <MaxDistance>353.2879374973419</MaxDistance>
+    <Password>password695</Password>
+    <Address>48 King George Street, Jerusalem</Address>
+    <Latitude>31.7815</Latitude>
+    <Longitude>35.2132</Longitude>
+  </Volunteer>
+  <Volunteer Id="339762723">
+    <Name>Sarfati Ethan</Name>
+    <Phone>0584741216</Phone>
+    <Email>sarfati@g.jct.ac.il</Email>
+    <JobType>Volunteer</JobType>
+    <isActive>true</isActive>
+    <DistanceType>driving</DistanceType>
+    <MaxDistance>841.4640368077676</MaxDistance>
+    <Password>password47</Password>
+    <Address>12 Yafo Street, Jerusalem</Address>
+    <Latitude>31.778</Latitude>
+    <Longitude>35.2137</Longitude>
+  </Volunteer>
+  <Volunteer Id="358113614">
+    <Name>Martin Lucas</Name>
+    <Phone>0501234567</Phone>
+    <Email>martin.lucas@email.com</Email>
+    <JobType>Volunteer</JobType>
+    <isActive>true</isActive>
+    <DistanceType>walking</DistanceType>
+    <MaxDistance>326.69410293140146</MaxDistance>
+    <Password>password139</Password>
+    <Address>25 Ben Yehuda Street, Jerusalem</Address>
+    <Latitude>31.7712</Latitude>
+    <Longitude>35.211</Longitude>
+  </Volunteer>
+  <Volunteer Id="340485311">
+    <Name>Dubois Léa</Name>
+    <Phone>0549876543</Phone>
+    <Email>dubois.lea@email.com</Email>
+    <JobType>Volunteer</JobType>
+    <isActive>true</isActive>
+    <DistanceType>aerial</DistanceType>
+    <MaxDistance>267.0788037295104</MaxDistance>
+    <Password>password718</Password>
+    <Address>17 Agron Street, Jerusalem</Address>
+    <Latitude>31.7819</Latitude>
+    <Longitude>35.2178</Longitude>
+  </Volunteer>
+  <Volunteer Id="206371723">
+    <Name>Lefevre Antoine</Name>
+    <Phone>0522345678</Phone>
+    <Email>lefevre.antoine@email.com</Email>
+    <JobType>Volunteer</JobType>
+    <isActive>true</isActive>
+    <DistanceType>driving</DistanceType>
+    <MaxDistance>157.56191914572238</MaxDistance>
+    <Password>password154</Password>
+    <Address>33 Shlomtzion Hamalka Street, Jerusalem</Address>
+    <Latitude>31.7797</Latitude>
+    <Longitude>35.2129</Longitude>
+  </Volunteer>
+  <Volunteer Id="224008181">
+    <Name>Garnier Camille</Name>
+    <Phone>0587654321</Phone>
+    <Email>garnier.camille@email.com</Email>
+    <JobType>Volunteer</JobType>
+    <isActive>false</isActive>
+    <DistanceType>walking</DistanceType>
+    <MaxDistance>423.3225041087866</MaxDistance>
+    <Password>password692</Password>
+    <Address>9 Hillel Street, Jerusalem</Address>
+    <Latitude>31.7731</Latitude>
+    <Longitude>35.2105</Longitude>
+  </Volunteer>
+  <Volunteer Id="263061435">
+    <Name>Morel Julien</Name>
+    <Phone>0503456789</Phone>
+    <Email>morel.julien@email.com</Email>
+    <JobType>Volunteer</JobType>
+    <isActive>false</isActive>
+    <DistanceType>driving</DistanceType>
+    <MaxDistance>313.35306035127854</MaxDistance>
+    <Password>password547</Password>
+    <Address>56 Emek Refaim Street, Jerusalem</Address>
+    <Latitude>31.772</Latitude>
+    <Longitude>35.2098</Longitude>
+  </Volunteer>
+  <Volunteer Id="339366513">
+    <Name>Mercier Clara</Name>
+    <Phone>0548765432</Phone>
+    <Email>mercier.clara@email.com</Email>
+    <JobType>Volunteer</JobType>
+    <isActive>false</isActive>
+    <DistanceType>aerial</DistanceType>
+    <MaxDistance>889.8216309929568</MaxDistance>
+    <Password>password532</Password>
+    <Address>22 Azza Street, Jerusalem</Address>
+    <Latitude>31.7765</Latitude>
+    <Longitude>35.2154</Longitude>
+  </Volunteer>
+  <Volunteer Id="342943374">
+    <Name>Dupont Arthur</Name>
+    <Phone>0524567890</Phone>
+    <Email>dupont.arthur@email.com</Email>
+    <JobType>Volunteer</JobType>
+    <isActive>false</isActive>
+    <DistanceType>driving</DistanceType>
+    <MaxDistance>564.1414984748442</MaxDistance>
+    <Password>password705</Password>
+    <Address>67 Beit Lehem Street, Jerusalem</Address>
+    <Latitude>31.7742</Latitude>
+    <Longitude>35.2123</Longitude>
+  </Volunteer>
+  <Volunteer Id="360309029">
+    <Name>Laurent Inès</Name>
+    <Phone>0586781234</Phone>
+    <Email>laurent.ines@email.com</Email>
+    <JobType>Director</JobType>
+    <isActive>false</isActive>
+    <DistanceType>aerial</DistanceType>
+    <MaxDistance>233.10904775442177</MaxDistance>
+    <Password>password126</Password>
+    <Address>41 Hanevi'im Street, Jerusalem</Address>
+    <Latitude>31.7708</Latitude>
+    <Longitude>35.2091</Longitude>
+  </Volunteer>
+  <Volunteer Id="232357019">
+    <Name>Simon Hugo</Name>
+    <Phone>0505678901</Phone>
+    <Email>simon.hugo@email.com</Email>
+    <JobType>Volunteer</JobType>
+    <isActive>false</isActive>
+    <DistanceType>aerial</DistanceType>
+    <MaxDistance>353.11227660377756</MaxDistance>
+    <Password>password528</Password>
+    <Address>10 Ramban Street, Jerusalem</Address>
+    <Latitude>31.78</Latitude>
+    <Longitude>35.2187</Longitude>
+  </Volunteer>
+  <Volunteer Id="353009284">
+    <Name>Caron Emma</Name>
+    <Phone>0547890123</Phone>
+    <Email>caron.emma@email.com</Email>
+    <JobType>Director</JobType>
+    <isActive>false</isActive>
+    <DistanceType>aerial</DistanceType>
+    <MaxDistance>497.33202931621554</MaxDistance>
+    <Password>password224</Password>
+    <Address>3 Nachlaot Street, Jerusalem</Address>
+    <Latitude>31.7755</Latitude>
+    <Longitude>35.2165</Longitude>
+  </Volunteer>
+  <Volunteer Id="374360423">
+    <Name>Richard Thomas</Name>
+    <Phone>0526789012</Phone>
+    <Email>richard.thomas@email.com</Email>
+    <JobType>Volunteer</JobType>
+    <isActive>false</isActive>
+    <DistanceType>driving</DistanceType>
+    <MaxDistance>880.8474167638683</MaxDistance>
+    <Password>password508</Password>
+    <Address>29 Rachel Imenu Street, Jerusalem</Address>
+    <Latitude>31.7735</Latitude>
+    <Longitude>35.214</Longitude>
+  </Volunteer>
+  <Volunteer Id="392492475">
+    <Name>Rousseau Alice</Name>
+    <Phone>0581234567</Phone>
+    <Email>rousseau.alice@email.com</Email>
+    <JobType>Director</JobType>
+    <isActive>true</isActive>
+    <DistanceType>driving</DistanceType>
+    <MaxDistance>393.6154459778146</MaxDistance>
+    <Password>password100</Password>
+    <Address>15 Derech Hevron Street, Jerusalem</Address>
+    <Latitude>31.7775</Latitude>
+    <Longitude>35.2158</Longitude>
+  </Volunteer>
+  <Volunteer Id="255402454">
+    <Name>Girard Louis</Name>
+    <Phone>0508901234</Phone>
+    <Email>girard.louis@email.com</Email>
+    <JobType>Volunteer</JobType>
+    <isActive>true</isActive>
+    <DistanceType>walking</DistanceType>
+    <MaxDistance>88.21688149943962</MaxDistance>
+    <Password>password757</Password>
+    <Address>78 Hapalmah Street, Jerusalem</Address>
+    <Latitude>31.779</Latitude>
+    <Longitude>35.217</Longitude>
+  </Volunteer>
+</Volunteers>
