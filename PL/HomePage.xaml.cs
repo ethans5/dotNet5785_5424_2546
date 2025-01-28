@@ -1,50 +1,36 @@
-﻿using System;
+﻿// HomePage.xaml.cs
+using System;
 using System.Text.RegularExpressions;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
 using BlApi;
 using BO;
-
 
 namespace PL
 {
     public partial class HomePage : Window
     {
         private readonly IBl s_bl = BlApi.Factory.Get();
+        private int LoggedInId;
         public int ConfigValue { get; set; } = 0;
+        public HomePage(int loggedInId)
+        {
+            InitializeComponent();
+            LoggedInId = loggedInId;
 
-        // Constructeur avec injection de IAdmin
-        public HomePage(IAdmin admin)
-        {
-            InitializeComponent();
-            DispatcherTimer timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromSeconds(1); // Mettre à jour l'horloge toutes les secondes
-            //s_bl.Admin.AddClockObserver(UpdateClockText);
-            //s_bl.Admin.UpdateClock(UnitTime.seconds);
-        }
-        public HomePage()
-        {
-            InitializeComponent();
-            DispatcherTimer timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromSeconds(1); // Mettre à jour l'horloge toutes les secondes
-            //s_bl.Admin.AddClockObserver(UpdateClockText);
+            DispatcherTimer timer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(1)
+            };
             timer.Tick += (sender, e) => UpdateClockText();
+            timer.Start();
         }
 
-
-
-
-        // Met à jour l'affichage de l'horloge
         private void UpdateClockText()
         {
-            
-            ClockText.Text = $"Horloge :" + s_bl.Admin.GetSystemeClock().ToString("dd/MM/yyyy HH:mm:ss");
-            
-
+            ClockText.Text = $"Horloge : {s_bl.Admin.GetSystemeClock():dd/MM/yyyy HH:mm:ss}";
         }
-
         // Gestion des événements de l'horloge
         private void AddMinute_Click(object sender, RoutedEventArgs e)
         {
@@ -75,11 +61,9 @@ namespace PL
             s_bl.Admin.UpdateClock(UnitTime.Years);
             UpdateClockText();
         }
-
-        // Gestion des autres boutons
         private void ManageVolunteers_Click(object sender, RoutedEventArgs e)
         {
-            new Volunteer.VolunteerList().ShowDialog();
+            new Volunteer.VolunteerList(LoggedInId).ShowDialog();
         }
 
         private void ManageCalls_Click(object sender, RoutedEventArgs e)
@@ -87,7 +71,6 @@ namespace PL
             Call.CallInList callInList = new Call.CallInList();
             callInList.ShowDialog();
         }
-
         private void InitializeDB_Click(object sender, RoutedEventArgs e)
         {
             s_bl.Admin.InitializaData();
@@ -101,19 +84,12 @@ namespace PL
             s_bl.Admin.ResetData();
             MessageBox.Show("Base de données réinitialisée avec succès.", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
         }
-
         private void ExitApp_Click(object sender, RoutedEventArgs e)
         {
-            // Ouvrir la fenêtre de connexion avant de fermer la fenêtre actuelle
             LoginPage loginPage = new LoginPage();
             loginPage.Show();
-
-            // Fermer la fenêtre actuelle
-            this.Close();
+            Close();
         }
-
-
-
 
         private void UpdateConfigValue_Click(object sender, RoutedEventArgs e)
         {
@@ -142,9 +118,5 @@ namespace PL
         {
             e.Handled = !Regex.IsMatch(e.Text, "^[0-9]+$");
         }
-
-
     }
 }
-
-

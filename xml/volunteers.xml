@@ -5,10 +5,10 @@
     <Phone>0534703587</Phone>
     <Email>rubenaar@g.jct.ac.il</Email>
     <JobType>Director</JobType>
-    <isActive>true</isActive>
+    <isActive>false</isActive>
     <DistanceType>aerial</DistanceType>
-    <MaxDistance>353.2879374973419</MaxDistance>
-    <Password>password695</Password>
+    <MaxDistance>680.8373644983634</MaxDistance>
+    <Password>azertyuiop</Password>
     <Address>48 King George Street, Jerusalem</Address>
     <Latitude>31.7815</Latitude>
     <Longitude>35.2132</Longitude>
@@ -17,11 +17,11 @@
     <Name>Sarfati Ethan</Name>
     <Phone>0584741216</Phone>
     <Email>sarfati@g.jct.ac.il</Email>
-    <JobType>Volunteer</JobType>
+    <JobType>Director</JobType>
     <isActive>true</isActive>
     <DistanceType>driving</DistanceType>
-    <MaxDistance>841.4640368077676</MaxDistance>
-    <Password>password47</Password>
+    <MaxDistance>661.0154272119156</MaxDistance>
+    <Password>password605</Password>
     <Address>12 Yafo Street, Jerusalem</Address>
     <Latitude>31.778</Latitude>
     <Longitude>35.2137</Longitude>
@@ -31,10 +31,10 @@
     <Phone>0501234567</Phone>
     <Email>martin.lucas@email.com</Email>
     <JobType>Volunteer</JobType>
-    <isActive>true</isActive>
-    <DistanceType>walking</DistanceType>
-    <MaxDistance>326.69410293140146</MaxDistance>
-    <Password>password139</Password>
+    <isActive>false</isActive>
+    <DistanceType>driving</DistanceType>
+    <MaxDistance>981.7282228636919</MaxDistance>
+    <Password>password121</Password>
     <Address>25 Ben Yehuda Street, Jerusalem</Address>
     <Latitude>31.7712</Latitude>
     <Longitude>35.211</Longitude>
@@ -43,11 +43,11 @@
     <Name>Dubois Léa</Name>
     <Phone>0549876543</Phone>
     <Email>dubois.lea@email.com</Email>
-    <JobType>Volunteer</JobType>
+    <JobType>Director</JobType>
     <isActive>true</isActive>
     <DistanceType>aerial</DistanceType>
-    <MaxDistance>267.0788037295104</MaxDistance>
-    <Password>password718</Password>
+    <MaxDistance>458.0410853698825</MaxDistance>
+    <Password>password71</Password>
     <Address>17 Agron Street, Jerusalem</Address>
     <Latitude>31.7819</Latitude>
     <Longitude>35.2178</Longitude>
@@ -58,9 +58,9 @@
     <Email>lefevre.antoine@email.com</Email>
     <JobType>Volunteer</JobType>
     <isActive>true</isActive>
-    <DistanceType>driving</DistanceType>
-    <MaxDistance>157.56191914572238</MaxDistance>
-    <Password>password154</Password>
+    <DistanceType>walking</DistanceType>
+    <MaxDistance>816.3658054582532</MaxDistance>
+    <Password>password866</Password>
     <Address>33 Shlomtzion Hamalka Street, Jerusalem</Address>
     <Latitude>31.7797</Latitude>
     <Longitude>35.2129</Longitude>
@@ -69,11 +69,11 @@
     <Name>Garnier Camille</Name>
     <Phone>0587654321</Phone>
     <Email>garnier.camille@email.com</Email>
-    <JobType>Volunteer</JobType>
+    <JobType>Director</JobType>
     <isActive>false</isActive>
-    <DistanceType>walking</DistanceType>
-    <MaxDistance>423.3225041087866</MaxDistance>
-    <Password>password692</Password>
+    <DistanceType>aerial</DistanceType>
+    <MaxDistance>71.33046976799761</MaxDistance>
+    <Password>password740</Password>
     <Address>9 Hillel Street, Jerusalem</Address>
     <Latitude>31.7731</Latitude>
     <Longitude>35.2105</Longitude>
@@ -82,11 +82,11 @@
     <Name>Morel Julien</Name>
     <Phone>0503456789</Phone>
     <Email>morel.julien@email.com</Email>
-    <JobType>Volunteer</JobType>
+    <JobType>Director</JobType>
     <isActive>false</isActive>
     <DistanceType>driving</DistanceType>
-    <MaxDistance>313.35306035127854</MaxDistance>
-    <Password>password547</Password>
+    <MaxDistance>228.2080113531122</MaxDistance>
+    <Password>password858</Password>
     <Address>56 Emek Refaim Street, Jerusalem</Address>
     <Latitude>31.772</Latitude>
     <Longitude>35.2098</Longitude>
@@ -97,9 +97,9 @@
     <Email>mercier.clara@email.com</Email>
     <JobType>Volunteer</JobType>
     <isActive>false</isActive>
-    <DistanceType>aerial</DistanceType>
-    <MaxDistance>889.8216309929568</MaxDistance>
-    <Password>password532</Password>
+    <DistanceType>driving</DistanceType>
+    <MaxDistance>93.76098292675361</MaxDistance>
+    <Password>password267</Password>
     <Address>22 Azza Street, Jerusalem</Address>
     <Latitude>31.7765</Latitude>
     <Longitude>35.2154</Longitude>
@@ -109,10 +109,10 @@
     <Phone>0524567890</Phone>
     <Email>dupont.arthur@email.com</Email>
     <JobType>Volunteer</JobType>
-    <isActive>false</isActive>
+    <isActive>true</isActive>
     <DistanceType>driving</DistanceType>
-    <MaxDistance>564.1414984748442</MaxDistance>
-    <Password>password705</Password>
+    <MaxDistance>241.71933966483405</MaxDistance>
+    <Password>password638</Password>
     <Address>67 Beit Lehem Street, Jerusalem</Address>
     <Latitude>31.7742</Latitude>
     <Longitude>35.2123</Longitude>
@@ -123,9 +123,9 @@
     <Email>laurent.ines@email.com</Email>
     <JobType>Director</JobType>
     <isActive>false</isActive>
-    <DistanceType>aerial</DistanceType>
-    <MaxDistance>233.10904775442177</MaxDistance>
-    <Password>password126</Password>
+    <DistanceType>driving</DistanceType>
+    <MaxDistance>839.2264037647844</MaxDistance>
+    <Password>password214</Password>
     <Address>41 Hanevi'im Street, Jerusalem</Address>
     <Latitude>31.7708</Latitude>
     <Longitude>35.2091</Longitude>
@@ -134,11 +134,11 @@
     <Name>Simon Hugo</Name>
     <Phone>0505678901</Phone>
     <Email>simon.hugo@email.com</Email>
-    <JobType>Volunteer</JobType>
+    <JobType>Director</JobType>
     <isActive>false</isActive>
-    <DistanceType>aerial</DistanceType>
-    <MaxDistance>353.11227660377756</MaxDistance>
-    <Password>password528</Password>
+    <DistanceType>driving</DistanceType>
+    <MaxDistance>783.9369460636085</MaxDistance>
+    <Password>password253</Password>
     <Address>10 Ramban Street, Jerusalem</Address>
     <Latitude>31.78</Latitude>
     <Longitude>35.2187</Longitude>
@@ -148,10 +148,10 @@
     <Phone>0547890123</Phone>
     <Email>caron.emma@email.com</Email>
     <JobType>Director</JobType>
-    <isActive>false</isActive>
-    <DistanceType>aerial</DistanceType>
-    <MaxDistance>497.33202931621554</MaxDistance>
-    <Password>password224</Password>
+    <isActive>true</isActive>
+    <DistanceType>walking</DistanceType>
+    <MaxDistance>545.1970932444718</MaxDistance>
+    <Password>password491</Password>
     <Address>3 Nachlaot Street, Jerusalem</Address>
     <Latitude>31.7755</Latitude>
     <Longitude>35.2165</Longitude>
@@ -160,11 +160,11 @@
     <Name>Richard Thomas</Name>
     <Phone>0526789012</Phone>
     <Email>richard.thomas@email.com</Email>
-    <JobType>Volunteer</JobType>
-    <isActive>false</isActive>
-    <DistanceType>driving</DistanceType>
-    <MaxDistance>880.8474167638683</MaxDistance>
-    <Password>password508</Password>
+    <JobType>Director</JobType>
+    <isActive>true</isActive>
+    <DistanceType>aerial</DistanceType>
+    <MaxDistance>184.0001128823733</MaxDistance>
+    <Password>password87</Password>
     <Address>29 Rachel Imenu Street, Jerusalem</Address>
     <Latitude>31.7735</Latitude>
     <Longitude>35.214</Longitude>
@@ -174,10 +174,10 @@
     <Phone>0581234567</Phone>
     <Email>rousseau.alice@email.com</Email>
     <JobType>Director</JobType>
-    <isActive>true</isActive>
+    <isActive>false</isActive>
     <DistanceType>driving</DistanceType>
-    <MaxDistance>393.6154459778146</MaxDistance>
-    <Password>password100</Password>
+    <MaxDistance>166.42318506042287</MaxDistance>
+    <Password>password669</Password>
     <Address>15 Derech Hevron Street, Jerusalem</Address>
     <Latitude>31.7775</Latitude>
     <Longitude>35.2158</Longitude>
@@ -188,11 +188,24 @@
     <Email>girard.louis@email.com</Email>
     <JobType>Volunteer</JobType>
     <isActive>true</isActive>
-    <DistanceType>walking</DistanceType>
-    <MaxDistance>88.21688149943962</MaxDistance>
-    <Password>password757</Password>
+    <DistanceType>aerial</DistanceType>
+    <MaxDistance>389.62102809182164</MaxDistance>
+    <Password>password879</Password>
     <Address>78 Hapalmah Street, Jerusalem</Address>
     <Latitude>31.779</Latitude>
     <Longitude>35.217</Longitude>
+  </Volunteer>
+  <Volunteer Id="340993344">
+    <Name>R</Name>
+    <Phone>0534264909</Phone>
+    <Email>R@G.COM</Email>
+    <JobType>Volunteer</JobType>
+    <isActive>false</isActive>
+    <DistanceType>0</DistanceType>
+    <MaxDistance>3</MaxDistance>
+    <Password>QSDFGHJKLM</Password>
+    <Address>1 rue de la paix, paris, france</Address>
+    <Latitude>48.8685535</Latitude>
+    <Longitude>2.3303318</Longitude>
   </Volunteer>
 </Volunteers>

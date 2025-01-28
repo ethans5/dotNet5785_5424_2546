@@ -27,6 +27,7 @@ internal class Program
                " 3 - Admin. \n");
                 menu = Convert.ToInt32(Console.ReadLine());
                 // Switch case to choose which menu to access
+                
                 switch (menu)
                 {
                     case 0: return;

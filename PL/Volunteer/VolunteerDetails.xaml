@@ -58,10 +58,10 @@
                     <TextBox Name="AddressTextBox" Margin="0,5" Height="30" Background="#ecf0f1" />
 
                     <TextBlock Text="Latitude :" FontWeight="SemiBold" Margin="0,5" Foreground="#34495e" />
-                    <TextBox Name="LatitudeTextBox" Margin="0,5" Height="30" Background="#ecf0f1" IsReadOnly="True"/>
+                    <TextBox Name="LatitudeTextBox" Margin="0,5" Height="30" Background="#ecf0f1" IsEnabled="False"/>
 
                     <TextBlock Text="Longitude :" FontWeight="SemiBold" Margin="0,5" Foreground="#34495e" />
-                    <TextBox Name="LongitudeTextBox" Margin="0,5" Height="30" Background="#ecf0f1" IsReadOnly="True"/>
+                    <TextBox Name="LongitudeTextBox" Margin="0,5" Height="30" Background="#ecf0f1" IsEnabled="False"/>
 
                     <!-- Section Statut -->
                     <TextBlock Text="Statut Actif :" FontWeight="SemiBold" Margin="0,5" Foreground="#34495e" />
@@ -72,15 +72,15 @@
 
                     <TextBlock Text="Type de Distance :" FontWeight="SemiBold" Margin="0,5" Foreground="#34495e" />
                     <ComboBox Name="DistanceTypeComboBox" Margin="0,5" Height="30" Background="#ecf0f1">
-                        <ComboBoxItem Content="Aérien" Tag="aerial" />
-                        <ComboBoxItem Content="À pied" Tag="walking" />
-                        <ComboBoxItem Content="En voiture" Tag="driving" />
+                        <ComboBoxItem Content="aerial" Tag="aerial" />
+                        <ComboBoxItem Content="walking" Tag="walking" />
+                        <ComboBoxItem Content="driving" Tag="driving" />
                     </ComboBox>
 
                     <TextBlock Text="Type d'Emploi :" FontWeight="SemiBold" Margin="0,5" Foreground="#34495e" />
                     <ComboBox Name="JobTypeComboBox" Margin="0,5" Height="30" Background="#ecf0f1">
-                        <ComboBoxItem Content="Bénévole" Tag="Volunteer" />
-                        <ComboBoxItem Content="Directeur" Tag="Director" />
+                        <ComboBoxItem Content="Volunteer" Tag="Volunteer" />
+                        <ComboBoxItem Content="Director" Tag="Director" />
                     </ComboBox>
                 </StackPanel>
 
@@ -92,8 +92,9 @@
 
                     <Button Content="Annuler" Width="120" Height="40" Margin="10,0,0,0" Background="#e74c3c"
                             Foreground="White" FontWeight="Bold" Click="CancelButton_Click" />
-                    <Button Content="Sauvegarder" Width="120" Height="40" Margin="10,0,0,0" Background="#2ecc71"
-                            Foreground="White" FontWeight="Bold" Click="SaveButton_Click" />
+                    <Button Name="SaveButton" Content="Sauvegarder" Width="120" Height="40" Margin="10,0,0,0" Background="#2ecc71"
+        Foreground="White" FontWeight="Bold" Click="SaveButton_Click" />
+
                 </StackPanel>
             </Grid>
         </Border>

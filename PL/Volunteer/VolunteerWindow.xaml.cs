@@ -1,4 +1,5 @@
-﻿using BO;
+﻿// VolunteerWindow.xaml.cs
+using BO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,38 +11,32 @@ namespace PL.Volunteer
     public partial class VolunteerWindow : Window
     {
         private BO.Volunteer CurrentVolunteer;
-        private List<BO.Call> CallsInRange; // List of unassigned calls within the volunteer's travel range
-        private BO.Call CurrentCall; // Simulates the current assigned call
+        private int LoggedInId;
+        private List<BO.Call> CallsInRange;
+        private BO.Call CurrentCall;
         static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
 
-        public VolunteerWindow(BO.Volunteer volunteer)
+        public VolunteerWindow(BO.Volunteer volunteer, int loggedInId)
         {
             InitializeComponent();
 
-            // Assign the provided volunteer
             CurrentVolunteer = volunteer;
+            LoggedInId = loggedInId;
 
-            // Get all open calls within range
             CallsInRange = GetAllCalls();
-
-            // Check if the volunteer has an ongoing call
             CurrentCall = GetCurrentCall(volunteer.Id);
 
-            // Load the appropriate content
             LoadDynamicContent();
         }
-
 
         private void LoadDynamicContent()
         {
             if (CurrentCall == null)
             {
-                // Volunteer has no ongoing call
                 DisplayUnassignedCalls();
             }
             else
             {
-                // Volunteer has an ongoing call
                 DisplayCurrentCall();
             }
         }
@@ -109,10 +104,7 @@ namespace PL.Volunteer
                 HorizontalAlignment = HorizontalAlignment.Left
             };
 
-            completeButton.Click += (sender, args) =>
-            {
-                CompleteCall();
-            };
+            completeButton.Click += (sender, args) => CompleteCall();
 
             stackPanel.Children.Add(completeButton);
 
@@ -123,28 +115,15 @@ namespace PL.Volunteer
         {
             try
             {
-                // Call the business logic layer to assign the call
                 s_bl.Call.ChoiceCall(CurrentVolunteer.Id, call.Id);
-
-                // Simulate the assignment by setting the current call
                 CurrentCall = call;
 
                 MessageBox.Show($"Call assigned to {CurrentVolunteer.Name}.", "Call Assigned", MessageBoxButton.OK, MessageBoxImage.Information);
-
-                // Reload the content dynamically
                 LoadDynamicContent();
-            }
-            catch (BlNotFoundException ex)
-            {
-                MessageBox.Show($"Error: {ex.Message}", "Assignment Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-            catch (BlUnauthorizedException ex)
-            {
-                MessageBox.Show($"Error: {ex.Message}", "Assignment Error", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Unexpected error: {ex.Message}", "Assignment Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Erreur : {ex.Message}", "Assignment Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -152,23 +131,18 @@ namespace PL.Volunteer
         {
             if (CurrentCall != null)
             {
-                // Simulate the completion of the call
                 CurrentCall = null;
-
-                MessageBox.Show($"Call completed successfully.", "Call Completed", MessageBoxButton.OK, MessageBoxImage.Information);
-
-                // Reload dynamic content
+                MessageBox.Show("Call completed successfully.", "Call Completed", MessageBoxButton.OK, MessageBoxImage.Information);
                 LoadDynamicContent();
             }
         }
 
         private List<BO.Call> GetAllCalls()
         {
-            // Get all open calls for the volunteer's range
             var openCalls = s_bl.Call.ReadAllOpenCalls(
                 CurrentVolunteer.Id,
-                null, // No specific filter for call type
-                null  // No specific sorting
+                null,
+                null
             );
 
             return openCalls.Select(call => new BO.Call
@@ -181,16 +155,12 @@ namespace PL.Volunteer
 
         private BO.Call GetCurrentCall(int volunteerId)
         {
-            // Obtenir tous les appels ouverts pour le volontaire
             var openCalls = s_bl.Call.ReadAllOpenCalls(volunteerId, null, null);
 
-            // Rechercher un appel en cours pour le volontaire
             foreach (var openCall in openCalls)
             {
-                // Récupérer les détails complets de l'appel
                 var detailedCall = s_bl.Call.ReadCall(openCall.Id);
 
-                // Vérifier si le statut de l'appel est "InProgress"
                 if (detailedCall.Status == Status.InProgress)
                 {
                     return new BO.Call
@@ -202,10 +172,8 @@ namespace PL.Volunteer
                 }
             }
 
-            // Aucun appel en cours trouvé
             return null;
         }
-
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {

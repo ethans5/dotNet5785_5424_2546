@@ -11,12 +11,15 @@ namespace PL.Volunteer
     {
         private int? _volunteerId;
         private bool _isCreating; // Indique si on est en mode création
+        private int _myID; // ID de l'utilisateur connecté
         static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
 
-        public VolunteerDetails(int? volunteerId = null)
+
+        public VolunteerDetails(int myID,int? volunteerId = null)
         {
             InitializeComponent();
-
+            _myID = myID; // Stocke l'ID de l'utilisateur connecté
+            _isCreating = !volunteerId.HasValue; // Si volunteerId est null, on est en mode création.
             if (volunteerId.HasValue)
             {
                 // Charger les informations du volontaire existant
@@ -28,7 +31,54 @@ namespace PL.Volunteer
             else
             {
                 // Nouvelle création, masquer le bouton "Supprimer"
+                IdTextBox.IsEnabled = true;
                 IsDeleteButtonVisible = false;
+            }
+            // Définir le texte du bouton "Sauvegarder"
+            SaveButton.Content = _isCreating ? "Add" : "Update";
+        }
+
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(IdTextBox.Text) && _isCreating)
+            {
+                MessageBox.Show("L'ID est requis en mode création.", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            try
+            {
+                var volunteer = new BO.Volunteer
+                {
+                    Id = int.Parse(IdTextBox.Text),
+                    Name = NameTextBox.Text,
+                    Password = PasswordBox.Password,
+                    Phone = PhoneTextBox.Text,
+                    Mail = MailTextBox.Text,
+                    Address = AddressTextBox.Text,
+                    IsActive = IsActiveCheckBox.IsChecked ?? false,
+                    MaxDistance = double.Parse(MaxDistanceTextBox.Text),
+                    DistanceType = (BO.distanceType)DistanceTypeComboBox.SelectedIndex,
+                    Job = (BO.jobType)JobTypeComboBox.SelectedIndex
+                };
+
+                if (_isCreating)
+                {
+                    s_bl.Volunteer.CreateVolunteer(volunteer);
+                    MessageBox.Show("Le volontaire a été créé avec succès !", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else
+                {
+                    // Utiliser myID pour identifier l'utilisateur connecté qui effectue l'opération
+                    s_bl.Volunteer.UpdateVolunteer(_myID, volunteer);
+                    MessageBox.Show("Les détails ont été mis à jour avec succès !", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+
+                Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erreur lors de l'enregistrement : {ex.Message}", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -51,8 +101,8 @@ namespace PL.Volunteer
                 MaxDistanceTextBox.Text = volunteer.MaxDistance.ToString();
 
                 // Sélectionner les options dans les ComboBox
-                DistanceTypeComboBox.SelectedValue = volunteer.DistanceType;
-                JobTypeComboBox.SelectedValue = volunteer.Job;
+                DistanceTypeComboBox.SelectedIndex = (int)volunteer.DistanceType;
+                JobTypeComboBox.SelectedIndex = (int)volunteer.Job;
             }
             catch (Exception ex)
             {
@@ -102,48 +152,48 @@ namespace PL.Volunteer
             JobTypeComboBox.SelectedIndex = -1;
         }
 
-        private void SaveButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (string.IsNullOrWhiteSpace(IdTextBox.Text) && !_isCreating)
-            {
-                MessageBox.Show("L'ID est requis en mode création.", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
+        //private void SaveButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    if (string.IsNullOrWhiteSpace(IdTextBox.Text) && !_isCreating)
+        //    {
+        //        MessageBox.Show("L'ID est requis en mode création.", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
+        //        return;
+        //    }
 
-            try
-            {
-                var volunteer = new BO.Volunteer
-                {
-                    Id = int.Parse(IdTextBox.Text),
-                    Name = NameTextBox.Text,
-                    Password = PasswordBox.Password,
-                    Phone = PhoneTextBox.Text,
-                    Mail = MailTextBox.Text,
-                    Address = AddressTextBox.Text,
-                    IsActive = IsActiveCheckBox.IsChecked ?? false,
-                    MaxDistance = double.Parse(MaxDistanceTextBox.Text),
-                    DistanceType = (BO.distanceType)DistanceTypeComboBox.SelectedIndex,
-                    Job = (BO.jobType)JobTypeComboBox.SelectedIndex
-                };
+        //    try
+        //    {
+        //        var volunteer = new BO.Volunteer
+        //        {
+        //            Id = int.Parse(IdTextBox.Text),
+        //            Name = NameTextBox.Text,
+        //            Password = PasswordBox.Password,
+        //            Phone = PhoneTextBox.Text,
+        //            Mail = MailTextBox.Text,
+        //            Address = AddressTextBox.Text,
+        //            IsActive = IsActiveCheckBox.IsChecked ?? false,
+        //            MaxDistance = double.Parse(MaxDistanceTextBox.Text),
+        //            DistanceType = (BO.distanceType)DistanceTypeComboBox.SelectedIndex,
+        //            Job = (BO.jobType)JobTypeComboBox.SelectedIndex
+        //        };
 
-                if (_isCreating)
-                {
-                    s_bl.Volunteer.CreateVolunteer(volunteer);
-                    MessageBox.Show("Le volontaire a été créé avec succès !", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
-                else
-                {
+        //        if (_isCreating)
+        //        {
+        //            s_bl.Volunteer.CreateVolunteer(volunteer);
+        //            MessageBox.Show("Le volontaire a été créé avec succès !", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
+        //        }
+        //        else
+        //        {
 
-                    MessageBox.Show("Les détails ont été sauvegardés avec succès !", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
+        //            MessageBox.Show("Les détails ont été sauvegardés avec succès !", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
+        //        }
 
-                Close();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Erreur lors de l'enregistrement : {ex.Message}", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
+        //        Close();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show($"Erreur lors de l'enregistrement : {ex.Message}", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
+        //    }
+        //}
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {

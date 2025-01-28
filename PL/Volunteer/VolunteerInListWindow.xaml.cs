@@ -15,7 +15,7 @@ namespace PL.Volunteer
         private List<VolunteerInList> _volunteers;
         private List<VolunteerInList> _filteredVolunteers;
         static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
-
+        private int LoggedInId;
         private VolunteerSortField? _selectedFilter;
 
         // Implémentation de INotifyPropertyChanged
@@ -39,11 +39,12 @@ namespace PL.Volunteer
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public VolunteerList()
+        public VolunteerList(int loggedInId)
         {
             InitializeComponent();
             DataContext = this; // Définir le DataContext pour les liaisons
             VolunteerDataGrid.MouseDoubleClick += VolunteerDataGrid_MouseDoubleClick;
+            LoggedInId = loggedInId;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -129,7 +130,7 @@ namespace PL.Volunteer
         private void AddVolunteer_Click(object sender, RoutedEventArgs e)
         {
             // Ouvrir la fenêtre pour ajouter un volontaire
-            var detailsWindow = new VolunteerDetails(null);
+            var detailsWindow = new VolunteerDetails(LoggedInId);
             detailsWindow.ShowDialog();
 
             // Recharger la liste après ajout
@@ -160,7 +161,7 @@ namespace PL.Volunteer
             if (VolunteerDataGrid.SelectedItem is VolunteerInList selectedVolunteer)
             {
                 // Ouvrir la fenêtre avec l'ID du volontaire
-                var detailsWindow = new VolunteerDetails(selectedVolunteer.Id);
+                var detailsWindow = new VolunteerDetails(LoggedInId, selectedVolunteer.Id);
                 detailsWindow.ShowDialog();
 
                 // Recharger la liste après modification

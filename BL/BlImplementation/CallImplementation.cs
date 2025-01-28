@@ -107,7 +107,7 @@ internal class CallImplementation : BlApi.ICall
         {
             throw new BlNotFoundException("Volunteer not found.");
         }
-        var myVolunteer = VolunteerManager.parseDoToBoVolunteer(volunteer);
+        var myVolunteer = VolunteerManager.ParseDoToBoVolunteer(volunteer);
         if (myVolunteer.CallInProgress != null || _dal.Assignment.ReadAll()
         .Any(a => a.VolunteerId == volunteerId && a.endTreatment == null))
         {

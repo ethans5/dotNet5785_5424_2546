@@ -1,4 +1,5 @@
-﻿using System;
+﻿// LoginPage.xaml.cs
+using System;
 using System.Windows;
 using MailKit.Net.Smtp;
 using MailKit.Security;
@@ -14,7 +15,6 @@ namespace PL
         public LoginPage()
         {
             InitializeComponent();
-         
         }
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
@@ -28,28 +28,34 @@ namespace PL
                 return;
             }
 
-            var volunteer = s_bl.Volunteer.ReadVolunteer(int.Parse(id));
-            string myPassword = volunteer.Password!;
-            if (myPassword == password)
+            try
             {
-                if (volunteer.Job == BO.jobType.Director)
+                var volunteer = s_bl.Volunteer.ReadVolunteer(int.Parse(id));
+                string myPassword = volunteer.Password!;
+
+                if (myPassword == password)
                 {
-                    var adminWindow = new HomePage();
-                    adminWindow.Show();
+                    if (volunteer.Job == BO.jobType.Director)
+                    {
+                        var adminWindow = new HomePage(int.Parse(id));
+                        adminWindow.Show();
+                    }
+                    else
+                    {
+                        var volunteerWindow = new VolunteerWindow(volunteer, int.Parse(id));
+                        volunteerWindow.Show();
+                    }
+                    Close();
                 }
                 else
                 {
-                    var volunteerWindow = new VolunteerWindow(volunteer);
-                    volunteerWindow.Show();
+                    MessageBox.Show("ID ou mot de passe incorrect.", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
-                Close();
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("ID ou mot de passe incorrect.", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Erreur lors de la connexion : {ex.Message}", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-
-
         }
 
         private void ForgotPasswordButton_Click(object sender, RoutedEventArgs e)
@@ -63,7 +69,6 @@ namespace PL
                 return;
             }
 
-            // Récupération du mot de passe depuis une base de données fictive
             string password = GetPasswordForId(id);
 
             if (password == null)
@@ -74,11 +79,9 @@ namespace PL
 
             try
             {
-                // Récupérer l'email du volontaire
                 var volunteer = s_bl.Volunteer.ReadVolunteer(int.Parse(id));
                 string volunteerMail = volunteer.Mail;
 
-                // Envoyer l'email
                 SendEmailWithMailKit(volunteerMail, password);
                 MessageBox.Show("Un email de récupération a été envoyé avec succès.",
                                 "Mot de passe oublié", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -95,7 +98,7 @@ namespace PL
             try
             {
                 var volunteer = s_bl.Volunteer.ReadVolunteer(int.Parse(id));
-                return volunteer.Password;
+                return volunteer.Password!;
             }
             catch (Exception)
             {
@@ -105,9 +108,8 @@ namespace PL
 
         private void SendEmailWithMailKit(string recipientEmail, string password)
         {
-            // Créer le message
             var message = new MimeMessage();
-            message.From.Add(new MailboxAddress("Application", "envoyeurdemails@gmail.com")); // Remplacez par votre email
+            message.From.Add(new MailboxAddress("Application", "envoyeurdemails@gmail.com"));
             message.To.Add(new MailboxAddress("rubensbensimon@gmail.com", recipientEmail));
             message.Subject = "Récupération de mot de passe";
 
@@ -116,20 +118,12 @@ namespace PL
                 Text = $"Bonjour,\n\nVotre mot de passe est : {password}\n\nCordialement,\nL'équipe de support"
             };
 
-            // Configurer le client SMTP
             using (var client = new SmtpClient())
             {
-                try
-                {
-                    client.Connect("smtp.gmail.com", 465, SecureSocketOptions.StartTls); // Connexion au serveur
-                    client.Authenticate("envoyeurdemails@gmail.com", "bajl phja cxsf aftg"); // Remplacez par vos identifiants
-                    client.Send(message); // Envoi du message
-                    client.Disconnect(true); // Déconnexion propre
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception($"Erreur SMTP : {ex.Message}");
-                }
+                client.Connect("smtp.gmail.com", 465, SecureSocketOptions.StartTls);
+                client.Authenticate("envoyeurdemails@gmail.com", "bajl phja cxsf aftg");
+                client.Send(message);
+                client.Disconnect(true);
             }
         }
     }
