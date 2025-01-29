@@ -10,13 +10,18 @@ internal static class VolunteerManager
     public static double? latitude;
     public static double? longitude;
 
-    public static BO.Volunteer ParseDoToBoVolunteer(DO.Volunteer volunteer)
+   
+    public static  BO.Volunteer ParseDoToBoVolunteer(DO.Volunteer volunteer)
     {
         if (volunteer == null)
             throw new ArgumentNullException(nameof(volunteer), "Volunteer cannot be null.");
-
+        //var coordinates = Tools.GetCoordinatesAsync(volunteer.Address!);
+        //latitude = coordinates.Result.Latitude;
+        //longitude = coordinates.Result.Longitude;
         try
         {
+            
+
             BO.Volunteer volunteer1 = new BO.Volunteer
             {
                 Id = volunteer.Id,
@@ -35,11 +40,6 @@ internal static class VolunteerManager
                 TotalSelfCancellation = Tools.totalSelfCancelled(volunteer.Id),
                 TotalExpired = Tools.totalExpired(volunteer.Id)
             };
-
-            // Utilisation de GetAwaiter().GetResult() pour convertir un appel async en synchrone
-            var coordinates = Tools.GetCoordinatesAsync(volunteer.Address!).GetAwaiter().GetResult();
-            volunteer1.Latitude = coordinates.Latitude;
-            volunteer1.Longitude = coordinates.Longitude;
 
             return volunteer1;
         }

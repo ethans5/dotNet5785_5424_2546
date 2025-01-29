@@ -36,8 +36,7 @@
 
                     <!-- Bouton Connexion -->
                     <Button Content="Se connecter" HorizontalAlignment="Stretch" Height="50" Background="#2ecc71" 
-                            Foreground="White" FontWeight="Bold" FontSize="16" Margin="0,20,0,0"
-                            Click="LoginButton_Click" />
+                            Foreground="White" FontWeight="Bold" FontSize="16" Margin="0,20,0,0" Click="LoginButton_Click"/>
 
                     <!-- Ligne séparatrice -->
                     <Rectangle Height="2" Fill="#bdc3c7" Margin="0,20,0,20" />

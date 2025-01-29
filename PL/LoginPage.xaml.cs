@@ -1,5 +1,6 @@
 ﻿// LoginPage.xaml.cs
 using System;
+using System.Diagnostics;
 using System.Windows;
 using MailKit.Net.Smtp;
 using MailKit.Security;
@@ -19,10 +20,10 @@ namespace PL
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            string id = IdTextBox.Text;
-            string password = PasswordBox.Password;
+            string inputId = IdTextBox.Text;
+            string inputPassword = PasswordBox.Password;
 
-            if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(password))
+            if (string.IsNullOrEmpty(inputId) || string.IsNullOrEmpty(inputPassword))
             {
                 MessageBox.Show("Veuillez remplir tous les champs.", "Erreur", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
@@ -30,19 +31,20 @@ namespace PL
 
             try
             {
-                var volunteer = s_bl.Volunteer.ReadVolunteer(int.Parse(id));
+                int.TryParse(inputId, out int myId);
+                var volunteer = s_bl.Volunteer.ReadVolunteer(myId);
                 string myPassword = volunteer.Password!;
 
-                if (myPassword == password)
+                if (myPassword == inputPassword)
                 {
                     if (volunteer.Job == BO.jobType.Director)
                     {
-                        var adminWindow = new HomePage(int.Parse(id));
+                        var adminWindow = new HomePage(myId);
                         adminWindow.Show();
                     }
                     else
                     {
-                        var volunteerWindow = new VolunteerWindow(volunteer, int.Parse(id));
+                        var volunteerWindow = new VolunteerWindow(volunteer, myId);
                         volunteerWindow.Show();
                     }
                     Close();
@@ -56,6 +58,8 @@ namespace PL
             {
                 MessageBox.Show($"Erreur lors de la connexion : {ex.Message}", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+
+            Debug.WriteLine($"ID: {IdTextBox.Text}, Password: {PasswordBox.Password}");
         }
 
         private void ForgotPasswordButton_Click(object sender, RoutedEventArgs e)
