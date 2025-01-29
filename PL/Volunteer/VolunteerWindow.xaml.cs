@@ -1,5 +1,4 @@
-﻿// VolunteerWindow.xaml.cs
-using BO;
+﻿using BO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,8 +12,8 @@ namespace PL.Volunteer
         private BO.Volunteer CurrentVolunteer;
         private int LoggedInId;
         private List<BO.Call> CallsInRange;
-        private BO.Call CurrentCall;
         static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
+        private bool IsEditing = false;
 
         public VolunteerWindow(BO.Volunteer volunteer, int loggedInId)
         {
@@ -23,158 +22,157 @@ namespace PL.Volunteer
             CurrentVolunteer = volunteer;
             LoggedInId = loggedInId;
 
-            CallsInRange = GetAllCalls();
-            CurrentCall = GetCurrentCall(volunteer.Id);
+            LoadVolunteerInfo();
+            LoadAvailableCalls();
 
-            LoadDynamicContent();
+            CloseButton.Click += CloseButton_Click;
+            EditButton.Click += EditButton_Click;
+            AssignCallButton.Click += AssignCallButton_Click;
         }
 
-        private void LoadDynamicContent()
+        /// <summary>
+        /// Charge les informations du volontaire dans les champs correspondants.
+        /// </summary>
+        private void LoadVolunteerInfo()
         {
-            if (CurrentCall == null)
+            VolunteerNameTextBox.Text = CurrentVolunteer.Name;
+            VolunteerPhoneTextBox.Text = CurrentVolunteer.Phone;
+            VolunteerAddressTextBox.Text = CurrentVolunteer.Address ?? "Non spécifié";
+            VolunteerEmailTextBox.Text = CurrentVolunteer.Mail;
+
+            MaxDistanceTextBox.Text = CurrentVolunteer.MaxDistance?.ToString() ?? "Non défini";
+            DistanceTypeTextBox.Text = CurrentVolunteer.DistanceType.ToString();
+            IsActiveTextBox.Text = CurrentVolunteer.IsActive ? "✅ Actif" : "❌ Inactif";
+
+            // 🎯 Mise à jour des statistiques
+            TotalTreatedText.Text = $"✅ Total Traités : {CurrentVolunteer.Totaltreated}";
+            TotalCancelledText.Text = $"❌ Total Annulés : {CurrentVolunteer.TotalSelfCancellation}";
+            TotalExpiredText.Text = $"⏳ Total Expirés : {CurrentVolunteer.TotalExpired}";
+
+            // 🟢 Vérification de l'appel en cours
+            if (CurrentVolunteer.CallInProgress != null)
             {
-                DisplayUnassignedCalls();
+                CallInProgressText.Text = $"📞 {CurrentVolunteer.CallInProgress.Description}";
+                CallInProgressText.Foreground = System.Windows.Media.Brushes.Green;
             }
             else
             {
-                DisplayCurrentCall();
+                CallInProgressText.Text = "Aucun appel en cours";
+                CallInProgressText.Foreground = System.Windows.Media.Brushes.Gray;
             }
         }
 
-        private void DisplayUnassignedCalls()
+
+        /// <summary>
+        /// Charge les appels disponibles et les affiche dans la liste.
+        /// </summary>
+        private void LoadAvailableCalls()
         {
-            var listBox = new ListBox
-            {
-                ItemsSource = CallsInRange,
-                DisplayMemberPath = "Description",
-                Margin = new Thickness(10)
-            };
+            CallsInRange = GetAllCalls();
+            CallsListBox.ItemsSource = CallsInRange;
 
-            listBox.SelectionChanged += (sender, args) =>
-            {
-                if (listBox.SelectedItem is BO.Call selectedCall)
-                {
-                    AssignCallToVolunteer(selectedCall);
-                }
-            };
-
-            DynamicContent.Content = listBox;
-        }
-
-        private void DisplayCurrentCall()
-        {
-            var stackPanel = new StackPanel
-            {
-                Margin = new Thickness(10),
-                Orientation = Orientation.Vertical
-            };
-
-            stackPanel.Children.Add(new TextBlock
-            {
-                Text = "Current Call Details:",
-                FontSize = 18,
-                FontWeight = FontWeights.Bold,
-                Margin = new Thickness(0, 0, 0, 10)
-            });
-
-            stackPanel.Children.Add(new TextBlock
-            {
-                Text = $"Call ID: {CurrentCall.Id}",
-                FontSize = 16
-            });
-
-            stackPanel.Children.Add(new TextBlock
-            {
-                Text = $"Description: {CurrentCall.Description}",
-                FontSize = 16
-            });
-
-            stackPanel.Children.Add(new TextBlock
-            {
-                Text = $"Address: {CurrentCall.Address}",
-                FontSize = 16
-            });
-
-            var completeButton = new Button
-            {
-                Content = "Complete Call",
-                Height = 40,
-                Width = 200,
-                Margin = new Thickness(0, 10, 0, 0),
-                HorizontalAlignment = HorizontalAlignment.Left
-            };
-
-            completeButton.Click += (sender, args) => CompleteCall();
-
-            stackPanel.Children.Add(completeButton);
-
-            DynamicContent.Content = stackPanel;
-        }
-
-        private void AssignCallToVolunteer(BO.Call call)
-        {
-            try
-            {
-                s_bl.Call.ChoiceCall(CurrentVolunteer.Id, call.Id);
-                CurrentCall = call;
-
-                MessageBox.Show($"Call assigned to {CurrentVolunteer.Name}.", "Call Assigned", MessageBoxButton.OK, MessageBoxImage.Information);
-                LoadDynamicContent();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Erreur : {ex.Message}", "Assignment Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
-        private void CompleteCall()
-        {
-            if (CurrentCall != null)
-            {
-                CurrentCall = null;
-                MessageBox.Show("Call completed successfully.", "Call Completed", MessageBoxButton.OK, MessageBoxImage.Information);
-                LoadDynamicContent();
-            }
+            // Afficher le message si aucun appel n'est disponible
+            NoCallsMessage.Visibility = CallsInRange.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private List<BO.Call> GetAllCalls()
         {
-            var openCalls = s_bl.Call.ReadAllOpenCalls(
-                CurrentVolunteer.Id,
-                null,
-                null
-            );
-
-            return openCalls.Select(call => new BO.Call
-            {
-                Id = call.Id,
-                Description = call.description,
-                Address = call.Address
-            }).ToList();
+            return s_bl.Call.ReadAllOpenCalls(CurrentVolunteer.Id, null, null)
+                            .Select(call => new BO.Call
+                            {
+                                Id = call.Id,
+                                Description = call.description,
+                                Address = call.Address
+                            }).ToList();
         }
 
-        private BO.Call GetCurrentCall(int volunteerId)
+        /// <summary>
+        /// Active/Désactive la modification des informations du volontaire.
+        /// </summary>
+        private void EditButton_Click(object sender, RoutedEventArgs e)
         {
-            var openCalls = s_bl.Call.ReadAllOpenCalls(volunteerId, null, null);
-
-            foreach (var openCall in openCalls)
+            if (!IsEditing)
             {
-                var detailedCall = s_bl.Call.ReadCall(openCall.Id);
-
-                if (detailedCall.Status == Status.InProgress)
+                // Activation des champs pour la modification
+                SetEditableState(true);
+                EditButton.Content = "💾 Enregistrer";
+                EditButton.Background = System.Windows.Media.Brushes.SkyBlue;
+                IsEditing = true;
+            }
+            else
+            {
+                try
                 {
-                    return new BO.Call
-                    {
-                        Id = detailedCall.Id,
-                        Description = detailedCall.Description,
-                        Address = detailedCall.Address
-                    };
+                    // Sauvegarde des nouvelles informations
+                    CurrentVolunteer.Name = VolunteerNameTextBox.Text;
+                    CurrentVolunteer.Phone = VolunteerPhoneTextBox.Text;
+                    CurrentVolunteer.Address = VolunteerAddressTextBox.Text;
+                    CurrentVolunteer.Mail = VolunteerEmailTextBox.Text;
+
+                    // Mise à jour dans le système
+                    s_bl.Volunteer.UpdateVolunteer(LoggedInId,CurrentVolunteer);
+                    MessageBox.Show("Informations mises à jour avec succès.", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    // Désactivation des champs après modification
+                    SetEditableState(false);
+                    EditButton.Content = "✏️ Modifier";
+                    EditButton.Background = System.Windows.Media.Brushes.Gold;
+                    IsEditing = false;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Erreur : {ex.Message}", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
-
-            return null;
         }
 
+        /// <summary>
+        /// Permet de modifier l'état des champs (lecture seule ou éditable).
+        /// </summary>
+        private void SetEditableState(bool isEditable)
+        {
+            VolunteerNameTextBox.IsReadOnly = !isEditable;
+            VolunteerPhoneTextBox.IsReadOnly = !isEditable;
+            VolunteerAddressTextBox.IsReadOnly = !isEditable;
+            VolunteerEmailTextBox.IsReadOnly = !isEditable;
+
+            var backgroundColor = isEditable ? System.Windows.Media.Brushes.White : System.Windows.Media.Brushes.LightGray;
+            VolunteerNameTextBox.Background = backgroundColor;
+            VolunteerPhoneTextBox.Background = backgroundColor;
+            VolunteerAddressTextBox.Background = backgroundColor;
+            VolunteerEmailTextBox.Background = backgroundColor;
+        }
+
+        /// <summary>
+        /// Assigne un appel sélectionné au volontaire.
+        /// </summary>
+        private void AssignCallButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (CallsListBox.SelectedItem is BO.Call selectedCall)
+            {
+                try
+                {
+                    s_bl.Call.ChoiceCall(CurrentVolunteer.Id, selectedCall.Id);
+                    MessageBox.Show($"📞 Appel '{selectedCall.Description}' assigné avec succès.", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    // Mettre à jour les informations et la liste
+                    LoadVolunteerInfo();
+                    LoadAvailableCalls();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Erreur : {ex.Message}", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Veuillez sélectionner un appel à assigner.", "Avertissement", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        /// <summary>
+        /// Ferme la fenêtre.
+        /// </summary>
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             Close();

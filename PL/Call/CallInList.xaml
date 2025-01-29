@@ -81,7 +81,7 @@
         </StackPanel>
 
         <!-- Tableau des Appels -->
-        <Border Grid.Row="1" Background="White" CornerRadius="10" BorderBrush="#bdc3c7" BorderThickness="1">
+        <Border Grid.Row="1" Background="White" CornerRadius="10" BorderBrush="#bdc3c7" BorderThickness="1" ScrollViewer.VerticalScrollBarVisibility="Auto">
             <StackPanel>
                 <!-- Sous-titre -->
                 <TextBlock Text="Liste des Appels" FontSize="20" FontWeight="SemiBold" Foreground="#7f8c8d"
