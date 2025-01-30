@@ -195,10 +195,23 @@
     <Latitude>31.779</Latitude>
     <Longitude>35.217</Longitude>
   </Volunteer>
+  <Volunteer Id="340993351">
+    <Name>S</Name>
+    <Phone>0534269093</Phone>
+    <Email>S@G.COM</Email>
+    <JobType>Volunteer</JobType>
+    <isActive>true</isActive>
+    <DistanceType>aerial</DistanceType>
+    <MaxDistance>4</MaxDistance>
+    <Password>WXCVBN</Password>
+    <Address>25 rue des laitières, Vincennes, France</Address>
+    <Latitude>48.8478069</Latitude>
+    <Longitude>2.4238748</Longitude>
+  </Volunteer>
   <Volunteer Id="340993344">
-    <Name>Ruben</Name>
+    <Name>Ruben B</Name>
     <Phone>0534264909</Phone>
-    <Email>R@G.COM</Email>
+    <Email>R@G.FR</Email>
     <JobType>Volunteer</JobType>
     <isActive>true</isActive>
     <DistanceType>0</DistanceType>

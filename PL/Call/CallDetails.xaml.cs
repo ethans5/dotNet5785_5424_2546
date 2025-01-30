@@ -31,6 +31,7 @@ namespace PL.Call
             {
                 LoadCallDetails(callId.Value);
             }
+            SaveButton.Content = _isCreating ? "Add" : "Update";
         }
 
         private void LoadCallDetails(int callId)
@@ -46,22 +47,27 @@ namespace PL.Call
             CallAssignInListsListBox.ItemsSource = CallAssignInLists;
         }
 
-        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        private void AddButton_Click(object sender, RoutedEventArgs e)
         {
             var call = new BO.Call
             {
-                Id = _callId ?? 0,
                 CallType = (BO.callType)CallTypeComboBox.SelectedItem,
                 Description = DescriptionTextBox.Text,
                 Address = AddressTextBox.Text,
-                Created = DateTime.Parse(CreatedDateTextBox.Text),
+                Created = s_bl.Admin.GetSystemeClock(),
                 callAssignInLists = CallAssignInLists
             };
 
             if (_isCreating)
+            {
                 s_bl.Call.CreateCall(call);
+                MessageBox.Show("Call created successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
             else
+            {
                 s_bl.Call.UpdateCall(call);
+                MessageBox.Show("Call updated successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
 
             Close();
         }

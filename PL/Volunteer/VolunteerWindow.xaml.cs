@@ -37,12 +37,13 @@ namespace PL.Volunteer
         {
             VolunteerNameTextBox.Text = CurrentVolunteer.Name;
             VolunteerPhoneTextBox.Text = CurrentVolunteer.Phone;
+            VolunteerPasswordTextBox.Password = CurrentVolunteer.Password;
             VolunteerAddressTextBox.Text = CurrentVolunteer.Address ?? "Non spécifié";
             VolunteerEmailTextBox.Text = CurrentVolunteer.Mail;
 
             MaxDistanceTextBox.Text = CurrentVolunteer.MaxDistance?.ToString() ?? "Non défini";
-            DistanceTypeTextBox.Text = CurrentVolunteer.DistanceType.ToString();
-            IsActiveTextBox.Text = CurrentVolunteer.IsActive ? "✅ Actif" : "❌ Inactif";
+            DistanceTypeComboBox.Text = CurrentVolunteer.DistanceType.ToString();
+            IsActiveCheckBox.IsChecked = CurrentVolunteer.IsActive;
 
             // 🎯 Mise à jour des statistiques
             TotalTreatedText.Text = $"✅ Total Traités : {CurrentVolunteer.Totaltreated}";
@@ -108,9 +109,14 @@ namespace PL.Volunteer
                     CurrentVolunteer.Phone = VolunteerPhoneTextBox.Text;
                     CurrentVolunteer.Address = VolunteerAddressTextBox.Text;
                     CurrentVolunteer.Mail = VolunteerEmailTextBox.Text;
+                    CurrentVolunteer.Password = VolunteerPasswordTextBox.Password;
+                    CurrentVolunteer.IsActive = IsActiveCheckBox.IsChecked ?? false;
+                    CurrentVolunteer.DistanceType = (BO.distanceType)Enum.Parse(typeof(BO.distanceType), DistanceTypeComboBox.Text);
+                    CurrentVolunteer.MaxDistance = int.TryParse(MaxDistanceTextBox.Text, out int maxDistance) ? maxDistance : (int?)null;
+
 
                     // Mise à jour dans le système
-                    s_bl.Volunteer.UpdateVolunteer(LoggedInId,CurrentVolunteer);
+                    s_bl.Volunteer.UpdateVolunteer(LoggedInId, CurrentVolunteer);
                     MessageBox.Show("Informations mises à jour avec succès.", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
 
                     // Désactivation des champs après modification
@@ -135,6 +141,10 @@ namespace PL.Volunteer
             VolunteerPhoneTextBox.IsReadOnly = !isEditable;
             VolunteerAddressTextBox.IsReadOnly = !isEditable;
             VolunteerEmailTextBox.IsReadOnly = !isEditable;
+            VolunteerPasswordTextBox.IsEnabled = isEditable;
+            IsActiveCheckBox.IsEnabled = isEditable;
+            DistanceTypeComboBox.IsEnabled = isEditable;
+            MaxDistanceTextBox.IsReadOnly = !isEditable;
 
             var backgroundColor = isEditable ? System.Windows.Media.Brushes.White : System.Windows.Media.Brushes.LightGray;
             VolunteerNameTextBox.Background = backgroundColor;
@@ -175,7 +185,10 @@ namespace PL.Volunteer
         /// </summary>
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
-            Close();
+            LoginPage loginPage = new LoginPage();
+            loginPage.Show();
+            this.Close();
+         
         }
     }
 }

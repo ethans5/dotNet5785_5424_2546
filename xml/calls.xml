@@ -507,7 +507,17 @@
     <Latitude>48.8685535</Latitude>
     <Longitude>2.3303318</Longitude>
     <CallTime>2025-01-28T17:19:38</CallTime>
-    <Description>asass</Description>
+    <Description>packing the food into the boxes</Description>
+    <MaxTime xsi:nil="true" />
+  </Call>
+  <Call>
+    <Id>52</Id>
+    <CallType>BuyingFood</CallType>
+    <Address>25 rue des laitières, vincennes, france</Address>
+    <Latitude>48.8478069</Latitude>
+    <Longitude>2.4238748</Longitude>
+    <CallTime>2025-01-28T17:19:38</CallTime>
+    <Description>maaaaaaaaaaaaannnnnnnnnnnnnnnnnnnnnnger</Description>
     <MaxTime xsi:nil="true" />
   </Call>
 </ArrayOfCall>

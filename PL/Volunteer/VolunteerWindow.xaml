@@ -38,21 +38,23 @@
                 <Grid Width="500">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="10"/>
                         <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="10"/>
                         <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="10"/>
                         <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="10"/>
                         <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="10"/>
                         <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="10"/>
                         <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="10"/>
                         <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="10"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="10"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
@@ -66,42 +68,56 @@
                     <TextBlock Text="Téléphone :" FontWeight="Bold" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center"/>
                     <TextBox x:Name="VolunteerPhoneTextBox" Grid.Row="2" Grid.Column="1" Margin="5" Width="320" Height="30" IsReadOnly="True" Background="#FAFAFA"/>
 
-                    <TextBlock Text="Adresse :" FontWeight="Bold" Grid.Row="4" Grid.Column="0" VerticalAlignment="Center"/>
-                    <TextBox x:Name="VolunteerAddressTextBox" Grid.Row="4" Grid.Column="1" Margin="5" Width="320" Height="30" IsReadOnly="True" Background="#FAFAFA"/>
+                    <TextBlock Text="Mot de Passe :" FontWeight="Bold" Grid.Row="4" Grid.Column="0" VerticalAlignment="Center"/>
+                    <PasswordBox x:Name="VolunteerPasswordTextBox" Grid.Row="4" Grid.Column="1" Margin="5" Width="320" Height="30" IsEnabled="False" Background="#FAFAFA"/>
 
-                    <TextBlock Text="Email :" FontWeight="Bold" Grid.Row="6" Grid.Column="0" VerticalAlignment="Center"/>
-                    <TextBox x:Name="VolunteerEmailTextBox" Grid.Row="6" Grid.Column="1" Margin="5" Width="320" Height="30" IsReadOnly="True" Background="#FAFAFA"/>
+                    <TextBlock Text="Adresse :" FontWeight="Bold" Grid.Row="6" Grid.Column="0" VerticalAlignment="Center"/>
+                    <TextBox x:Name="VolunteerAddressTextBox" Grid.Row="6" Grid.Column="1" Margin="5" Width="320" Height="30" IsReadOnly="True" Background="#FAFAFA"/>
 
-                    <TextBlock Text="Distance Max :" FontWeight="Bold" Grid.Row="8" Grid.Column="0" VerticalAlignment="Center"/>
-                    <TextBox x:Name="MaxDistanceTextBox" Grid.Row="8" Grid.Column="1" Margin="5" Width="320" Height="30" IsReadOnly="True" Background="#FAFAFA"/>
+                    <TextBlock Text="Email :" FontWeight="Bold" Grid.Row="8" Grid.Column="0" VerticalAlignment="Center"/>
+                    <TextBox x:Name="VolunteerEmailTextBox" Grid.Row="8" Grid.Column="1" Margin="5" Width="320" Height="30" IsReadOnly="True" Background="#FAFAFA"/>
 
-                    <TextBlock Text="Type de Distance :" FontWeight="Bold" Grid.Row="10" Grid.Column="0" VerticalAlignment="Center"/>
-                    <TextBox x:Name="DistanceTypeTextBox" Grid.Row="10" Grid.Column="1" Margin="5" Width="320" Height="30" IsReadOnly="True" Background="#FAFAFA"/>
+                    <TextBlock Text="Distance Max :" FontWeight="Bold" Grid.Row="10" Grid.Column="0" VerticalAlignment="Center"/>
+                    <TextBox x:Name="MaxDistanceTextBox" Grid.Row="10" Grid.Column="1" Margin="5" Width="320" Height="30" Background="#FAFAFA" IsReadOnly="True"/>
 
-                    <TextBlock Text="État :" FontWeight="Bold" Grid.Row="12" Grid.Column="0" VerticalAlignment="Center"/>
-                    <TextBox x:Name="IsActiveTextBox" Grid.Row="12" Grid.Column="1" Margin="5" Width="320" Height="30" IsReadOnly="True" Background="#FAFAFA"/>
+                    <TextBlock Text="Type de Distance :" FontWeight="Bold" Grid.Row="12" Grid.Column="0" VerticalAlignment="Center"/>
+                    <ComboBox x:Name="DistanceTypeComboBox" Grid.Row="12" Grid.Column="1" Margin="5" Width="320" Height="30" Background="#FAFAFA" IsEnabled="False">
+                        <ComboBoxItem Content="aerial" Tag="aerial"/>
+                        <ComboBoxItem Content="walking" Tag="walking"/>
+                        <ComboBoxItem Content="driving" Tag="driving"/>
+                    </ComboBox>
+
+                    <TextBlock Text="Status :" FontWeight="Bold" Grid.Row="14" Grid.Column="0" VerticalAlignment="Center"/>
+                    <CheckBox x:Name="IsActiveCheckBox" Grid.Row="14" Grid.Column="1" Margin="5" Width="320" IsEnabled="False"/>
 
                     <!-- 📊 Statistiques -->
-                    <TextBlock Text="📊 Statistiques :" FontWeight="Bold" Grid.Row="14" Grid.Column="0" VerticalAlignment="Center"/>
-                    <StackPanel Grid.Row="14" Grid.Column="1">
-                        <TextBlock x:Name="TotalTreatedText" Text="Total Traités: 0" FontSize="14" Foreground="Black"/>
-                        <TextBlock x:Name="TotalCancelledText" Text="Total Annulés: 0" FontSize="14" Foreground="Black"/>
-                        <TextBlock x:Name="TotalExpiredText" Text="Total Expirés: 0" FontSize="14" Foreground="Black"/>
-                    </StackPanel>
+                    <TextBlock Text="📊 Statistiques :" FontWeight="Bold" Grid.Row="16" Grid.Column="0" VerticalAlignment="Center"/>
+                    <Grid Grid.Row="16" Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock x:Name="TotalTreatedText" Text="✔️ Total Traités: 0" FontSize="14" Foreground="Black" Grid.Row="0" Margin="5"/>
+                        <TextBlock x:Name="TotalCancelledText" Text="❌ Total Annulés: 0" FontSize="14" Foreground="Black" Grid.Row="1" Margin="5"/>
+                        <TextBlock x:Name="TotalExpiredText" Text="⏳ Total Expirés: 0" FontSize="14" Foreground="Black" Grid.Row="2" Margin="5"/>
+                    </Grid>
 
-                    <TextBlock Text="Appel en cours :" FontWeight="Bold" Grid.Row="16" Grid.Column="0"/>
-                    <TextBlock x:Name="CallInProgressText" Grid.Row="16" Grid.Column="1" Text="Aucun appel en cours" FontStyle="Italic" Foreground="Gray"/>
+                    <TextBlock Text="📞 Appel en cours :" FontWeight="Bold" Grid.Row="18" Grid.Column="0"/>
+                    <TextBlock x:Name="CallInProgressText" Grid.Row="18" Grid.Column="1" Text="Aucun appel en cours" FontStyle="Italic" Foreground="Gray"/>
                 </Grid>
 
+                <!-- Boutons alignés -->
+                <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="10,25,0,0">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Button Content="✏️ Modifier" x:Name="EditButton" Width="160" Height="45" Margin="5" Background="#FFD700" Foreground="Black" FontWeight="Bold"/>
+                        <Button Content="✅ Choisir Call" x:Name="AssignCallButton" Width="160" Height="45" Margin="5" Background="#28A745" Foreground="White" FontWeight="Bold"/>
+                    </StackPanel>
 
-                <!-- Boutons d'action -->
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10,25,0,0">
-                    <Button Content="✏️ Modifier" x:Name="EditButton" Width="160" Height="45" Margin="5" Background="#FFD700" Foreground="Black" FontWeight="Bold"/>
-                    <Button Content="✅ Choisir Call" x:Name="AssignCallButton" Width="160" Height="45" Margin="5" Background="#28A745" Foreground="White" FontWeight="Bold"/>
+                    <Button Content="❌ Fermer" x:Name="CloseButton" Width="340" Height="45" Margin="10,10,0,0" Background="#DC3545" Foreground="White" FontWeight="Bold"/>
                 </StackPanel>
-
-                <Button Content="❌ Fermer" x:Name="CloseButton" Width="340" Height="45" Margin="10,25,0,0" Background="#DC3545" Foreground="White" FontWeight="Bold"/>
             </StackPanel>
+
         </Border>
     </Grid>
 </Window>

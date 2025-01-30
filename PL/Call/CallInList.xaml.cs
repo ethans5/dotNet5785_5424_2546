@@ -96,13 +96,13 @@ namespace PL.Call
             LoadCalls();
         }
 
-        private void AddCall_Click(object sender, RoutedEventArgs e)
+        private void AddCallButton_Click(object sender, RoutedEventArgs e)
         {
             new CallDetails().ShowDialog();
             LoadCalls();
         }
 
-        private void RefreshButton_Click(object sender, RoutedEventArgs e)
+        private void RefreshCallList_Click(object sender, RoutedEventArgs e)
         {
             LoadCalls();
         }
