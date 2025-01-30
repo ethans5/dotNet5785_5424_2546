@@ -12,45 +12,32 @@ namespace PL.Call
 {
     public partial class CallInList : Window, INotifyPropertyChanged
     {
+        private readonly BlApi.IBl _bl = BlApi.Factory.Get();
         private List<BO.CallInList> _calls;
         private List<BO.CallInList> _filteredCalls;
-        static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
 
-        private CallFields? _selectedFilter;
-        private object _selectedFilterValue;
-
-        // Implémentation de INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
 
+        private CallFields? _selectedFilter;
         public CallFields? SelectedFilter
         {
             get => _selectedFilter;
             set
             {
-                if (_selectedFilter != value)
-                {
-                    _selectedFilter = value;
-                    OnPropertyChanged();
-                }
+                _selectedFilter = value;
+                OnPropertyChanged();
             }
         }
 
+        private object _selectedFilterValue;
         public object SelectedFilterValue
         {
             get => _selectedFilterValue;
             set
             {
-                if (_selectedFilterValue != value)
-                {
-                    _selectedFilterValue = value;
-                    OnPropertyChanged();
-                }
+                _selectedFilterValue = value;
+                OnPropertyChanged();
             }
-        }
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public CallInList()
@@ -62,28 +49,21 @@ namespace PL.Call
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            // Inscrire l'observateur et charger les données
-            s_bl.Call.AddObserver(CallListObserver);
+            _bl.Call.AddObserver(RefreshCalls);
             LoadCalls();
         }
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            // Supprimer l'observateur
-            s_bl.Call.RemoveObserver(CallListObserver);
+            _bl.Call.RemoveObserver(RefreshCalls);
         }
 
         private void LoadCalls(CallFields? filter = null, object filterValue = null, CallFields? sort = null)
         {
             try
             {
-                // Charger les appels depuis la couche BL avec les filtres actifs
-                _calls = s_bl.Call.ReadAllCalls(filter, filterValue, sort).ToList();
-
-                // Appliquer les filtres
+                _calls = _bl.Call.ReadAllCalls(filter, filterValue, sort).ToList();
                 _filteredCalls = _calls;
-
-                // Mettre à jour la source de données du DataGrid
                 CallDataGrid.ItemsSource = _filteredCalls;
             }
             catch (Exception ex)
@@ -92,28 +72,68 @@ namespace PL.Call
             }
         }
 
-        private void CallListObserver()
+        private void RefreshCalls()
         {
-            // Mettre à jour la liste des appels
-            LoadCalls(sort: SelectedFilter);
+            LoadCalls(SelectedFilter, SelectedFilterValue);
         }
 
-        private object ConvertFilterValue(CallFields filterField, string filterText)
+        private void ApplyFilterAndSort_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(filterText)) return null;
+            SelectedFilter = GetSelectedFilter(FilterComboBox);
+            SelectedFilterValue = ConvertFilterValue(SelectedFilter, FilterTextBox.Text);
+            var sortField = GetSelectedFilter(SortComboBox);
 
+            LoadCalls(SelectedFilter, SelectedFilterValue, sortField);
+        }
+
+        private void ResetFilters_Click(object sender, RoutedEventArgs e)
+        {
+            SelectedFilter = null;
+            SelectedFilterValue = null;
+            FilterComboBox.SelectedIndex = -1;
+            FilterTextBox.Text = string.Empty;
+            SortComboBox.SelectedIndex = -1;
+            LoadCalls();
+        }
+
+        private void AddCall_Click(object sender, RoutedEventArgs e)
+        {
+            new CallDetails().ShowDialog();
+            LoadCalls();
+        }
+
+        private void RefreshButton_Click(object sender, RoutedEventArgs e)
+        {
+            LoadCalls();
+        }
+
+        private void CallDataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (CallDataGrid.SelectedItem is BO.CallInList selectedCall)
+            {
+                new CallDetails(selectedCall.callId).ShowDialog();
+                LoadCalls();
+            }
+        }
+
+        private CallFields? GetSelectedFilter(ComboBox comboBox)
+        {
+            return comboBox.SelectedItem is ComboBoxItem item && item.Tag != null
+                ? Enum.Parse<CallFields>(item.Tag.ToString())
+                : (CallFields?)null;
+        }
+
+        private object ConvertFilterValue(CallFields? filterField, string filterText)
+        {
+            if (filterField == null || string.IsNullOrEmpty(filterText)) return null;
             try
             {
-                return filterField switch
+                return filterField.Value switch
                 {
-                    CallFields.Id or CallFields.CallId or CallFields.totalAssignmentAllocation
-                        => int.Parse(filterText),
-                    CallFields.startingTime
-                        => DateTime.Parse(filterText),
-                    CallFields.remainingTime or CallFields.duration
-                        => TimeSpan.Parse(filterText),
-                    CallFields.callType or CallFields.Status
-                        => Enum.Parse(typeof(CallFields), filterText),
+                    CallFields.Id or CallFields.CallId or CallFields.totalAssignmentAllocation => int.Parse(filterText),
+                    CallFields.startingTime => DateTime.Parse(filterText),
+                    CallFields.remainingTime or CallFields.duration => TimeSpan.Parse(filterText),
+                    CallFields.callType or CallFields.Status => Enum.Parse(typeof(CallFields), filterText),
                     _ => filterText
                 };
             }
@@ -124,72 +144,40 @@ namespace PL.Call
             }
         }
 
-        private void ApplyFilterAndSort_Click(object sender, RoutedEventArgs e)
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            CallFields? filterField = null;
-            object filterValue = null;
-            CallFields? sortField = null;
-
-            // Récupération du champ de filtrage
-            if (FilterComboBox.SelectedItem is ComboBoxItem filterItem &&
-                filterItem.Tag != null)
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+        private void DeleteCallButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Récupérer l'ID du volontaire à supprimer
+            if (sender is Button button && button.CommandParameter is int id)
             {
-                filterField = (CallFields)Enum.Parse(typeof(CallFields), filterItem.Tag.ToString());
-                filterValue = ConvertFilterValue(filterField.Value, FilterTextBox.Text);
-            }
+                // Demander confirmation à l'utilisateur
+                var result = MessageBox.Show($"Êtes-vous sûr de vouloir supprimer le call avec l'ID {id} ?",
+                                             "Confirmation de suppression",
+                                             MessageBoxButton.YesNo,
+                                             MessageBoxImage.Warning);
 
-            // Récupération du champ de tri
-            if (SortComboBox.SelectedItem is ComboBoxItem sortItem &&
-                sortItem.Tag != null)
-            {
-                sortField = (CallFields)Enum.Parse(typeof(CallFields), sortItem.Tag.ToString());
-            }
+                if (result == MessageBoxResult.Yes)
+                {
+                    try
+                    {
+                        // Supprimer le volontaire via la couche BL
+                        _bl.Call.DeleteCall(id);
 
-            LoadCalls(filterField, filterValue, sortField);
-        }
+                        // Recharger la liste des volontaires
+                        LoadCalls();
 
-        private void ResetFilters_Click(object sender, RoutedEventArgs e)
-        {
-            // Réinitialiser les filtres
-            SelectedFilter = null;
-            SelectedFilterValue = null;
-
-            // Réinitialiser les contrôles
-            FilterComboBox.SelectedIndex = -1;
-            FilterTextBox.Text = string.Empty;
-            SortComboBox.SelectedIndex = -1;
-
-            // Recharger les appels sans filtre
-            LoadCalls();
-        }
-
-        private void AddCall_Click(object sender, RoutedEventArgs e)
-        {
-            // Ouvrir la fenêtre pour ajouter un appel
-            var detailsWindow = new CallDetails();
-            detailsWindow.ShowDialog();
-
-            // Recharger la liste après ajout
-            LoadCalls();
-        }
-
-        private void RefreshButton_Click(object sender, RoutedEventArgs e)
-        {
-            // Recharger les données
-            LoadCalls();
-        }
-
-        private void CallDataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            if (CallDataGrid.SelectedItem is BO.CallInList selectedCall)
-            {
-                // Ouvrir la fenêtre avec les détails de l'appel
-                var details = new CallDetails(s_bl.Call.ReadCall(selectedCall.callId));
-                details.ShowDialog();
-
-                // Recharger la liste après modification
-                LoadCalls();
+                        MessageBox.Show("Volontaire supprimé avec succès.", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Erreur lors de la suppression : {ex.Message}", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
             }
         }
+
     }
 }

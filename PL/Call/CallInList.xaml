@@ -81,7 +81,7 @@
         </StackPanel>
 
         <!-- Tableau des Appels -->
-        <Border Grid.Row="1" Background="White" CornerRadius="10" BorderBrush="#bdc3c7" BorderThickness="1" ScrollViewer.VerticalScrollBarVisibility="Auto">
+        <Border Grid.Row="1" Background="White" CornerRadius="10" BorderBrush="#bdc3c7" BorderThickness="1">
             <StackPanel>
                 <!-- Sous-titre -->
                 <TextBlock Text="Liste des Appels" FontSize="20" FontWeight="SemiBold" Foreground="#7f8c8d"
@@ -94,21 +94,25 @@
                         RowBackground="#ecf0f1" AlternatingRowBackground="#dfe6e9"
                         MouseDoubleClick="CallDataGrid_MouseDoubleClick">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="ID Appel" Binding="{Binding callId}" Width="*" />
-                        <DataGridTextColumn Header="Type d'Appel" Binding="{Binding callType}" Width="2*">
-                            <DataGridTextColumn.ElementStyle>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="TextWrapping" Value="Wrap"/>
-                                    <Setter Property="VerticalAlignment" Value="Center"/>
-                                </Style>
-                            </DataGridTextColumn.ElementStyle>
-                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="ID" Binding="{Binding callId}" Width="*" />
+                        <DataGridTextColumn Header="Type d'Appel" Binding="{Binding callType}" Width="2*"/>
                         <DataGridTextColumn Header="Heure de Début" Binding="{Binding startingTime}" Width="2*" />
                         <DataGridTextColumn Header="Temps Restant" Binding="{Binding remainingTime, Converter={StaticResource RemainingTimeConverter}}" Width="2*" />
                         <DataGridTextColumn Header="Dernier Volontaire" Binding="{Binding LastVolunteerName}" Width="2*" />
                         <DataGridTextColumn Header="Durée" Binding="{Binding duration}" Width="*" />
                         <DataGridTextColumn Header="Statut" Binding="{Binding Status}" Width="*" />
                         <DataGridTextColumn Header="Total Allocations" Binding="{Binding TotalAssignmentAllocations}" Width="2*" />
+
+                        <!-- Colonne pour la suppression -->
+                        <DataGridTemplateColumn Header="Supprimer" Width="Auto">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="🗑️" Background="Transparent" Foreground="Red" BorderThickness="0"
+                                            ToolTip="Supprimer l'appel" Click="DeleteCallButton_Click"
+                                            CommandParameter="{Binding callId}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
                     </DataGrid.Columns>
                 </DataGrid>
 

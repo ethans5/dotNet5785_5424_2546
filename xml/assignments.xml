@@ -288,4 +288,12 @@
     <endTreatment>2025-01-24T10:52:19.5482654</endTreatment>
     <typeOfEnd>treated</typeOfEnd>
   </Assignment>
+  <Assignment>
+    <Id>37</Id>
+    <CallId>51</CallId>
+    <VolunteerId>340993344</VolunteerId>
+    <StartTreatment>2025-01-28T17:19:38</StartTreatment>
+    <endTreatment xsi:nil="true" />
+    <typeOfEnd xsi:nil="true" />
+  </Assignment>
 </ArrayOfAssignment>

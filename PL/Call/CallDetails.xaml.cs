@@ -1,81 +1,73 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using BO;
-using DO;
 
 namespace PL.Call
 {
-    public partial class CallDetails : Window
+    public partial class CallDetails : Window, INotifyPropertyChanged
     {
-        public BO.Call Call { get; private set; }
+        private int? _callId;
         private bool _isCreating;
         static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
 
-        public CallDetails(BO.Call? call = null, bool isCreating = true)
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public List<CallAssignInList> CallAssignInLists { get; set; }
+
+        public CallDetails(int? callId = null)
         {
             InitializeComponent();
+            _isCreating = !callId.HasValue;
+            _callId = callId;
 
-            _isCreating = isCreating;
-            Call = call ?? new BO.Call();
-            DataContext = Call;
-
-            // Remplir les ComboBox avec des valeurs d'énumérations
-            CallTypeComboBox.ItemsSource = Enum.GetValues(typeof(BO.callType));
-            StatusComboBox.ItemsSource = Enum.GetValues(typeof(Status));
-
-            // Si on crée un nouvel appel
-            if (_isCreating)
+            if (callId.HasValue)
             {
-                Call.Created = s_bl.Admin.GetSystemeClock();
-                CreatedDateTextBox.Text = Call.Created.ToString("g"); // Format lisible
+                LoadCallDetails(callId.Value);
             }
-            else
-            {
-                CreatedDateTextBox.Text = Call.Created.ToString("g");
-            }
+        }
+
+        private void LoadCallDetails(int callId)
+        {
+            var call = s_bl.Call.ReadCall(callId);
+            IdTextBox.Text = call.Id.ToString();
+            CallTypeComboBox.SelectedItem = call.CallType;
+            DescriptionTextBox.Text = call.Description;
+            AddressTextBox.Text = call.Address;
+            CreatedDateTextBox.Text = call.Created.ToString("g");
+
+            CallAssignInLists = call.callAssignInLists ?? new List<CallAssignInList>();
+            CallAssignInListsListBox.ItemsSource = CallAssignInLists;
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            try
+            var call = new BO.Call
             {
-                if (string.IsNullOrWhiteSpace(DescriptionTextBox.Text) ||
-                    string.IsNullOrWhiteSpace(AddressTextBox.Text) ||
-                    StatusComboBox.SelectedItem == null ||
-                    CallTypeComboBox.SelectedItem == null)
-                {
-                    MessageBox.Show("Veuillez remplir tous les champs obligatoires.", "Erreur de validation", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
+                Id = _callId ?? 0,
+                CallType = (BO.callType)CallTypeComboBox.SelectedItem,
+                Description = DescriptionTextBox.Text,
+                Address = AddressTextBox.Text,
+                Created = DateTime.Parse(CreatedDateTextBox.Text),
+                callAssignInLists = CallAssignInLists
+            };
 
-                Call.Description = DescriptionTextBox.Text;
-                Call.Address = AddressTextBox.Text;
-                Call.MaxEndTreatment = MaxEndTreatmentDatePicker.SelectedDate;
-                Call.Status = (Status)StatusComboBox.SelectedItem;
-                Call.CallType = (BO.callType)CallTypeComboBox.SelectedItem;
+            if (_isCreating)
+                s_bl.Call.CreateCall(call);
+            else
+                s_bl.Call.UpdateCall(call);
 
-                if (_isCreating)
-                {
-                    s_bl.Call.CreateCall(Call);
-                    MessageBox.Show("L'appel a été créé avec succès !", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
-                else
-                {
-                    s_bl.Call.UpdateCall(Call);
-                    MessageBox.Show("Les détails de l'appel ont été mis à jour avec succès !", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
-
-                Close();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Une erreur est survenue : {ex.Message}", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            Close();
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            DialogResult = false;
             Close();
         }
     }
