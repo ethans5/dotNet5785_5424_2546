@@ -58,7 +58,7 @@ namespace PL.Call
             _bl.Call.RemoveObserver(RefreshCalls);
         }
 
-        private void LoadCalls(CallFields? filter = null, object filterValue = null, CallFields? sort = null)
+        private void LoadCalls(CallFields? filter = null, object? filterValue = null, CallFields? sort = null)
         {
             try
             {
@@ -79,9 +79,9 @@ namespace PL.Call
 
         private void ApplyFilterAndSort_Click(object sender, RoutedEventArgs e)
         {
-            SelectedFilter = GetSelectedFilter(FilterComboBox);
+            SelectedFilter = GetSelectedFilter(FilterComboBox); 
             SelectedFilterValue = ConvertFilterValue(SelectedFilter, FilterTextBox.Text);
-            var sortField = GetSelectedFilter(SortComboBox);
+            var sortField = GetSelectedFilter(SortComboBox); 
 
             LoadCalls(SelectedFilter, SelectedFilterValue, sortField);
         }
@@ -119,7 +119,7 @@ namespace PL.Call
         private CallFields? GetSelectedFilter(ComboBox comboBox)
         {
             return comboBox.SelectedItem is ComboBoxItem item && item.Tag != null
-                ? Enum.Parse<CallFields>(item.Tag.ToString())
+                ? Enum.Parse<CallFields>(item.Tag.ToString()!)
                 : (CallFields?)null;
         }
 
@@ -176,6 +176,17 @@ namespace PL.Call
                         MessageBox.Show($"Erreur lors de la suppression : {ex.Message}", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
+            }
+        }
+
+        private void ScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            var scrollViewer = sender as ScrollViewer;
+            if (scrollViewer != null)
+            {
+                // Permet le scrolling fluide avec le touchpad
+                scrollViewer.ScrollToVerticalOffset(scrollViewer.VerticalOffset - e.Delta / 3);
+                e.Handled = true; // Empêche la propagation de l'événement
             }
         }
 

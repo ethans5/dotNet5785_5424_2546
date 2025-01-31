@@ -20,68 +20,80 @@
         </ObjectDataProvider>
     </Window.Resources>
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto" CanContentScroll="True" >
-        <Grid Margin="20">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
 
-            <StackPanel Grid.Row="0" Orientation="Vertical" Margin="0,0,0,20">
-                <TextBlock Text="Gestion des Appels" FontSize="32" FontWeight="Bold" Foreground="#2c3e50"
-                         HorizontalAlignment="Center" />
-                <Rectangle Height="2" Fill="#3498db" Margin="100,10,100,20" HorizontalAlignment="Stretch" />
+        <!-- Section Titre et Filtres -->
+        <StackPanel Grid.Row="0" Orientation="Vertical" Margin="0,0,0,20">
+            <TextBlock Text="Gestion des Appels" FontSize="32" FontWeight="Bold" Foreground="#2c3e50"
+                     HorizontalAlignment="Center" />
+            <Rectangle Height="2" Fill="#3498db" Margin="100,10,100,20" HorizontalAlignment="Stretch" />
 
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="20,0,0,20">
-                    <StackPanel Orientation="Vertical" Margin="0,0,20,0">
-                        <TextBlock Text="Filtrer par :" FontSize="16" Margin="0,0,0,5" />
-                        <ComboBox Name="SortComboBox" Width="200">
-                            <ComboBoxItem Content="ID" Tag="Id"/>
-                            <ComboBoxItem Content="Type d'Appel" Tag="callType"/>
-                            <ComboBoxItem Content="Heure de Début" Tag="startingTime"/>
-                            <ComboBoxItem Content="Temps Restant" Tag="remainingTime"/>
-                            <ComboBoxItem Content="Dernier Volontaire" Tag="LastVolunteerName"/>
-                            <ComboBoxItem Content="Durée" Tag="duration"/>
-                            <ComboBoxItem Content="Statut" Tag="Status"/>
-                            <ComboBoxItem Content="Total Allocations" Tag="totalAssignmentAllocation"/>
-                        </ComboBox>
-                    </StackPanel>
-                    <StackPanel Orientation="Vertical" Margin="0,0,20,0">
-                        <TextBlock Text="Valeur :" FontSize="16" Margin="0,0,0,5" />
-                        <TextBox Name="FilterTextBox" Width="200"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Vertical" Margin="0,0,20,0">
-                        <TextBlock Text="Trier par :" FontSize="16" Margin="0,0,0,5" />
-                        <ComboBox Name="FilterComboBox" Width="200">
-                            <ComboBoxItem Content="ID" Tag="Id"/>
-                            <ComboBoxItem Content="Type d'Appel" Tag="callType"/>
-                            <ComboBoxItem Content="Heure de Début" Tag="startingTime"/>
-                            <ComboBoxItem Content="Temps Restant" Tag="remainingTime"/>
-                            <ComboBoxItem Content="Dernier Volontaire" Tag="LastVolunteerName"/>
-                            <ComboBoxItem Content="Durée" Tag="duration"/>
-                            <ComboBoxItem Content="Statut" Tag="Status"/>
-                            <ComboBoxItem Content="Total Allocations" Tag="totalAssignmentAllocation"/>
-                        </ComboBox>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
-                        <Button Content="Appliquer" Width="100" Height="30" Background="#2980b9" Foreground="White"
-                                Click="ApplyFilterAndSort_Click" Margin="0,0,10,0"/>
-                        <Button Content="Réinitialiser" Width="120" Height="30" Background="#e74c3c" Foreground="White"
-                                Click="ResetFilters_Click"/>
-                    </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="20,0,0,20">
+                <StackPanel Orientation="Vertical" Margin="0,0,20,0">
+                    <TextBlock Text="Trier par :" FontSize="16" Margin="0,0,0,5" />
+                    <ComboBox Name="SortComboBox" Width="200">
+                        <ComboBoxItem Content="ID" Tag="Id"/>
+                        <ComboBoxItem Content="Type d'Appel" Tag="callType"/>
+                        <ComboBoxItem Content="Heure de Début" Tag="startingTime"/>
+                        <ComboBoxItem Content="Temps Restant" Tag="remainingTime"/>
+                        <ComboBoxItem Content="Dernier Volontaire" Tag="LastVolunteerName"/>
+                        <ComboBoxItem Content="Durée" Tag="duration"/>
+                        <ComboBoxItem Content="Statut" Tag="Status"/>
+                        <ComboBoxItem Content="Total Allocations" Tag="totalAssignmentAllocation"/>
+                    </ComboBox>
+                </StackPanel>
+
+                <StackPanel Orientation="Vertical" Margin="0,0,20,0">
+                    <TextBlock Text="Filtrer par :" FontSize="16" Margin="0,0,0,5" />
+                    <ComboBox Name="FilterComboBox" Width="200">
+                        <ComboBoxItem Content="ID" Tag="Id"/>
+                        <ComboBoxItem Content="Type d'Appel" Tag="callType"/>
+                        <ComboBoxItem Content="Heure de Début" Tag="startingTime"/>
+                        <ComboBoxItem Content="Temps Restant" Tag="remainingTime"/>
+                        <ComboBoxItem Content="Dernier Volontaire" Tag="LastVolunteerName"/>
+                        <ComboBoxItem Content="Durée" Tag="duration"/>
+                        <ComboBoxItem Content="Statut" Tag="Status"/>
+                        <ComboBoxItem Content="Total Allocations" Tag="totalAssignmentAllocation"/>
+                    </ComboBox>
+                </StackPanel>
+                <StackPanel Orientation="Vertical" Margin="0,0,20,0">
+                    <TextBlock Text="Valeur :" FontSize="16" Margin="0,0,0,5" />
+                    <TextBox Name="FilterTextBox" Width="200" Height="20"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
+                    <Button Content="Appliquer" Width="100" Height="30" Background="#2980b9" Foreground="White"
+                            Click="ApplyFilterAndSort_Click" Margin="0,0,10,0"/>
+                    <Button Content="Réinitialiser" Width="120" Height="30" Background="#e74c3c" Foreground="White"
+                            Click="ResetFilters_Click"/>
                 </StackPanel>
             </StackPanel>
+        </StackPanel>
 
-            <Border Grid.Row="1" Background="White" CornerRadius="10" BorderBrush="#bdc3c7" BorderThickness="1" ScrollViewer.CanContentScroll="True">
-                <StackPanel>
-                    <TextBlock Text="Liste des Appels" FontSize="20" FontWeight="SemiBold" Foreground="#7f8c8d"
-                             Margin="20,10,0,10" />
+        <Border Grid.Row="1" Background="White" CornerRadius="10" BorderBrush="#bdc3c7" BorderThickness="1">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
 
+                <TextBlock Text="Liste des Appels" FontSize="20" FontWeight="SemiBold" Foreground="#7f8c8d"
+                   Margin="20,10,0,10" Grid.Row="0" />
+
+                <!-- Ajout de PreviewMouseWheel pour capturer le scroll du touchpad -->
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"
+                      PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
                     <DataGrid Name="CallDataGrid" AutoGenerateColumns="False" CanUserAddRows="False"
-                            IsReadOnly="True" SelectionMode="Single" Margin="20"
-                            Background="White" BorderBrush="#dcdcdc" BorderThickness="1"
-                            RowBackground="#ecf0f1" AlternatingRowBackground="#dfe6e9"
-                            MouseDoubleClick="CallDataGrid_MouseDoubleClick">
+                      IsReadOnly="True" SelectionMode="Single" Margin="20"
+                      Background="White" BorderBrush="#dcdcdc" BorderThickness="1"
+                      RowBackground="#ecf0f1" AlternatingRowBackground="#dfe6e9"
+                      MouseDoubleClick="CallDataGrid_MouseDoubleClick"
+                      ScrollViewer.CanContentScroll="False"
+                      VerticalAlignment="Stretch">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="ID" Binding="{Binding callId}" Width="*" />
                             <DataGridTextColumn Header="Type d'Appel" Binding="{Binding callType}" Width="2*"/>
@@ -95,20 +107,23 @@
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <Button Content="🗑️" Background="Transparent" Foreground="Red" BorderThickness="0"
-                                                ToolTip="Supprimer l'appel" Click="DeleteCallButton_Click"
-                                                CommandParameter="{Binding callId}" />
+                                        ToolTip="Supprimer l'appel" Click="DeleteCallButton_Click"
+                                        CommandParameter="{Binding callId}" />
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
                         </DataGrid.Columns>
                     </DataGrid>
-                </StackPanel>
-            </Border>
+                </ScrollViewer>
+            </Grid>
+        </Border>
 
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,10,20,10">
-                <Button Content="Ajouter" Width="120" Height="40" Background="#27ae60" Foreground="White" Click="AddCallButton_Click" Margin="0,0,10,0"/>
-                <Button Content="Rafraîchir" Width="120" Height="40" Background="#3498db" Foreground="White" Click="RefreshCallList_Click"/>
-            </StackPanel>
-        </Grid>
-    </ScrollViewer>
+
+
+        <!-- Boutons Ajouter et Rafraîchir -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,10,20,10">
+            <Button Content="Ajouter" Width="120" Height="40" Background="#27ae60" Foreground="White" Click="AddCallButton_Click" Margin="0,0,10,0"/>
+            <Button Content="Rafraîchir" Width="120" Height="40" Background="#3498db" Foreground="White" Click="RefreshCallList_Click"/>
+        </StackPanel>
+    </Grid>
 </Window>
