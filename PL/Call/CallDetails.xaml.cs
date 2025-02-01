@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 using BO;
 
 namespace PL.Call
@@ -41,7 +43,12 @@ namespace PL.Call
             CallTypeComboBox.SelectedItem = call.CallType;
             DescriptionTextBox.Text = call.Description;
             AddressTextBox.Text = call.Address;
+            LatitudeTextBox.Text = call.Latitude.ToString();
+            LongitudeTextBox.Text = call.Longitude.ToString();
             CreatedDateTextBox.Text = call.Created.ToString("g");
+            MaxEndTreatmentTextBox.Text = call.MaxEndTreatment?.ToString("g");
+            StatusComboBox.Text = call.Status.ToString();
+
 
             CallAssignInLists = call.callAssignInLists ?? new List<CallAssignInList>();
             CallAssignInListsListBox.ItemsSource = CallAssignInLists;
@@ -75,6 +82,16 @@ namespace PL.Call
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             Close();
+        }
+        private void ScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            var scrollViewer = sender as ScrollViewer;
+            if (scrollViewer != null)
+            {
+                // Permet le scrolling fluide avec le touchpad
+                scrollViewer.ScrollToVerticalOffset(scrollViewer.VerticalOffset - e.Delta / 3);
+                e.Handled = true; // Empêche la propagation de l'événement
+            }
         }
     }
 }

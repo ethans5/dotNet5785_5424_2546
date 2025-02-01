@@ -14,6 +14,7 @@ namespace PL.Call
         {
             if (value is TimeSpan timeSpan)
             {
+               
                 return $"{timeSpan.Days} jours, {timeSpan.Hours} heures, {timeSpan.Minutes} minutes";
             }
             return "Non défini";

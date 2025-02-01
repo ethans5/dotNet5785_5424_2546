@@ -35,7 +35,35 @@
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="20,0,0,20">
                 <StackPanel Orientation="Vertical" Margin="0,0,20,0">
+                    <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Trier par :" FontSize="16" Margin="0,0,0,5" />
+                        <TextBlock Text="?" FontSize="16" FontWeight="Bold" Foreground="#2980b9" Cursor="Hand">
+                        <TextBlock.ToolTip>
+                            <StackPanel>
+                                <TextBlock Text="Call Type:" FontWeight="Bold"/>
+                                <TextBlock Text="0 = None" />
+                                <TextBlock Text="1 = BuyingFood" />
+                                <TextBlock Text="2 = BuyingMedicine" />
+                                <TextBlock Text="3 = BuyingClothes" />
+                                <TextBlock Text="4 = BuyingCartoons" />
+                                <TextBlock Text="5 = PackingFood" />
+                                <TextBlock Text="6 = PackingMedicine" />
+                                <TextBlock Text="7 = PackingClothes" />
+                                <TextBlock Text="8 = PackingCartoonsInTheTruck" />
+                                <TextBlock Text="9 = Deliveries" />
+                                <TextBlock Text="10 = DeliveriesToTheDoor" />
+                                <TextBlock Text=" " />
+                                <TextBlock Text="Status:" FontWeight="Bold"/>
+                                <TextBlock Text="0 = Open" />
+                                <TextBlock Text="1 = InProgress" />
+                                <TextBlock Text="2 = Closed" />
+                                <TextBlock Text="3 = Expired" />
+                                <TextBlock Text="4 = OpenAlmostExpired" />
+                                <TextBlock Text="5 = AlmostExpired" />
+                            </StackPanel>
+                        </TextBlock.ToolTip>
+                        </TextBlock>
+                    </StackPanel>
                     <ComboBox Name="SortComboBox" Width="200">
                         <ComboBoxItem Content="ID" Tag="Id"/>
                         <ComboBoxItem Content="Type d'Appel" Tag="callType"/>
@@ -100,7 +128,7 @@
                             <DataGridTextColumn Header="Heure de Début" Binding="{Binding startingTime}" Width="2*" />
                             <DataGridTextColumn Header="Temps Restant" Binding="{Binding remainingTime, Converter={StaticResource RemainingTimeConverter}}" Width="2*" />
                             <DataGridTextColumn Header="Dernier Volontaire" Binding="{Binding LastVolunteerName}" Width="2*" />
-                            <DataGridTextColumn Header="Durée" Binding="{Binding duration}" Width="*" />
+                            <DataGridTextColumn Header="Durée" Binding="{Binding duration, Converter={StaticResource RemainingTimeConverter}}" Width="*" />
                             <DataGridTextColumn Header="Statut" Binding="{Binding Status}" Width="*" />
                             <DataGridTextColumn Header="Total Allocations" Binding="{Binding TotalAssignmentAllocations}" Width="2*" />
                             <DataGridTemplateColumn Header="Supprimer" Width="Auto">
@@ -116,6 +144,7 @@
                     </DataGrid>
                 </ScrollViewer>
             </Grid>
+           
         </Border>
 
 
