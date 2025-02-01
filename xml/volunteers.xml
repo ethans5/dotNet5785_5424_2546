@@ -214,8 +214,8 @@
     <Email>R@G.FR</Email>
     <JobType>Volunteer</JobType>
     <isActive>true</isActive>
-    <DistanceType>0</DistanceType>
-    <MaxDistance>3</MaxDistance>
+    <DistanceType>aerial</DistanceType>
+    <MaxDistance>10</MaxDistance>
     <Password>QSDFGHJKLM</Password>
     <Address>1 rue de la paix, paris, france</Address>
     <Latitude>48.8685535</Latitude>
