@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -12,15 +13,21 @@ namespace PL.Call
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
+            if (value == null) return "Non défini";
+
             if (value is TimeSpan timeSpan)
             {
-                if (timeSpan < TimeSpan.Zero)
+                if (timeSpan <= TimeSpan.Zero)
                 {
+                    Debug.WriteLine("Call terminé");
                     return "Call terminé";
                 }
 
-                return $"{timeSpan.Days} jours, {timeSpan.Hours} heures, {timeSpan.Minutes} minutes";
+                string formattedTime = $"{(int)timeSpan.TotalDays} jours, {timeSpan.Hours} heures, {timeSpan.Minutes} minutes";
+                Debug.WriteLine($"Temps Restant: {formattedTime}");
+                return formattedTime;
             }
+
             return "Non défini";
         }
 

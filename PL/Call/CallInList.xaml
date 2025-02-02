@@ -126,7 +126,9 @@
                             <DataGridTextColumn Header="ID" Binding="{Binding callId}" Width="*" />
                             <DataGridTextColumn Header="Type d'Appel" Binding="{Binding callType}" Width="2*"/>
                             <DataGridTextColumn Header="Heure de Début" Binding="{Binding startingTime}" Width="2*" />
-                            <DataGridTextColumn Header="Temps Restant" Binding="{Binding remainingTime, Converter={StaticResource RemainingTimeConverter}}" Width="2*" />
+                            <DataGridTextColumn Header="Temps Restant" 
+    Binding="{Binding remainingTime, Converter={StaticResource RemainingTimeConverter}, Mode=OneWay}" Width="2*" />
+
                             <DataGridTextColumn Header="Dernier Volontaire" Binding="{Binding LastVolunteerName}" Width="2*" />
                             <DataGridTextColumn Header="Durée" Binding="{Binding duration, Converter={StaticResource RemainingTimeConverter}}" Width="2*" />
                             <DataGridTextColumn Header="Statut" Binding="{Binding Status}" Width="*" />
