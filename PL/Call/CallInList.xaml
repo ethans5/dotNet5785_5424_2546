@@ -35,35 +35,36 @@
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="20,0,0,20">
                 <StackPanel Orientation="Vertical" Margin="0,0,20,0">
-                    <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Trier par :" FontSize="16" Margin="0,0,0,5" />
-                        <TextBlock Text="?" FontSize="16" FontWeight="Bold" Foreground="#2980b9" Cursor="Hand">
-                        <TextBlock.ToolTip>
-                            <StackPanel>
-                                <TextBlock Text="Call Type:" FontWeight="Bold"/>
-                                <TextBlock Text="0 = None" />
-                                <TextBlock Text="1 = BuyingFood" />
-                                <TextBlock Text="2 = BuyingMedicine" />
-                                <TextBlock Text="3 = BuyingClothes" />
-                                <TextBlock Text="4 = BuyingCartoons" />
-                                <TextBlock Text="5 = PackingFood" />
-                                <TextBlock Text="6 = PackingMedicine" />
-                                <TextBlock Text="7 = PackingClothes" />
-                                <TextBlock Text="8 = PackingCartoonsInTheTruck" />
-                                <TextBlock Text="9 = Deliveries" />
-                                <TextBlock Text="10 = DeliveriesToTheDoor" />
-                                <TextBlock Text=" " />
-                                <TextBlock Text="Status:" FontWeight="Bold"/>
-                                <TextBlock Text="0 = Open" />
-                                <TextBlock Text="1 = InProgress" />
-                                <TextBlock Text="2 = Closed" />
-                                <TextBlock Text="3 = Expired" />
-                                <TextBlock Text="4 = OpenAlmostExpired" />
-                                <TextBlock Text="5 = AlmostExpired" />
-                            </StackPanel>
-                        </TextBlock.ToolTip>
+                    <!--<StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Trier par :" FontSize="16" Margin="0,0,0,5" />
+                        <TextBlock Text="?" FontSize="16" FontWeight="Bold" Foreground="#2980b9" Cursor="Hand" AutomationProperties.HelpText="aa">
+                            <TextBlock.ToolTip>
+                                <StackPanel>
+                                    <TextBlock Text="Call Type:" FontWeight="Bold"/>
+                                    <TextBlock Text="0 = None" />
+                                    <TextBlock Text="1 = BuyingFood" />
+                                    <TextBlock Text="2 = BuyingMedicine" />
+                                    <TextBlock Text="3 = BuyingClothes" />
+                                    <TextBlock Text="4 = BuyingCartoons" />
+                                    <TextBlock Text="5 = PackingFood" />
+                                    <TextBlock Text="6 = PackingMedicine" />
+                                    <TextBlock Text="7 = PackingClothes" />
+                                    <TextBlock Text="8 = PackingCartoonsInTheTruck" />
+                                    <TextBlock Text="9 = Deliveries" />
+                                    <TextBlock Text="10 = DeliveriesToTheDoor" />
+                                    <TextBlock Text=" " />
+                                    <TextBlock Text="Status:" FontWeight="Bold"/>
+                                    <TextBlock Text="0 = Open" />
+                                    <TextBlock Text="1 = InProgress" />
+                                    <TextBlock Text="2 = Closed" />
+                                    <TextBlock Text="3 = Expired" />
+                                    <TextBlock Text="4 = OpenAlmostExpired" />
+                                    <TextBlock Text="5 = AlmostExpired" />
+                                </StackPanel>
+                            </TextBlock.ToolTip>
                         </TextBlock>
-                    </StackPanel>
+                    </StackPanel>-->
                     <ComboBox Name="SortComboBox" Width="200">
                         <ComboBoxItem Content="ID" Tag="Id"/>
                         <ComboBoxItem Content="Type d'Appel" Tag="callType"/>
@@ -77,7 +78,35 @@
                 </StackPanel>
 
                 <StackPanel Orientation="Vertical" Margin="0,0,20,0">
-                    <TextBlock Text="Filtrer par :" FontSize="16" Margin="0,0,0,5" />
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Filtrer par :" FontSize="16" Margin="0,0,0,5" />
+                        <TextBlock Text="?" FontSize="16" FontWeight="Bold" Foreground="#2980b9" Cursor="Hand" Margin="10,0,0,0">
+                            <TextBlock.ToolTip>
+                                <StackPanel>
+                                    <TextBlock Text="Call Type:" FontWeight="Bold"/>
+                                    <TextBlock Text="0 = None" />
+                                    <TextBlock Text="1 = BuyingFood" />
+                                    <TextBlock Text="2 = BuyingMedicine" />
+                                    <TextBlock Text="3 = BuyingClothes" />
+                                    <TextBlock Text="4 = BuyingCartoons" />
+                                    <TextBlock Text="5 = PackingFood" />
+                                    <TextBlock Text="6 = PackingMedicine" />
+                                    <TextBlock Text="7 = PackingClothes" />
+                                    <TextBlock Text="8 = PackingCartoonsInTheTruck" />
+                                    <TextBlock Text="9 = Deliveries" />
+                                    <TextBlock Text="10 = DeliveriesToTheDoor" />
+                                    <TextBlock Text=" " />
+                                    <TextBlock Text="Status:" FontWeight="Bold"/>
+                                    <TextBlock Text="0 = Open" />
+                                    <TextBlock Text="1 = InProgress" />
+                                    <TextBlock Text="2 = Closed" />
+                                    <TextBlock Text="3 = Expired" />
+                                    <TextBlock Text="4 = OpenAlmostExpired" />
+                                    <TextBlock Text="5 = AlmostExpired" />
+                                </StackPanel>
+                            </TextBlock.ToolTip>
+     </TextBlock>
+                    </StackPanel>
                     <ComboBox Name="FilterComboBox" Width="200">
                         <ComboBoxItem Content="ID" Tag="Id"/>
                         <ComboBoxItem Content="Type d'Appel" Tag="callType"/>
