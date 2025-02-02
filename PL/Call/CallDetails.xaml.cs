@@ -16,6 +16,7 @@ namespace PL.Call
         static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
 
         public event PropertyChangedEventHandler PropertyChanged;
+
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -46,10 +47,9 @@ namespace PL.Call
             LatitudeTextBox.Text = call.Latitude.ToString();
             LongitudeTextBox.Text = call.Longitude.ToString();
             CreatedDateTextBox.Text = call.Created.ToString("g");
-            MaxEndTreatmentTextBox.Text = call.MaxEndTreatment?.ToString("g");
+            MaxEndTreatmentTextBox.SelectedDate = call.MaxEndTreatment;  // Correct usage of Calendar
+
             StatusComboBox.Text = call.Status.ToString();
-
-
             CallAssignInLists = call.callAssignInLists ?? new List<CallAssignInList>();
             CallAssignInListsListBox.ItemsSource = CallAssignInLists;
         }
@@ -58,10 +58,13 @@ namespace PL.Call
         {
             var call = new BO.Call
             {
+                Id = _callId ?? 0,
                 CallType = (BO.callType)CallTypeComboBox.SelectedItem,
                 Description = DescriptionTextBox.Text,
                 Address = AddressTextBox.Text,
                 Created = s_bl.Admin.GetSystemeClock(),
+                MaxEndTreatment = MaxEndTreatmentTextBox.SelectedDate,  // Correct assignment for Calendar
+                Status = (BO.Status)StatusComboBox.SelectedItem,
                 callAssignInLists = CallAssignInLists
             };
 
@@ -83,14 +86,14 @@ namespace PL.Call
         {
             Close();
         }
+
         private void ScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
             var scrollViewer = sender as ScrollViewer;
             if (scrollViewer != null)
             {
-                // Permet le scrolling fluide avec le touchpad
                 scrollViewer.ScrollToVerticalOffset(scrollViewer.VerticalOffset - e.Delta / 3);
-                e.Handled = true; // Empêche la propagation de l'événement
+                e.Handled = true;
             }
         }
     }
