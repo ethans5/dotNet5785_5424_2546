@@ -128,9 +128,9 @@
                             <DataGridTextColumn Header="Heure de Début" Binding="{Binding startingTime}" Width="2*" />
                             <DataGridTextColumn Header="Temps Restant" Binding="{Binding remainingTime, Converter={StaticResource RemainingTimeConverter}}" Width="2*" />
                             <DataGridTextColumn Header="Dernier Volontaire" Binding="{Binding LastVolunteerName}" Width="2*" />
-                            <DataGridTextColumn Header="Durée" Binding="{Binding duration, Converter={StaticResource RemainingTimeConverter}}" Width="*" />
+                            <DataGridTextColumn Header="Durée" Binding="{Binding duration, Converter={StaticResource RemainingTimeConverter}}" Width="2*" />
                             <DataGridTextColumn Header="Statut" Binding="{Binding Status}" Width="*" />
-                            <DataGridTextColumn Header="Total Allocations" Binding="{Binding TotalAssignmentAllocations}" Width="2*" />
+                            <DataGridTextColumn Header="Total Allocations" Binding="{Binding TotalAssignmentAllocations}" Width="*" />
                             <DataGridTemplateColumn Header="Supprimer" Width="Auto">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>

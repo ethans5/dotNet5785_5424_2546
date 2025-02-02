@@ -40,7 +40,7 @@
         </Grid.ColumnDefinitions>
 
         <Border Grid.Row="0" Grid.Column="0" Background="White" Padding="20" BorderBrush="#bdc3c7" BorderThickness="1" CornerRadius="10" Margin="10">
-            <ScrollViewer PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
+            <!--<ScrollViewer PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">-->
 
                 <StackPanel>
                 <TextBlock Text="Informations Générales" FontSize="26" FontWeight="Bold" Foreground="#2c3e50" Margin="0,0,0,20" />
@@ -74,7 +74,7 @@
                 <ComboBox Name="StatusComboBox" Margin="0,5" Height="35" Background="#ecf0f1"
                           ItemsSource="{Binding Source={StaticResource StatusEnumProvider}}"/>
             </StackPanel>
-            </ScrollViewer>
+            <!--</ScrollViewer>-->
         </Border>
 
         <Border Grid.Row="0" Grid.Column="1" Background="White" Padding="20" BorderBrush="#bdc3c7" BorderThickness="1" CornerRadius="10" Margin="10">

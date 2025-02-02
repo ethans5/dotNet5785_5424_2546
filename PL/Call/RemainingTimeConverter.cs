@@ -14,11 +14,16 @@ namespace PL.Call
         {
             if (value is TimeSpan timeSpan)
             {
-               
+                if (timeSpan < TimeSpan.Zero)
+                {
+                    return "Call terminé";
+                }
+
                 return $"{timeSpan.Days} jours, {timeSpan.Hours} heures, {timeSpan.Minutes} minutes";
             }
             return "Non défini";
         }
+
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {

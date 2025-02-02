@@ -39,7 +39,7 @@ internal class CallImplementation : BlApi.ICall
 
             // 4. Ajout de l'appel dans la base de données via DAL
             _dal.Call.Create(doCall); //stage 4
-            CallManager.Observers.NotifyListUpdated();   
+            CallManager.Observers.NotifyListUpdated();
         }
 
         catch
@@ -218,13 +218,17 @@ internal class CallImplementation : BlApi.ICall
                              callType = (BO.callType)call.CallType,
                              startingTime = call.CallTime,
                              remainingTime = call.MaxTime.HasValue
-                                 ? call.MaxTime!.Value - AdminManager.Now
-                                 : null,
+    ? (call.MaxTime!.Value - AdminManager.Now) < TimeSpan.Zero
+        ? TimeSpan.MinValue  // ou tu pourrais utiliser un autre indicateur pour "terminé"
+        : call.MaxTime!.Value - AdminManager.Now
+    : (TimeSpan?)null,
+
+
                              LastVolunteerName = lastVolunteer?.Name,
                              duration = hasAssignments && lastAssignment?.endTreatment.HasValue == true
                              ? lastAssignment.endTreatment - lastAssignment.StartTreatment
                              : null,
-                             Status = Tools.DetermineCallStatus(call.Id,call.CallTime, call.MaxTime),
+                             Status = Tools.DetermineCallStatus(call.Id, call.CallTime, call.MaxTime),
                              TotalAssignmentAllocations = hasAssignments ? validAssignments.Count() : 0
                          };
 
@@ -412,7 +416,7 @@ internal class CallImplementation : BlApi.ICall
             if (result.Count() == 0)
                 Console.WriteLine("Any calls with this filter exist");
         }
-        
+
 
 
         // Appliquer le tri, si nécessaire
@@ -439,7 +443,7 @@ internal class CallImplementation : BlApi.ICall
                 throw new BlNotFoundException("Call not found");
             }
             Tools.ValidateCallFieldsFormat(call);
-            var coordinates=await Tools.GetCoordinatesAsync(call.Address!);
+            var coordinates = await Tools.GetCoordinatesAsync(call.Address!);
             call.Latitude = coordinates.Latitude;
             call.Longitude = coordinates.Longitude;
 
@@ -571,7 +575,7 @@ internal class CallImplementation : BlApi.ICall
 
     public void AddObserver(Action listObserver) => CallManager.Observers.AddListObserver(listObserver);
 
-     public void AddObserver(int id, Action observer) => CallManager.Observers.AddObserver(id, observer);
+    public void AddObserver(int id, Action observer) => CallManager.Observers.AddObserver(id, observer);
 
     public void RemoveObserver(Action listObserver) => CallManager.Observers.RemoveListObserver(listObserver);
 

@@ -170,7 +170,7 @@ namespace PL.Call
                         // Recharger la liste des volontaires
                         LoadCalls();
 
-                        MessageBox.Show("Volontaire supprimé avec succès.", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
+                        MessageBox.Show("Call supprimé avec succès.", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                     catch (Exception ex)
                     {
