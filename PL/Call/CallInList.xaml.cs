@@ -124,7 +124,7 @@ namespace PL.Call
                 : (CallFields?)null;
         }
 
-        private object ConvertFilterValue(CallFields? filterField, string filterText)
+        private object? ConvertFilterValue(CallFields? filterField, string filterText)
         {
             if (filterField == null || string.IsNullOrEmpty(filterText)) return null;
             try

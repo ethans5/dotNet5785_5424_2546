@@ -19,7 +19,7 @@ namespace PL.Volunteer
         private VolunteerSortField? _selectedFilter;
 
         // Implémentation de INotifyPropertyChanged
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public VolunteerSortField? SelectedFilter
         {
