@@ -49,4 +49,10 @@ internal static class VolunteerManager
             throw;
         }
     }
+
+    public static IEnumerable<BO.Volunteer> GetAvailableVolunteers()
+    {
+        var volunteers = _dal.Volunteer.ReadAll();
+        return volunteers.Select(ParseDoToBoVolunteer).Where(v => v.CallInProgress==null);
+    }
 }

@@ -12,7 +12,7 @@ internal static class AssignmentManager
     {
         bool assignmentUpdated = false; // Indicateur pour suivre les modifications
 
-        lock (AdminManager.blMutex) // Utilisation d'un verrou pour éviter les conflits multi-thread (stage 7)
+        lock (AdminManager.BlMutex) // Utilisation d'un verrou pour éviter les conflits multi-thread (stage 7)
         {
             var assignments = _dal.Assignment.ReadAll().ToList(); // Lire toutes les assignations
 

@@ -143,7 +143,7 @@ internal static class CallManager
 
                         // Assigner l'appel au volontaire et mettre à jour le statut
                         s_bl.Call.ChoiceCall(callId, volunteerId);
-                        boCall = boCall with { Status = Status.InProgress };
+                        boCall.Status = Status.InProgress ;
                         callId = boCall.Id;
                     }
                 }
@@ -154,7 +154,7 @@ internal static class CallManager
                     bool closeCall = s_rand.NextDouble() > 0.5; // 50% de chances de clôturer l’appel
                     if (closeCall)
                     {
-                        boCall = boCall with { Status = Status.Closed, Rating = Math.Round(s_rand.NextDouble() * 5, 1) };
+                        boCall.Status = Status.Closed;
                         callId = boCall.Id;
                     }
                 }
