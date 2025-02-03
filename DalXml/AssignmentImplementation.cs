@@ -3,10 +3,12 @@ using DalApi;
 using DO;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 internal class AssignmentImplementation : IAssignment
 {
     // Create a new Assignment and save it to the XML file
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Create(Assignment item)
     {
         int id = Config.NextAssignmentId; // Generate a new unique ID
@@ -17,6 +19,7 @@ internal class AssignmentImplementation : IAssignment
     }
 
     // Delete an Assignment by ID from the XML file
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Delete(int id)
     {
         List<Assignment> assignments = XMLTools.LoadListFromXMLSerializer<Assignment>(Config.s_assignments_xml);
@@ -26,12 +29,14 @@ internal class AssignmentImplementation : IAssignment
     }
 
     // Delete all Assignments from the XML file
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void DeleteAll()
     {
         XMLTools.SaveListToXMLSerializer(new List<Assignment>(), Config.s_assignments_xml); // Save an empty list
     }
 
     // Read an Assignment by ID from the XML file
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public Assignment? Read(int id)
     {
         List<Assignment> assignments = XMLTools.LoadListFromXMLSerializer<Assignment>(Config.s_assignments_xml);
@@ -39,6 +44,7 @@ internal class AssignmentImplementation : IAssignment
     }
 
     // Read an Assignment using a filter from the XML file
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public Assignment? Read(Func<Assignment, bool> filter)
     {
         List<Assignment> assignments = XMLTools.LoadListFromXMLSerializer<Assignment>(Config.s_assignments_xml);
@@ -46,6 +52,7 @@ internal class AssignmentImplementation : IAssignment
     }
 
     // Read all Assignments or filtered Assignments from the XML file
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public IEnumerable<Assignment> ReadAll(Func<Assignment, bool>? filter = null)
     {
         List<Assignment> assignments = XMLTools.LoadListFromXMLSerializer<Assignment>(Config.s_assignments_xml);
@@ -53,6 +60,7 @@ internal class AssignmentImplementation : IAssignment
     }
 
     // Update an existing Assignment in the XML file
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Update(Assignment item)
     {
         List<Assignment> assignments = XMLTools.LoadListFromXMLSerializer<Assignment>(Config.s_assignments_xml);

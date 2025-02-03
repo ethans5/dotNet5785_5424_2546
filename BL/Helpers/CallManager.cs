@@ -45,28 +45,61 @@ internal static class CallManager
         };
     }
 
-    public static void CheckCallStatuses(DateTime currentSystemTime)
+    //public static void CheckCallStatuses(DateTime currentSystemTime)
+    //{
+    //    var _calls = _dal.Call.ReadAll();
+
+    //    foreach (var doCall in _calls)
+    //    {
+    //        var boCall = parseDoToBoCall(doCall);
+
+    //        if (boCall.Status == Status.Open || boCall.Status == Status.InProgress ||
+    //            boCall.Status == Status.OpenAlmostExpired || boCall.Status==Status.AlmostExpired)
+    //        {
+    //            if (currentSystemTime >= boCall.MaxEndTreatment)
+    //            {
+    //                boCall.Status = Status.Expired;
+    //            }
+    //            else if ((currentSystemTime - _dal.Config.RiskRange) < boCall.MaxEndTreatment && boCall.Status == Status.Open)
+    //            {
+    //                boCall.Status = Status.OpenAlmostExpired;
+    //            }
+    //            else if ((currentSystemTime - _dal.Config.RiskRange) < boCall.MaxEndTreatment && boCall.Status == Status.InProgress)
+    //            {
+    //                boCall.Status = Status.AlmostExpired;
+    //            }
+    //        }
+    //    }
+    //}
+
+    public static void CheckCallStatuses(DateTime oldClock, DateTime newClock)
     {
-        var _calls = _dal.Call.ReadAll();
-
-        foreach (var doCall in _calls)
+        lock (AdminManager.BlMutex) // Protection contre les accès concurrents
         {
-            var boCall = parseDoToBoCall(doCall);
+            var calls = _dal.Call.ReadAll().ToList(); // Charger toutes les données une seule fois
 
-            if (boCall.Status == Status.Open || boCall.Status == Status.InProgress ||
-                boCall.Status == Status.OpenAlmostExpired || boCall.Status==Status.AlmostExpired)
+            foreach (var doCall in calls)
             {
-                if (currentSystemTime >= boCall.MaxEndTreatment)
+                var boCall = parseDoToBoCall(doCall);
+
+                if (boCall.Status == Status.Open || boCall.Status == Status.InProgress ||
+                    boCall.Status == Status.OpenAlmostExpired || boCall.Status == Status.AlmostExpired)
                 {
-                    boCall.Status = Status.Expired;
-                }
-                else if ((currentSystemTime - _dal.Config.RiskRange) < boCall.MaxEndTreatment && boCall.Status == Status.Open)
-                {
-                    boCall.Status = Status.OpenAlmostExpired;
-                }
-                else if ((currentSystemTime - _dal.Config.RiskRange) < boCall.MaxEndTreatment && boCall.Status == Status.InProgress)
-                {
-                    boCall.Status = Status.AlmostExpired;
+                    if (newClock >= boCall.MaxEndTreatment)
+                    {
+                        boCall.Status = Status.Expired;
+                    }
+                    else if ((newClock - _dal.Config.RiskRange) < boCall.MaxEndTreatment && boCall.Status == Status.Open)
+                    {
+                        boCall.Status = Status.OpenAlmostExpired;
+                    }
+                    else if ((newClock - _dal.Config.RiskRange) < boCall.MaxEndTreatment && boCall.Status == Status.InProgress)
+                    {
+                        boCall.Status = Status.AlmostExpired;
+                    }
+
+                    // Mise à jour de l'appel en base de données
+                    _dal.Call.Update(parseBoToDoCall(boCall));
                 }
             }
         }

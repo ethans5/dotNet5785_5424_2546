@@ -2,6 +2,7 @@
 using DO;
 using DalApi;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 /// <summary>
 /// Implements the ICall interface to handle CRUD operations for Call entities.
@@ -11,6 +12,7 @@ internal class CallImplementation : ICall
     /// <summary>
     /// Creates a new Call and assigns a unique ID.
     /// </summary>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Create(Call call)
     {
         int id = Config.NextCallId;
@@ -21,6 +23,7 @@ internal class CallImplementation : ICall
     /// <summary>
     /// Retrieves a Call by its unique ID.
     /// </summary>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public Call? Read(int id)
     {
         if (DataSource.Calls.Exists(c => c.Id == id))
@@ -32,6 +35,7 @@ internal class CallImplementation : ICall
     /// <summary>
     /// Retrieves a Call that matches the specified condition.
     /// </summary>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public Call? Read(Func<Call, bool> filter)
     {
         return DataSource.Calls.FirstOrDefault(filter);
@@ -40,6 +44,7 @@ internal class CallImplementation : ICall
     /// <summary>
     /// Retrieves all Calls, optionally filtering them based on a condition.
     /// </summary>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public IEnumerable<Call> ReadAll(Func<Call, bool>? filter = null)
     {
         return filter == null
@@ -50,6 +55,7 @@ internal class CallImplementation : ICall
     /// <summary>
     /// Updates an existing Call in the data source.
     /// </summary>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Update(Call call)
     {
         int index = DataSource.Calls.FindIndex(c => c.Id == call.Id);
@@ -61,6 +67,7 @@ internal class CallImplementation : ICall
     /// <summary>
     /// Deletes a Call by its unique ID.
     /// </summary>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Delete(int id)
     {
         if (DataSource.Calls.Any(c => c.Id == id))
@@ -72,6 +79,7 @@ internal class CallImplementation : ICall
     /// <summary>
     /// Deletes all Calls from the data source.
     /// </summary>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void DeleteAll()
     {
         DataSource.Calls.Clear();

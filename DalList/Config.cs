@@ -1,4 +1,6 @@
-﻿namespace s_dal;
+﻿using System.Runtime.CompilerServices;
+
+namespace s_dal;
 
 /// <summary>
 /// Static configuration class for managing unique IDs, system clock, and other global settings.
@@ -43,6 +45,7 @@ internal static class Config
     /// Resets all configuration values to their initial state.
     /// Resets IDs, system clock, and risk range.
     /// </summary>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     internal static void Reset()
     {
         nextCallId = startCallId;

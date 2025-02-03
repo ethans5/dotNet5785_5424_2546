@@ -2,6 +2,7 @@
 using DalApi;
 using DO;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 /// <summary>
 /// Implements the IVolunteer interface to manage Volunteer entities in the data source.
@@ -12,6 +13,7 @@ internal class VolunteerImplementation : IVolunteer
     /// <summary>
     /// Adds a new Volunteer to the data source.
     /// </summary>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Create(Volunteer volunteer)
     {
         if (DataSource.Volunteers.Exists(v => v.Id == volunteer.Id))
@@ -23,6 +25,7 @@ internal class VolunteerImplementation : IVolunteer
     /// <summary>
     /// Retrieves a Volunteer by its unique ID.
     /// </summary>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public Volunteer? Read(int id)
     {
         if (DataSource.Volunteers.Exists(v => v.Id == id))
@@ -34,6 +37,7 @@ internal class VolunteerImplementation : IVolunteer
     /// <summary>
     /// Retrieves the first Volunteer that matches a given condition.
     /// </summary>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public Volunteer? Read(Func<Volunteer, bool> filter)
     {
         return DataSource.Volunteers.FirstOrDefault(filter);
@@ -42,6 +46,7 @@ internal class VolunteerImplementation : IVolunteer
     /// <summary>
     /// Retrieves all Volunteers, optionally filtering them based on a condition.
     /// </summary>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public IEnumerable<Volunteer> ReadAll(Func<Volunteer, bool>? filter = null)
     {
         return filter == null
@@ -52,6 +57,7 @@ internal class VolunteerImplementation : IVolunteer
     /// <summary>
     /// Updates an existing Volunteer in the data source.
     /// </summary>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Update(Volunteer volunteer)
     {
         int index = DataSource.Volunteers.FindIndex(v => v.Id == volunteer.Id);
@@ -64,6 +70,7 @@ internal class VolunteerImplementation : IVolunteer
     /// <summary>
     /// Deletes a Volunteer by its unique ID.
     /// </summary>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Delete(int id)
     {
         if (DataSource.Volunteers.Exists(v => v.Id == id))
@@ -75,6 +82,7 @@ internal class VolunteerImplementation : IVolunteer
     /// <summary>
     /// Deletes all Volunteers from the data source.
     /// </summary>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void DeleteAll()
     {
         DataSource.Volunteers.Clear();

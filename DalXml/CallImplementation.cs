@@ -3,10 +3,12 @@ using DalApi;
 using DO;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 internal class CallImplementation : ICall
 {
     // Create a new Call and save it to the XML file
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Create(Call item)
     {
         int id = Config.NextCallId; // Generate a new unique ID
@@ -17,6 +19,7 @@ internal class CallImplementation : ICall
     }
 
     // Delete a Call by ID from the XML file
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Delete(int id)
     {
         List<Call> calls = XMLTools.LoadListFromXMLSerializer<Call>(Config.s_calls_xml);
@@ -26,12 +29,14 @@ internal class CallImplementation : ICall
     }
 
     // Delete all Calls from the XML file
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void DeleteAll()
     {
         XMLTools.SaveListToXMLSerializer(new List<Call>(), Config.s_calls_xml); // Save an empty list
     }
 
     // Read a Call by ID from the XML file
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public Call? Read(int id)
     {
         List<Call> calls = XMLTools.LoadListFromXMLSerializer<Call>(Config.s_calls_xml);
@@ -39,6 +44,7 @@ internal class CallImplementation : ICall
     }
 
     // Read a Call using a filter from the XML file
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public Call? Read(Func<Call, bool> filter)
     {
         List<Call> calls = XMLTools.LoadListFromXMLSerializer<Call>(Config.s_calls_xml);
@@ -46,6 +52,7 @@ internal class CallImplementation : ICall
     }
 
     // Read all Calls or filtered Calls from the XML file
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public IEnumerable<Call> ReadAll(Func<Call, bool>? filter = null)
     {
         List<Call> calls = XMLTools.LoadListFromXMLSerializer<Call>(Config.s_calls_xml);
@@ -53,6 +60,7 @@ internal class CallImplementation : ICall
     }
 
     // Update an existing Call in the XML file
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Update(Call item)
     {
         List<Call> calls = XMLTools.LoadListFromXMLSerializer<Call>(Config.s_calls_xml);

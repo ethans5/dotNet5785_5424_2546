@@ -5,6 +5,7 @@ using DalApi;
 using DO;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Xml.Linq;
 
 internal class VolunteerImplementation : IVolunteer
@@ -30,6 +31,7 @@ internal class VolunteerImplementation : IVolunteer
     }
 
     // Function to create a Volunteer and add it to the XML
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Create(Volunteer item)
     {
         XElement volunteerList = XMLTools.LoadListFromXMLElement(Config.s_volunteers_xml);
@@ -58,6 +60,7 @@ internal class VolunteerImplementation : IVolunteer
     }
 
     // Function to delete a Volunteer from the XML
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Delete(int id)
     {
         XElement volunteerList = XMLTools.LoadListFromXMLElement(Config.s_volunteers_xml);
@@ -73,12 +76,14 @@ internal class VolunteerImplementation : IVolunteer
     }
 
     // Function to delete all Volunteers from the XML
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void DeleteAll()
     {
         XMLTools.SaveListToXMLElement(new XElement("Volunteers"), Config.s_volunteers_xml);
     }
 
     // Function to read a Volunteer by ID from the XML
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public Volunteer? Read(int id)
     {
         XElement? volunteerElem = XMLTools.LoadListFromXMLElement(Config.s_volunteers_xml)?.Elements().FirstOrDefault(s => s.Attribute("Id")!.Value == id.ToString());
@@ -86,12 +91,14 @@ internal class VolunteerImplementation : IVolunteer
     }
 
     // Function to read a Volunteer by a filter from the XML
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public Volunteer? Read(Func<Volunteer, bool> filter)
     {
         return XMLTools.LoadListFromXMLElement(Config.s_volunteers_xml)?.Elements().Select(GetVolunteer).FirstOrDefault(filter);
     }
 
     // Function to read all Volunteers from the XML
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public IEnumerable<Volunteer> ReadAll(Func<Volunteer, bool>? filter = null)
     {
         XElement? volunteerList = XMLTools.LoadListFromXMLElement(Config.s_volunteers_xml);
@@ -100,6 +107,7 @@ internal class VolunteerImplementation : IVolunteer
     }
 
     // Function to update a Volunteer in the XML
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Update(Volunteer item)
     {
         XElement volunteerRootElem = XMLTools.LoadListFromXMLElement(Config.s_volunteers_xml);
