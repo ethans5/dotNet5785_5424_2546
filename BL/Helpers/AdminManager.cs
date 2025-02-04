@@ -137,7 +137,7 @@ namespace Helpers
 
                 // TO_DO: Add simulation logic here (e.g., course registration simulation)
                 if (_simulateTask is null || _simulateTask.IsCompleted) // Stage 7
-                    _simulateTask = Task.Run(() => CallManager.SimulateCallHandling());
+                    _simulateTask = Task.Run(() => VolunteerManager.SimulateCallHandling());
 
                 try
                 {

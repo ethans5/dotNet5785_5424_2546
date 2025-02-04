@@ -76,101 +76,120 @@ internal static class CallManager
 
     public static void CheckCallStatuses(DateTime oldClock, DateTime newClock)
     {
-        lock (AdminManager.BlMutex) // Protection contre les accès concurrents
+        AdminManager.ThrowOnSimulatorIsRunning();  // Vérifier que le simulateur n'est pas en cours
+
+        List<int> updatedCallIds = new List<int>(); // Stocker les IDs des appels mis à jour
+
+        // Charger toutes les données en dehors du `lock` pour éviter de bloquer trop longtemps
+        List<DO.Call> calls;
+        lock (AdminManager.BlMutex)
         {
-            var calls = _dal.Call.ReadAll().ToList(); // Charger toutes les données une seule fois
+            calls = _dal.Call.ReadAll().ToList(); // `ToList()` pour éviter l'exécution différée
+        }
 
-            foreach (var doCall in calls)
+        foreach (var doCall in calls)
+        {
+            var boCall = parseDoToBoCall(doCall);
+            bool updated = false; // Indicateur de mise à jour
+
+            if (boCall.Status == Status.Open || boCall.Status == Status.InProgress ||
+                boCall.Status == Status.OpenAlmostExpired || boCall.Status == Status.AlmostExpired)
             {
-                var boCall = parseDoToBoCall(doCall);
-
-                if (boCall.Status == Status.Open || boCall.Status == Status.InProgress ||
-                    boCall.Status == Status.OpenAlmostExpired || boCall.Status == Status.AlmostExpired)
+                if (newClock >= boCall.MaxEndTreatment)
                 {
-                    if (newClock >= boCall.MaxEndTreatment)
-                    {
-                        boCall.Status = Status.Expired;
-                    }
-                    else if ((newClock - _dal.Config.RiskRange) < boCall.MaxEndTreatment && boCall.Status == Status.Open)
-                    {
-                        boCall.Status = Status.OpenAlmostExpired;
-                    }
-                    else if ((newClock - _dal.Config.RiskRange) < boCall.MaxEndTreatment && boCall.Status == Status.InProgress)
-                    {
-                        boCall.Status = Status.AlmostExpired;
-                    }
+                    boCall.Status = Status.Expired;
+                    updated = true;
+                }
+                else if ((newClock - _dal.Config.RiskRange) < boCall.MaxEndTreatment && boCall.Status == Status.Open)
+                {
+                    boCall.Status = Status.OpenAlmostExpired;
+                    updated = true;
+                }
+                else if ((newClock - _dal.Config.RiskRange) < boCall.MaxEndTreatment && boCall.Status == Status.InProgress)
+                {
+                    boCall.Status = Status.AlmostExpired;
+                    updated = true;
+                }
 
-                    // Mise à jour de l'appel en base de données
+                if (updated) // Mise à jour uniquement si nécessaire
+                {
                     lock (AdminManager.BlMutex)
                     {
                         _dal.Call.Update(parseBoToDoCall(boCall));
                     }
+                    updatedCallIds.Add(boCall.Id); // Ajouter l'ID pour les notifications
                 }
             }
         }
-    }
-    private static readonly Random s_rand = new(); // Générateur de nombres aléatoires
-    private static int s_simulatorCounter = 0; // Compteur du simulateur
 
-    internal static void SimulateCallHandling()
-    {
-        Thread.CurrentThread.Name = $"CallSimulator{++s_simulatorCounter}";
-
-        LinkedList<int> callsToUpdate = new();
-        List<DO.Call> doCallList;
-
-        lock (AdminManager.BlMutex)
-            doCallList = _dal.Call.ReadAll().ToList(); // On récupère tous les appels
-
-        foreach (var doCall in doCallList)
+        // Envoyer les notifications en dehors du `lock`
+        foreach (var id in updatedCallIds)
         {
-            int callId = 0;
-            lock (AdminManager.BlMutex)
-            {
-                // Convertir DO.Call en BO.Call
-                BO.Call boCall = parseDoToBoCall(doCall);
-
-                // Vérifier si l'appel est en attente d'un volontaire
-                if (boCall.Status == Status.Open || boCall.Status == Status.OpenAlmostExpired)
-                {
-                    var availableVolunteers = VolunteerManager.GetAvailableVolunteers();
-                    int cntVolunteers = availableVolunteers.Count();
-
-                    if (cntVolunteers != 0)
-                    {
-                        // Sélection aléatoire d’un volontaire
-                        int volunteerId = availableVolunteers.Skip(s_rand.Next(0, cntVolunteers)).First()!.Id;
-
-                        // Assigner l'appel au volontaire et mettre à jour le statut
-                        s_bl.Call.ChoiceCall(callId, volunteerId);
-                        boCall.Status = Status.InProgress ;
-                        callId = boCall.Id;
-                    }
-                }
-
-                // Simuler la clôture de l’appel avec une évaluation aléatoire
-                if (boCall.Status == Status.InProgress)
-                {
-                    bool closeCall = s_rand.NextDouble() > 0.5; // 50% de chances de clôturer l’appel
-                    if (closeCall)
-                    {
-                        boCall.Status = Status.Closed;
-                        callId = boCall.Id;
-                    }
-                }
-
-                // Convertir BO.Call en DO.Call et mettre à jour la base
-                DO.Call updatedDoCall = CallManager.parseBoToDoCall(boCall);
-                _dal.Call.Update(updatedDoCall);
-
-                if (callId != 0)
-                    callsToUpdate.AddLast(callId);
-            }
+            CallManager.Observers.NotifyItemUpdated(id);
         }
-
-        // Notifier les observateurs des mises à jour
-        foreach (int id in callsToUpdate)
-            Observers.NotifyItemUpdated(id);
     }
+    //private static readonly Random s_rand = new(); // Générateur de nombres aléatoires
+    //private static int s_simulatorCounter = 0; // Compteur du simulateur
+
+    //internal static void SimulateCallHandling()
+    //{
+    //    Thread.CurrentThread.Name = $"CallSimulator{++s_simulatorCounter}";
+
+    //    LinkedList<int> callsToUpdate = new();
+    //    List<DO.Call> doCallList;
+
+    //    lock (AdminManager.BlMutex)
+    //        doCallList = _dal.Call.ReadAll().ToList(); // On récupère tous les appels
+
+    //    foreach (var doCall in doCallList)
+    //    {
+    //        int callId = 0;
+    //        lock (AdminManager.BlMutex)
+    //        {
+    //            // Convertir DO.Call en BO.Call
+    //            BO.Call boCall = parseDoToBoCall(doCall);
+
+    //            // Vérifier si l'appel est en attente d'un volontaire
+    //            if (boCall.Status == Status.Open || boCall.Status == Status.OpenAlmostExpired)
+    //            {
+    //                var availableVolunteers = VolunteerManager.GetAvailableVolunteers();
+    //                int cntVolunteers = availableVolunteers.Count();
+
+    //                if (cntVolunteers != 0)
+    //                {
+    //                    // Sélection aléatoire d’un volontaire
+    //                    int volunteerId = availableVolunteers.Skip(s_rand.Next(0, cntVolunteers)).First()!.Id;
+
+    //                    // Assigner l'appel au volontaire et mettre à jour le statut
+    //                    s_bl.Call.ChoiceCall(callId, volunteerId);
+    //                    boCall.Status = Status.InProgress ;
+    //                    callId = boCall.Id;
+    //                }
+    //            }
+
+    //            // Simuler la clôture de l’appel avec une évaluation aléatoire
+    //            if (boCall.Status == Status.InProgress)
+    //            {
+    //                bool closeCall = s_rand.NextDouble() > 0.5; // 50% de chances de clôturer l’appel
+    //                if (closeCall)
+    //                {
+    //                    boCall.Status = Status.Closed;
+    //                    callId = boCall.Id;
+    //                }
+    //            }
+
+    //            // Convertir BO.Call en DO.Call et mettre à jour la base
+    //            DO.Call updatedDoCall = CallManager.parseBoToDoCall(boCall);
+    //            _dal.Call.Update(updatedDoCall);
+
+    //            if (callId != 0)
+    //                callsToUpdate.AddLast(callId);
+    //        }
+    //    }
+
+    //    // Notifier les observateurs des mises à jour
+    //    foreach (int id in callsToUpdate)
+    //        Observers.NotifyItemUpdated(id);
+    //}
 
 }

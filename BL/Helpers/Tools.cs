@@ -13,26 +13,34 @@ internal static class Tools
 
     public static int totalTreated(int id)
     {
-        var doAssignment = _dal.Assignment.ReadAll();
-        var volunteerAssignments = doAssignment.Where(a => a.VolunteerId == id);
+        lock (AdminManager.BlMutex)
+        {
+            var doAssignment = _dal.Assignment.ReadAll();
+            var volunteerAssignments = doAssignment.Where(a => a.VolunteerId == id);
 
-        return volunteerAssignments.Count(a => a.typeOfEnd == DO.typeOfEndTreatment.treated);
+            return volunteerAssignments.Count(a => a.typeOfEnd == DO.typeOfEndTreatment.treated);
+        }
     }
 
     public static int totalSelfCancelled(int id)
     {
-        var doAssignment = _dal.Assignment.ReadAll();
-        var volunteerAssignments = doAssignment.Where(a => a.VolunteerId == id);
+        lock (AdminManager.BlMutex)
+        {
+            var doAssignment = _dal.Assignment.ReadAll();
+            var volunteerAssignments = doAssignment.Where(a => a.VolunteerId == id);
 
-        return volunteerAssignments.Count(a => a.typeOfEnd == DO.typeOfEndTreatment.selfCancellation);
+            return volunteerAssignments.Count(a => a.typeOfEnd == DO.typeOfEndTreatment.selfCancellation);
+        }
     }
 
     public static int totalExpired(int id)
     {
-        var doAssignment = _dal.Assignment.ReadAll();
+        lock (AdminManager.BlMutex) { 
+            var doAssignment = _dal.Assignment.ReadAll();
         var volunteerAssignments = doAssignment.Where(a => a.VolunteerId == id);
 
-        return volunteerAssignments.Count(a => a.typeOfEnd == DO.typeOfEndTreatment.Expired);
+        return volunteerAssignments.Count(a => a.typeOfEnd == DO.typeOfEndTreatment.Expired); 
+    }
     }
 
     public static bool IsValidEmail(string email)
@@ -69,8 +77,11 @@ internal static class Tools
 
     public static bool isDirector(int id)
     {
-        var volunteer = _dal.Volunteer.Read(id);
-        return volunteer!.JobType == DO.jobType.Director;
+        lock (AdminManager.BlMutex)
+        {
+            var volunteer = _dal.Volunteer.Read(id);
+            return volunteer!.JobType == DO.jobType.Director;
+        }
     }
 
     public static void ValidateFieldsFormat(BO.Volunteer volunteer)
@@ -209,18 +220,21 @@ internal static class Tools
     //}
     public static Status DetermineCallStatus(int id, DateTime created, DateTime? maxEndTreatment)
     {
-        var now = AdminManager.Now;
-        var myAssignments = _dal.Assignment.ReadAll().Where(assign => assign.CallId == id);
-
-        // Vérifie si l'appel n'a pas encore été assigné
-        if (!myAssignments.Any())
+        lock (AdminManager.BlMutex)
         {
-            return DetermineOpenStatus(now, maxEndTreatment);
+            var now = AdminManager.Now;
+            var myAssignments = _dal.Assignment.ReadAll().Where(assign => assign.CallId == id);
+
+            // Vérifie si l'appel n'a pas encore été assigné
+            if (!myAssignments.Any())
+            {
+                return DetermineOpenStatus(now, maxEndTreatment);
+            }
+
+
+            // L'appel a été assigné à au moins un volunteer
+            return DetermineAssignedStatus(id, now, maxEndTreatment);
         }
-
-
-        // L'appel a été assigné à au moins un volunteer
-        return DetermineAssignedStatus(id,now, maxEndTreatment);
     }
 
     private static Status DetermineOpenStatus(DateTime now, DateTime? maxEndTreatment)
@@ -242,29 +256,32 @@ internal static class Tools
         return Status.Open; // Appel ouvert sans risque immédiat
     }
 
-    private static Status DetermineAssignedStatus(int id,DateTime now, DateTime? maxEndTreatment)
+    private static Status DetermineAssignedStatus(int id, DateTime now, DateTime? maxEndTreatment)
     {
-       var myAssignments = _dal.Assignment.ReadAll().Where(assign => assign.CallId == id).FirstOrDefault();
-    //    if (myAssignments.typeOfEnd)
-        if (maxEndTreatment.HasValue)
+        lock (AdminManager.BlMutex)
         {
-            if (now > maxEndTreatment.Value)
+            var myAssignments = _dal.Assignment.ReadAll().Where(assign => assign.CallId == id).FirstOrDefault();
+            //    if (myAssignments.typeOfEnd)
+            if (maxEndTreatment.HasValue)
             {
-                return Status.Expired; // Appel expiré
+                if (now > maxEndTreatment.Value)
+                {
+                    return Status.Expired; // Appel expiré
+                }
+
+                var timeUntilExpiration = maxEndTreatment.Value - now;
+                if (timeUntilExpiration <= _dal.Config.RiskRange)
+                {
+                    return Status.AlmostExpired; // Assigné et proche d'expirer
+                }
+                else if (myAssignments!.endTreatment.HasValue)
+                {
+                    return Status.Closed; // Assigné et terminé
+                }
             }
 
-            var timeUntilExpiration = maxEndTreatment.Value - now;
-             if (timeUntilExpiration <= _dal.Config.RiskRange)
-            {
-                return Status.AlmostExpired; // Assigné et proche d'expirer
-            }
-            else if (myAssignments!.endTreatment.HasValue)
-            {
-                return Status.Closed; // Assigné et terminé
-            }
+            return Status.InProgress; // Assigné et en cours
         }
-
-        return Status.InProgress; // Assigné et en cours
     }
 
 
@@ -323,37 +340,40 @@ internal static class Tools
 
 
     }
-    public static CallInProgress ?GetCallInProgress(int id)
+    public static CallInProgress? GetCallInProgress(int id)
     {
-        var call = _dal.Call.ReadAll();
-        var callAssign = _dal.Assignment.ReadAll();
-        var volunteer = _dal.Volunteer.Read(id);
-        if (volunteer == null)
-            throw new BlNotFoundException("Volunteer not found");
+        lock (AdminManager.BlMutex)
+        {
+            var call = _dal.Call.ReadAll();
+            var callAssign = _dal.Assignment.ReadAll();
+            var volunteer = _dal.Volunteer.Read(id);
+            if (volunteer == null)
+                throw new BlNotFoundException("Volunteer not found");
 
 
-        var progress = (from c in call
-                        join a in callAssign on c.Id equals a.CallId
-                        where a.VolunteerId == id && a.endTreatment == null
-                        select new CallInProgress
-                        {
-                            Id = a.Id,
-                            CallId = c.Id,
-                            CallType = (BO.callType)c.CallType,
-                            Description = c.Description,
-                            Address = c.Address,
-                            Created = c.CallTime,
-                            MaxEndTreatment = c.MaxTime,
-                            StartTreatment = a.StartTreatment,
-                            Distance = (volunteer.Latitude.HasValue && volunteer.Longitude.HasValue)
-                            ? CalculateDistance(c.Latitude, c.Longitude, volunteer.Latitude.Value, volunteer.Longitude.Value)
-                            : 0,
-                            Treatment = DetermineTreatment(c)
-                        }).FirstOrDefault();
-        
-        
-        return progress;
+            var progress = (from c in call
+                            join a in callAssign on c.Id equals a.CallId
+                            where a.VolunteerId == id && a.endTreatment == null
+                            select new CallInProgress
+                            {
+                                Id = a.Id,
+                                CallId = c.Id,
+                                CallType = (BO.callType)c.CallType,
+                                Description = c.Description,
+                                Address = c.Address,
+                                Created = c.CallTime,
+                                MaxEndTreatment = c.MaxTime,
+                                StartTreatment = a.StartTreatment,
+                                Distance = (volunteer.Latitude.HasValue && volunteer.Longitude.HasValue)
+                                ? CalculateDistance(c.Latitude, c.Longitude, volunteer.Latitude.Value, volunteer.Longitude.Value)
+                                : 0,
+                                Treatment = DetermineTreatment(c)
+                            }).FirstOrDefault();
 
+
+            return progress;
+
+        }
     }
  
 

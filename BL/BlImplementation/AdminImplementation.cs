@@ -20,47 +20,63 @@ internal class AdminImplementation : IAdmin
 
     public void InitializaData()
     {
-        DalTest.Initialization.Do();
-        AdminManager.UpdateClock(DateTime.Now);
-        AdminManager.RiskRange=AdminManager.RiskRange;
+        AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
+        lock (AdminManager.BlMutex)
+        {
+            DalTest.Initialization.Do();
+            AdminManager.UpdateClock(DateTime.Now);
+            AdminManager.RiskRange = AdminManager.RiskRange;
+        }
+      
 
     }
 
     public void ResetData()
     {
         
-        _dal.ResetDB();
-        AdminManager.RiskRange = AdminManager.RiskRange;
-
+        AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
+        lock (AdminManager.BlMutex)
+        {
+            _dal.ResetDB();
+            AdminManager.RiskRange = AdminManager.RiskRange;
+        }
     }
 
     public void UpdateClock(UnitTime time)
     {
-        if(time == UnitTime.Minutes)
+        lock (AdminManager.BlMutex)
         {
-            AdminManager.UpdateClock(AdminManager.Now.AddMinutes(1));
-        }
-        else if(time == UnitTime.Hours)
-        {
-            AdminManager.UpdateClock(AdminManager.Now.AddHours(1));
-        }
-        else if (time == UnitTime.Days)
-        {
-            AdminManager.UpdateClock(AdminManager.Now.AddDays(1));
-        }
-        else if (time == UnitTime.Months)
-        {
-            AdminManager.UpdateClock(AdminManager.Now.AddMonths(1));
-        }
-        else if (time == UnitTime.Years)
-        {
-            AdminManager.UpdateClock(AdminManager.Now.AddYears(1));
+            AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
+            if (time == UnitTime.Minutes)
+            {
+                AdminManager.UpdateClock(AdminManager.Now.AddMinutes(1));
+            }
+            else if (time == UnitTime.Hours)
+            {
+                AdminManager.UpdateClock(AdminManager.Now.AddHours(1));
+            }
+            else if (time == UnitTime.Days)
+            {
+                AdminManager.UpdateClock(AdminManager.Now.AddDays(1));
+            }
+            else if (time == UnitTime.Months)
+            {
+                AdminManager.UpdateClock(AdminManager.Now.AddMonths(1));
+            }
+            else if (time == UnitTime.Years)
+            {
+                AdminManager.UpdateClock(AdminManager.Now.AddYears(1));
+            }
         }
     }
 
     public void UpdateRiskRange(TimeSpan range)
     {
-       AdminManager.RiskRange = range;
+        AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
+        lock (AdminManager.BlMutex)
+        {
+            AdminManager.RiskRange = range;
+        }
     }
     
     public void AddClockObserver(Action clockObserver) =>
@@ -72,5 +88,10 @@ internal class AdminImplementation : IAdmin
     public void RemoveConfigObserver(Action configObserver) =>
     AdminManager.ConfigUpdatedObservers -= configObserver;
 
-
+    public void StartSimulator(int interval)
+    {
+        AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
+        AdminManager.Start(interval);
+    }
+    public void StopSimulator()=>AdminManager.Stop();
 }
