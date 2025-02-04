@@ -1,6 +1,5 @@
-﻿using System;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
+﻿// HomePage.xaml.cs
+using System;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
@@ -10,78 +9,16 @@ using BO;
 
 namespace PL
 {
-    public partial class HomePage : Window, INotifyPropertyChanged
+    public partial class HomePage : Window
     {
         private readonly IBl s_bl = BlApi.Factory.Get();
         private int LoggedInId;
-
-        private bool _isSimulatorRunning = false;
-        private int _interval = 1; // Valeur par défaut
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        /// <summary>
-        /// Indique si le simulateur est en cours d'exécution
-        /// </summary>
-        public bool IsSimulatorRunning
-        {
-            get => _isSimulatorRunning;
-            set
-            {
-                if (_isSimulatorRunning != value)
-                {
-                    _isSimulatorRunning = value;
-                    OnPropertyChanged();
-                    OnPropertyChanged(nameof(SimulatorButtonText));
-                    OnPropertyChanged(nameof(IsIntervalEditable));
-                    OnPropertyChanged(nameof(IsControlsEnabled));
-                }
-            }
-        }
-
-        /// <summary>
-        /// Intervalle de progression (en minutes)
-        /// </summary>
-        public int Interval
-        {
-            get => _interval;
-            set
-            {
-                if (_interval != value)
-                {
-                    _interval = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        /// <summary>
-        /// Texte dynamique du bouton de simulation
-        /// </summary>
-        public string SimulatorButtonText => IsSimulatorRunning ? "Arrêter le simulateur" : "Démarrer le simulateur";
-
-        /// <summary>
-        /// Définit si la TextBox d'intervalle est modifiable
-        /// </summary>
-        public bool IsIntervalEditable => !IsSimulatorRunning;
-
-        /// <summary>
-        /// Désactive les boutons de gestion du temps et la configuration lorsqu'il tourne
-        /// </summary>
-        public bool IsControlsEnabled => IsSimulatorRunning = false;
-
+        public int ConfigValue { get; set; } = 0;
         public HomePage(int loggedInId)
         {
             InitializeComponent();
-            DataContext = this;
             LoggedInId = loggedInId;
 
-            // Mise à jour automatique de l'horloge toutes les secondes
             DispatcherTimer timer = new DispatcherTimer
             {
                 Interval = TimeSpan.FromSeconds(1)
@@ -94,52 +31,36 @@ namespace PL
         {
             ClockText.Text = $"Horloge : {s_bl.Admin.GetSystemeClock():dd/MM/yyyy HH:mm:ss}";
         }
-
-        /// <summary>
-        /// Gestion du simulateur (Démarrage / Arrêt)
-        /// </summary>
-        private void ToggleSimulator_Click(object sender, RoutedEventArgs e)
-        {
-            if (IsSimulatorRunning)
-            {
-                s_bl.Admin.StopSimulator();
-                IsSimulatorRunning = false;
-            }
-            else
-            {
-                s_bl.Admin.StopSimulator();
-                IsSimulatorRunning = true;
-                s_bl.Admin.StartSimulator(Interval);
-               
-            }
-        }
-
-        // 🔹 Mise à jour de l'horloge système (désactivé si le simulateur tourne)
+        // Gestion des événements de l'horloge
         private void AddMinute_Click(object sender, RoutedEventArgs e)
         {
-            if (!IsSimulatorRunning) { s_bl.Admin.UpdateClock(UnitTime.Minutes); UpdateClockText(); }
+            s_bl.Admin.UpdateClock(UnitTime.Minutes);
+            UpdateClockText();
         }
 
         private void AddHour_Click(object sender, RoutedEventArgs e)
         {
-            if (!IsSimulatorRunning) { s_bl.Admin.UpdateClock(UnitTime.Hours); UpdateClockText(); }
+            s_bl.Admin.UpdateClock(UnitTime.Hours);
+            UpdateClockText();
         }
 
         private void AddDay_Click(object sender, RoutedEventArgs e)
         {
-            if (!IsSimulatorRunning) { s_bl.Admin.UpdateClock(UnitTime.Days); UpdateClockText(); }
+            s_bl.Admin.UpdateClock(UnitTime.Days);
+            UpdateClockText();
         }
 
         private void AddMonth_Click(object sender, RoutedEventArgs e)
         {
-            if (!IsSimulatorRunning) { s_bl.Admin.UpdateClock(UnitTime.Months); UpdateClockText(); }
+            s_bl.Admin.UpdateClock(UnitTime.Months);
+            UpdateClockText();
         }
 
         private void AddYear_Click(object sender, RoutedEventArgs e)
         {
-            if (!IsSimulatorRunning) { s_bl.Admin.UpdateClock(UnitTime.Years); UpdateClockText(); }
+            s_bl.Admin.UpdateClock(UnitTime.Years);
+            UpdateClockText();
         }
-
         private void ManageVolunteers_Click(object sender, RoutedEventArgs e)
         {
             new Volunteer.VolunteerList(LoggedInId).ShowDialog();
@@ -147,62 +68,49 @@ namespace PL
 
         private void ManageCalls_Click(object sender, RoutedEventArgs e)
         {
-
-            Call.CallInList callInList = new Call.CallInList(LoggedInId);
+            Call.CallInList callInList = new Call.CallInList();
             callInList.ShowDialog();
         }
-
         private void InitializeDB_Click(object sender, RoutedEventArgs e)
         {
-            if (!IsSimulatorRunning)
-            {
-                s_bl.Admin.InitializaData();
-                UpdateClockText();
-                riskTxtBox.Text = s_bl.Admin.GetRiskRange().TotalMinutes.ToString();
-                MessageBox.Show("Base de données initialisée avec succès.", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
+            s_bl.Admin.InitializaData();
+            UpdateClockText();
+            riskTxtBox.Text = s_bl.Admin.GetRiskRange().TotalMinutes.ToString();
+            MessageBox.Show("Base de données initialisée avec succès.", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void ResetDB_Click(object sender, RoutedEventArgs e)
         {
-            if (!IsSimulatorRunning)
-            {
-                s_bl.Admin.ResetData();
-                MessageBox.Show("Base de données réinitialisée avec succès.", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
+            s_bl.Admin.ResetData();
+            MessageBox.Show("Base de données réinitialisée avec succès.", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
         }
-
         private void ExitApp_Click(object sender, RoutedEventArgs e)
         {
-            if (IsSimulatorRunning)
-            {
-                s_bl.Admin.StopSimulator();
-                IsSimulatorRunning = false;
-            }
-            new LoginPage().Show();
+            LoginPage loginPage = new LoginPage();
+            loginPage.Show();
             Close();
         }
 
         private void UpdateConfigValue_Click(object sender, RoutedEventArgs e)
         {
-            if (!IsSimulatorRunning)
+            try
             {
-                try
+                if (!int.TryParse(riskTxtBox.Text, out int riskValue))
                 {
-                    if (!int.TryParse(riskTxtBox.Text, out int riskValue))
-                    {
-                        MessageBox.Show("Veuillez entrer une valeur entière valide.", "Erreur", MessageBoxButton.OK, MessageBoxImage.Warning);
-                        return;
-                    }
-
-                    s_bl.Admin.UpdateRiskRange(TimeSpan.FromMinutes(riskValue));
-
-                    MessageBox.Show($"Valeur mise à jour : {riskValue}", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show("Veuillez entrer une valeur entière valide.", "Erreur", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Une erreur s'est produite : {ex.Message}", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+
+                ConfigValue = riskValue;
+                s_bl.Admin.UpdateRiskRange(TimeSpan.FromMinutes(ConfigValue));
+
+                // Simuler une mise à jour en base de données
+                MessageBox.Show($"Valeur mise à jour : {ConfigValue}", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Une erreur s'est produite : {ex.Message}", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

@@ -14,9 +14,6 @@ namespace PL.Call
         private int? _callId;
         private bool _isCreating;
         static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
-        private DalApi.IDal _dal = Factory.Get;
-        private int LoggedInId;
-
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -27,12 +24,11 @@ namespace PL.Call
 
         public List<CallAssignInList> CallAssignInLists { get; set; }
 
-        public CallDetails(int loggedIn, int? callId = null)
+        public CallDetails(int? callId = null)
         {
             InitializeComponent();
             _isCreating = !callId.HasValue;
             _callId = callId;
-            LoggedInId = loggedIn;
 
             if (callId.HasValue)
             {
@@ -70,8 +66,7 @@ namespace PL.Call
                 MaxEndTreatment = MaxEndTreatmentTextBox.SelectedDate,  // Correct assignment for Calendar
                 Status = (BO.Status)StatusComboBox.SelectedItem,
                 callAssignInLists = CallAssignInLists,
-
-
+                
 
             };
 
@@ -82,29 +77,8 @@ namespace PL.Call
             }
             else
             {
-                if (_isComboBoxModified)
-                {
-
-                    s_bl.Call.UpdateCall(call);
-                    var selectedStatus = (BO.typeOfEndTreatment)StatusComboBox.SelectedItem;
-                    if (selectedStatus == BO.typeOfEndTreatment.treated)
-                    {
-                        var assign = _dal.Assignment.ReadAll().Where(c => c.CallId == call.Id).FirstOrDefault();
-                        s_bl.Call.UpdateCallCancel(LoggedInId, assign.CallId);
-
-                    }
-                    else if (selectedStatus == BO.typeOfEndTreatment.selfCancellation || selectedStatus == BO.typeOfEndTreatment.directorCancellation)
-
-                    {
-                        var assign = _dal.Assignment.ReadAll().Where(c => c.CallId == call.Id).FirstOrDefault();
-                        s_bl.Call.UpdateCallEnd(LoggedInId, assign.CallId);
-
-
-
-                    }
-                    MessageBox.Show("Call updated successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
-
+                s_bl.Call.UpdateCall(call);
+                MessageBox.Show("Call updated successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
             }
 
             Close();
@@ -124,18 +98,5 @@ namespace PL.Call
                 e.Handled = true;
             }
         }
-        private bool _isComboBoxModified = false;
-        private object _selectedComboBoxValue = null;
-
-        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (e.AddedItems.Count > 0)
-            {
-                _isComboBoxModified = true;
-                _selectedComboBoxValue = e.AddedItems[0]; // Stocke la nouvelle valeur sélectionnée
-            }
-        }
-
-
     }
 }

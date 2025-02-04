@@ -90,7 +90,7 @@ internal class AdminImplementation : IAdmin
 
     public void StartSimulator(int interval)
     {
-      /*  AdminManager.ThrowOnSimulatorIsRunning();  *///stage 7
+        AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
         AdminManager.Start(interval);
     }
     public void StopSimulator()=>AdminManager.Stop();
