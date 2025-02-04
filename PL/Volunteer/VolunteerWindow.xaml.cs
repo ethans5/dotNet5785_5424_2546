@@ -28,11 +28,9 @@ namespace PL.Volunteer
             CloseButton.Click += CloseButton_Click;
             EditButton.Click += EditButton_Click;
             AssignCallButton.Click += AssignCallButton_Click;
+            ViewOldCallsButton.Click += ViewOldCallsButton_Click; // Ajout du gestionnaire d'événements
         }
 
-        /// <summary>
-        /// Charge les informations du volontaire dans les champs correspondants.
-        /// </summary>
         private void LoadVolunteerInfo()
         {
             VolunteerNameTextBox.Text = CurrentVolunteer.Name;
@@ -45,12 +43,10 @@ namespace PL.Volunteer
             DistanceTypeComboBox.Text = CurrentVolunteer.DistanceType.ToString();
             IsActiveCheckBox.IsChecked = CurrentVolunteer.IsActive;
 
-            // 🎯 Mise à jour des statistiques
             TotalTreatedText.Text = $"✅ Total Traités : {CurrentVolunteer.Totaltreated}";
             TotalCancelledText.Text = $"❌ Total Annulés : {CurrentVolunteer.TotalSelfCancellation}";
             TotalExpiredText.Text = $"⏳ Total Expirés : {CurrentVolunteer.TotalExpired}";
 
-            // 🟢 Vérification de l'appel en cours
             if (CurrentVolunteer.CallInProgress != null)
             {
                 CallInProgressText.Text = $"📞 {CurrentVolunteer.CallInProgress.Description}";
@@ -63,16 +59,11 @@ namespace PL.Volunteer
             }
         }
 
-
-        /// <summary>
-        /// Charge les appels disponibles et les affiche dans la liste.
-        /// </summary>
         private void LoadAvailableCalls()
         {
             CallsInRange = GetAllCalls();
             CallsListBox.ItemsSource = CallsInRange;
 
-            // Afficher le message si aucun appel n'est disponible
             NoCallsMessage.Visibility = CallsInRange.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
         }
 
@@ -87,14 +78,10 @@ namespace PL.Volunteer
                             }).ToList();
         }
 
-        /// <summary>
-        /// Active/Désactive la modification des informations du volontaire.
-        /// </summary>
         private void EditButton_Click(object sender, RoutedEventArgs e)
         {
             if (!IsEditing)
             {
-                // Activation des champs pour la modification
                 SetEditableState(true);
                 EditButton.Content = "💾 Enregistrer";
                 EditButton.Background = System.Windows.Media.Brushes.SkyBlue;
@@ -104,7 +91,6 @@ namespace PL.Volunteer
             {
                 try
                 {
-                    // Sauvegarde des nouvelles informations
                     CurrentVolunteer.Name = VolunteerNameTextBox.Text;
                     CurrentVolunteer.Phone = VolunteerPhoneTextBox.Text;
                     CurrentVolunteer.Address = VolunteerAddressTextBox.Text;
@@ -114,12 +100,9 @@ namespace PL.Volunteer
                     CurrentVolunteer.DistanceType = (BO.distanceType)Enum.Parse(typeof(BO.distanceType), DistanceTypeComboBox.Text);
                     CurrentVolunteer.MaxDistance = int.TryParse(MaxDistanceTextBox.Text, out int maxDistance) ? maxDistance : (int?)null;
 
-
-                    // Mise à jour dans le système
                     s_bl.Volunteer.UpdateVolunteer(LoggedInId, CurrentVolunteer);
                     MessageBox.Show("Informations mises à jour avec succès.", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                    // Désactivation des champs après modification
                     SetEditableState(false);
                     EditButton.Content = "✏️ Modifier";
                     EditButton.Background = System.Windows.Media.Brushes.Gold;
@@ -132,9 +115,6 @@ namespace PL.Volunteer
             }
         }
 
-        /// <summary>
-        /// Permet de modifier l'état des champs (lecture seule ou éditable).
-        /// </summary>
         private void SetEditableState(bool isEditable)
         {
             VolunteerNameTextBox.IsReadOnly = !isEditable;
@@ -153,9 +133,6 @@ namespace PL.Volunteer
             VolunteerEmailTextBox.Background = backgroundColor;
         }
 
-        /// <summary>
-        /// Assigne un appel sélectionné au volontaire.
-        /// </summary>
         private void AssignCallButton_Click(object sender, RoutedEventArgs e)
         {
             if (CallsListBox.SelectedItem is BO.Call selectedCall)
@@ -165,7 +142,6 @@ namespace PL.Volunteer
                     s_bl.Call.ChoiceCall(CurrentVolunteer.Id, selectedCall.Id);
                     MessageBox.Show($"📞 Appel '{selectedCall.Description}' assigné avec succès.", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                    // Mettre à jour les informations et la liste
                     LoadVolunteerInfo();
                     LoadAvailableCalls();
                 }
@@ -180,15 +156,17 @@ namespace PL.Volunteer
             }
         }
 
-        /// <summary>
-        /// Ferme la fenêtre.
-        /// </summary>
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             LoginPage loginPage = new LoginPage();
             loginPage.Show();
             this.Close();
-         
+        }
+
+        private void ViewOldCallsButton_Click(object sender, RoutedEventArgs e)
+        {
+            OldCallsWindow oldCallsWindow = new OldCallsWindow(CurrentVolunteer.Id);
+            oldCallsWindow.Show();
         }
     }
 }

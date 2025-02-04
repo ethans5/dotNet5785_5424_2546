@@ -1,0 +1,12 @@
+﻿<Window x:Class="PL.Volunteer.OldCallsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Anciens Appels"
+        Width="600" Height="400">
+
+    <Grid Margin="20">
+        <TextBlock Text="📞 Anciens Appels" FontSize="20" FontWeight="Bold" Foreground="#333" Margin="0,0,0,10" HorizontalAlignment="Center"/>
+
+        <ListBox x:Name="OldCallsListBox" DisplayMemberPath="Description" BorderBrush="LightGray" BorderThickness="1" Background="#FAFAFA" Height="300"/>
+    </Grid>
+</Window>

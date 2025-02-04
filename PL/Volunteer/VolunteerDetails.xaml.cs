@@ -59,7 +59,7 @@ namespace PL.Volunteer
                     IsActive = IsActiveCheckBox.IsChecked ?? false,
                     MaxDistance = double.Parse(MaxDistanceTextBox.Text),
                     DistanceType = (BO.distanceType)DistanceTypeComboBox.SelectedIndex,
-                    Job = (BO.jobType)JobTypeComboBox.SelectedIndex
+                    Job = (BO.jobType)JobTypeComboBox.SelectedIndex,
                 };
 
                 if (_isCreating)

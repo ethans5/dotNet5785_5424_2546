@@ -108,10 +108,12 @@
                 </Grid>
 
                 <!-- Boutons alignés -->
-                <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="10,25,0,0">
+                <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="10,30,0,0">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <Button Content="✏️ Modifier" x:Name="EditButton" Width="160" Height="45" Margin="5" Background="#FFD700" Foreground="Black" FontWeight="Bold"/>
                         <Button Content="✅ Choisir Call" x:Name="AssignCallButton" Width="160" Height="45" Margin="5" Background="#28A745" Foreground="White" FontWeight="Bold"/>
+                        <Button Content="📜 Voir les anciens appels" x:Name="ViewOldCallsButton" Width="160" Height="45" Margin="5" Background="#FF6347" Foreground="White" FontWeight="Bold"/>
+
                     </StackPanel>
 
                     <Button Content="❌ Fermer" x:Name="CloseButton" Width="340" Height="45" Margin="10,10,0,0" Background="#DC3545" Foreground="White" FontWeight="Bold"/>

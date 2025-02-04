@@ -64,7 +64,9 @@ namespace PL.Call
                 Created = s_bl.Admin.GetSystemeClock(),
                 MaxEndTreatment = MaxEndTreatmentTextBox.SelectedDate,  // Correct assignment for Calendar
                 Status = (BO.Status)StatusComboBox.SelectedItem,
-                callAssignInLists = CallAssignInLists
+                callAssignInLists = CallAssignInLists,
+                
+
             };
 
             if (_isCreating)
