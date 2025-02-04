@@ -52,6 +52,7 @@ namespace PL.Call
             LongitudeTextBox.Text = call.Longitude.ToString();
             CreatedDateTextBox.Text = call.Created.ToString("g");
             MaxEndTreatmentTextBox.SelectedDate = call.MaxEndTreatment;  // Correct usage of Calendar
+
             StatusComboBox.Text = call.Status.ToString();
             CallAssignInLists = call.callAssignInLists ?? new List<CallAssignInList>();
             CallAssignInListsListBox.ItemsSource = CallAssignInLists;

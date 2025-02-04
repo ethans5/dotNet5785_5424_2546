@@ -20,7 +20,7 @@ namespace PL.Volunteer
         private volatile bool _observerWorking = false;
 
         // Implémentation de INotifyPropertyChanged
-        public event PropertyChangedEventHandler? PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public VolunteerSortField? SelectedFilter
         {

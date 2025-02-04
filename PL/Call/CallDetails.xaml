@@ -56,10 +56,10 @@
                 <TextBox Name="AddressTextBox" Margin="0,5" Height="35" Background="#ecf0f1" />
 
                 <TextBlock Text="Latitude :" FontWeight="SemiBold" Margin="0,10" Foreground="#34495e" />
-                <TextBox Name="LatitudeTextBox" Margin="0,5" Height="35" IsEnabled="False" Background="#ecf0f1" />
+                <TextBox Name="LatitudeTextBox" Margin="0,5" Height="35" Background="#ecf0f1" />
 
                 <TextBlock Text="Longitude :" FontWeight="SemiBold" Margin="0,10" Foreground="#34495e" />
-                <TextBox Name="LongitudeTextBox" Margin="0,5" Height="35" IsEnabled="False" Background="#ecf0f1" />
+                <TextBox Name="LongitudeTextBox" Margin="0,5" Height="35" Background="#ecf0f1" />
 
                 <TextBlock Text="Créé le :" FontWeight="SemiBold" Margin="0,10" Foreground="#34495e" />
                 <TextBox Name="CreatedDateTextBox" Margin="0,5" Height="35" IsEnabled="False" Background="#ecf0f1" />
