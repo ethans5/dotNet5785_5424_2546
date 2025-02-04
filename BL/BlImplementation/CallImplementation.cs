@@ -56,6 +56,8 @@ internal class CallImplementation : BlApi.ICall
         }
     }
 
+
+
     // Fonction asynchrone pour mettre à jour les coordonnées GPS de l’appel
     private async Task UpdateCallCoordinatesAsync(DO.Call doCall)
     {
