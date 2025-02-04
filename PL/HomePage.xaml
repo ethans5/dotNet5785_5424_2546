@@ -7,7 +7,7 @@
 
     <!-- Définition des styles -->
     <Window.Resources>
-        <!-- Style pour les boutons principaux -->
+        <!-- Styles des boutons (identiques) -->
         <Style x:Key="PrimaryButton" TargetType="Button">
             <Setter Property="Background" Value="#2196F3"/>
             <Setter Property="Foreground" Value="White"/>
@@ -15,7 +15,6 @@
             <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="Padding" Value="10,5"/>
             <Setter Property="Margin" Value="10"/>
-            <!-- Ajout de marge par défaut -->
             <Setter Property="BorderBrush" Value="#1E88E5"/>
             <Setter Property="BorderThickness" Value="2"/>
             <Setter Property="Cursor" Value="Hand"/>
@@ -42,7 +41,6 @@
             </Style.Triggers>
         </Style>
 
-        <!-- Style pour les boutons secondaires -->
         <Style x:Key="SecondaryButton" TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
             <Setter Property="Background" Value="#EEEEEE"/>
             <Setter Property="Foreground" Value="#333333"/>
@@ -58,7 +56,6 @@
             </Style.Triggers>
         </Style>
 
-        <!-- Style pour les boutons d'avertissement (danger) -->
         <Style x:Key="DangerButton" TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
             <Setter Property="Background" Value="#F44336"/>
             <Setter Property="Foreground" Value="White"/>
@@ -84,8 +81,9 @@
 
         <!-- Contenu principal -->
         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+
             <!-- Horloge -->
-            <Border Background="White" CornerRadius="10" Padding="20" Margin="10" Style="{StaticResource DropShadowEffect}">
+            <Border Background="White" CornerRadius="10" Padding="20" Margin="10">
                 <StackPanel HorizontalAlignment="Center">
                     <TextBlock Name="ClockText" Text="Horloge : 00:00:00" FontSize="48" FontWeight="Bold"
                                Foreground="#333" HorizontalAlignment="Center" />
@@ -96,48 +94,60 @@
 
             <!-- Boutons d'horloge -->
             <WrapPanel HorizontalAlignment="Center">
-                <Button Content="+1 Minute" Width="120" Height="40" Style="{StaticResource PrimaryButton}" Click="AddMinute_Click" />
-                <Button Content="+1 Heure" Width="120" Height="40" Style="{StaticResource PrimaryButton}" Click="AddHour_Click" />
-                <Button Content="+1 Jour" Width="120" Height="40" Style="{StaticResource PrimaryButton}" Click="AddDay_Click" />
-                <Button Content="+1 Mois" Width="120" Height="40" Style="{StaticResource PrimaryButton}" Click="AddMonth_Click" />
-                <Button Content="+1 Année" Width="120" Height="40" Style="{StaticResource PrimaryButton}" Click="AddYear_Click" />
+                <Button Content="+1 Minute" Width="120" Height="40" Style="{StaticResource PrimaryButton}"
+                        Click="AddMinute_Click" IsEnabled="{Binding IsControlsEnabled}"/>
+                <Button Content="+1 Heure" Width="120" Height="40" Style="{StaticResource PrimaryButton}"
+                        Click="AddHour_Click" IsEnabled="{Binding IsControlsEnabled}"/>
+                <Button Content="+1 Jour" Width="120" Height="40" Style="{StaticResource PrimaryButton}"
+                        Click="AddDay_Click" IsEnabled="{Binding IsControlsEnabled}"/>
+                <Button Content="+1 Mois" Width="120" Height="40" Style="{StaticResource PrimaryButton}"
+                        Click="AddMonth_Click" IsEnabled="{Binding IsControlsEnabled}"/>
+                <Button Content="+1 Année" Width="120" Height="40" Style="{StaticResource PrimaryButton}"
+                        Click="AddYear_Click" IsEnabled="{Binding IsControlsEnabled}"/>
             </WrapPanel>
 
-             <!--Zone Variables de Configuration--> 
-            <Border Background="White" CornerRadius="10" Padding="20" Margin="10" Style="{StaticResource DropShadowEffect}">
+            <!-- Zone du simulateur -->
+            <Border Background="White" CornerRadius="10" Padding="20" Margin="10">
+                <StackPanel HorizontalAlignment="Center">
+                    <TextBlock Text="Simulateur" FontSize="20" FontWeight="Bold" Foreground="#333"
+                               Margin="0,0,0,10" HorizontalAlignment="Center" />
+                    <TextBlock Text="Intervalle de progression (minutes)" FontSize="16" Foreground="#666"
+                               HorizontalAlignment="Center" />
+                    <TextBox Text="{Binding Interval, UpdateSourceTrigger=PropertyChanged}" Width="100"
+                             Height="30" IsEnabled="{Binding IsIntervalEditable}"
+                             VerticalContentAlignment="Center" TextAlignment="Center" />
+                    <Button Content="{Binding SimulatorButtonText}" Width="200" Height="40"
+                            Style="{StaticResource PrimaryButton}" Click="ToggleSimulator_Click"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Zone Variables de Configuration -->
+            <Border Background="White" CornerRadius="10" Padding="20" Margin="10">
                 <StackPanel HorizontalAlignment="Center">
                     <TextBlock Text="Update Risk Range" FontSize="20" FontWeight="Bold"
                                Foreground="#333" Margin="0,0,0,10" HorizontalAlignment="Center" />
-
-                     <!--Numeric UpDown Simulation--> 
                     <DockPanel HorizontalAlignment="Center">
                         <TextBox x:Name="riskTxtBox" Text="{Binding ConfigValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                  Width="150" Height="30" Margin="5,0" HorizontalAlignment="Center"
                                  VerticalContentAlignment="Center" TextAlignment="Center"
-                                 PreviewTextInput="NumericOnlyTextBox_PreviewTextInput"  />
+                                 PreviewTextInput="NumericOnlyTextBox_PreviewTextInput" IsEnabled="{Binding IsControlsEnabled}"/>
                     </DockPanel>
-
-                     <!--Bouton pour mettre à jour la base de données--> 
                     <Button Content="Mettre à jour" Width="150" Height="40" Style="{StaticResource PrimaryButton}"
-                            Click="UpdateConfigValue_Click" HorizontalAlignment="Center" />
+                            Click="UpdateConfigValue_Click" HorizontalAlignment="Center" IsEnabled="{Binding IsControlsEnabled}"/>
                 </StackPanel>
             </Border>
 
-
-       
-
-
-                <!-- Boutons de gestion -->
+            <!-- Boutons de gestion -->
             <WrapPanel HorizontalAlignment="Center" Margin="10">
-                <Button Content="Gérer Volontaires" Width="200" Height="50" Style="{StaticResource SecondaryButton}" Click="ManageVolunteers_Click" Margin="10" />
-                <Button Content="Gérer Appels" Width="200" Height="50" Style="{StaticResource SecondaryButton}" Click="ManageCalls_Click" Margin="10" />
-                <Button Content="Initialiser DB" Width="200" Height="50" Style="{StaticResource SecondaryButton}" Click="InitializeDB_Click" Margin="10" />
-                <Button Content="Réinitialiser DB" Width="200" Height="50" Style="{StaticResource SecondaryButton}" Click="ResetDB_Click" Margin="10" />
+                <Button Content="Gérer Volontaires" Width="200" Height="50" Style="{StaticResource SecondaryButton}" Click="ManageVolunteers_Click"/>
+                <Button Content="Gérer Appels" Width="200" Height="50" Style="{StaticResource SecondaryButton}" Click="ManageCalls_Click"/>
+                <Button Content="Initialiser DB" Width="200" Height="50" Style="{StaticResource SecondaryButton}" Click="InitializeDB_Click" IsEnabled="{Binding IsControlsEnabled}"/>
+                <Button Content="Réinitialiser DB" Width="200" Height="50" Style="{StaticResource SecondaryButton}" Click="ResetDB_Click" IsEnabled="{Binding IsControlsEnabled}"/>
             </WrapPanel>
         </StackPanel>
 
         <!-- Bouton Quitter -->
         <Button Content="Quitter" Width="100" Height="40" HorizontalAlignment="Right" VerticalAlignment="Bottom"
-                Margin="10" Style="{StaticResource DangerButton}" Click="ExitApp_Click" />
+                Margin="10" Style="{StaticResource DangerButton}" Click="ExitApp_Click"/>
     </Grid>
 </Window>

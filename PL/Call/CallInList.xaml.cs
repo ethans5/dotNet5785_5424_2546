@@ -15,6 +15,9 @@ namespace PL.Call
         private readonly BlApi.IBl _bl = BlApi.Factory.Get();
         private List<BO.CallInList> _calls;
         private List<BO.CallInList> _filteredCalls;
+        private volatile bool _observerWorking = false;
+        private readonly object _lock = new();
+        private int loggedIn;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -39,12 +42,12 @@ namespace PL.Call
                 OnPropertyChanged();
             }
         }
-
-        public CallInList()
+        public CallInList(int loggedInId)
         {
             InitializeComponent();
             DataContext = this;
             CallDataGrid.MouseDoubleClick += CallDataGrid_MouseDoubleClick;
+            loggedIn = loggedInId;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -99,13 +102,29 @@ namespace PL.Call
 
         private void AddCallButton_Click(object sender, RoutedEventArgs e)
         {
-            new CallDetails().ShowDialog();
+            new CallDetails(loggedIn).ShowDialog();
             LoadCalls();
         }
 
         private void RefreshCallList_Click(object sender, RoutedEventArgs e)
         {
-            LoadCalls();
+            lock (_lock)
+            {
+                if (_observerWorking) return;
+                _observerWorking = true;
+            }
+
+            try
+            {
+                LoadCalls(SelectedFilter, SelectedFilterValue);
+            }
+            finally
+            {
+                lock (_lock)
+                {
+                    _observerWorking = false;
+                }
+            }
         }
 
         private void CallDataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)

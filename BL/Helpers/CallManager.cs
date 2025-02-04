@@ -74,23 +74,80 @@ internal static class CallManager
     //    }
     //}
 
+    //public static void CheckCallStatuses(DateTime oldClock, DateTime newClock)
+    //{
+    //    AdminManager.ThrowOnSimulatorIsRunning();  // Vérifier que le simulateur n'est pas en cours
+
+    //    List<int> updatedCallIds = new List<int>(); // Stocker les IDs des appels mis à jour
+
+    //    // Charger toutes les données en dehors du `lock` pour éviter de bloquer trop longtemps
+    //    List<DO.Call> calls;
+    //    lock (AdminManager.BlMutex)
+    //    {
+    //        calls = _dal.Call.ReadAll().ToList(); // `ToList()` pour éviter l'exécution différée
+    //    }
+
+    //    foreach (var doCall in calls)
+    //    {
+    //        var boCall = parseDoToBoCall(doCall);
+    //        bool updated = false; // Indicateur de mise à jour
+
+    //        if (boCall.Status == Status.Open || boCall.Status == Status.InProgress ||
+    //            boCall.Status == Status.OpenAlmostExpired || boCall.Status == Status.AlmostExpired)
+    //        {
+    //            if (newClock >= boCall.MaxEndTreatment)
+    //            {
+    //                boCall.Status = Status.Expired;
+    //                updated = true;
+    //            }
+    //            else if ((newClock - _dal.Config.RiskRange) < boCall.MaxEndTreatment && boCall.Status == Status.Open)
+    //            {
+    //                boCall.Status = Status.OpenAlmostExpired;
+    //                updated = true;
+    //            }
+    //            else if ((newClock - _dal.Config.RiskRange) < boCall.MaxEndTreatment && boCall.Status == Status.InProgress)
+    //            {
+    //                boCall.Status = Status.AlmostExpired;
+    //                updated = true;
+    //            }
+
+    //            if (updated) // Mise à jour uniquement si nécessaire
+    //            {
+    //                lock (AdminManager.BlMutex)
+    //                {
+    //                    _dal.Call.Update(parseBoToDoCall(boCall));
+    //                }
+    //                updatedCallIds.Add(boCall.Id); // Ajouter l'ID pour les notifications
+    //            }
+    //        }
+    //    }
+
+    //    // Envoyer les notifications en dehors du `lock`
+    //    foreach (var id in updatedCallIds)
+    //    {
+    //        CallManager.Observers.NotifyItemUpdated(id);
+    //    }
+    //}
+
     public static void CheckCallStatuses(DateTime oldClock, DateTime newClock)
     {
-        AdminManager.ThrowOnSimulatorIsRunning();  // Vérifier que le simulateur n'est pas en cours
+        if (Thread.CurrentThread != AdminManager.getThread())
+        {
+            AdminManager.ThrowOnSimulatorIsRunning();
+        }
 
-        List<int> updatedCallIds = new List<int>(); // Stocker les IDs des appels mis à jour
+        List<int> updatedCallIds = new List<int>();
 
-        // Charger toutes les données en dehors du `lock` pour éviter de bloquer trop longtemps
         List<DO.Call> calls;
         lock (AdminManager.BlMutex)
         {
-            calls = _dal.Call.ReadAll().ToList(); // `ToList()` pour éviter l'exécution différée
+            calls = _dal.Call.ReadAll().ToList();
         }
 
         foreach (var doCall in calls)
         {
             var boCall = parseDoToBoCall(doCall);
-            bool updated = false; // Indicateur de mise à jour
+            bool updated = false;
 
             if (boCall.Status == Status.Open || boCall.Status == Status.InProgress ||
                 boCall.Status == Status.OpenAlmostExpired || boCall.Status == Status.AlmostExpired)
@@ -111,23 +168,26 @@ internal static class CallManager
                     updated = true;
                 }
 
-                if (updated) // Mise à jour uniquement si nécessaire
+                if (updated)
                 {
                     lock (AdminManager.BlMutex)
                     {
                         _dal.Call.Update(parseBoToDoCall(boCall));
                     }
-                    updatedCallIds.Add(boCall.Id); // Ajouter l'ID pour les notifications
+                    updatedCallIds.Add(boCall.Id);
                 }
             }
         }
 
-        // Envoyer les notifications en dehors du `lock`
         foreach (var id in updatedCallIds)
         {
             CallManager.Observers.NotifyItemUpdated(id);
         }
     }
+
+
+
+
     //private static readonly Random s_rand = new(); // Générateur de nombres aléatoires
     //private static int s_simulatorCounter = 0; // Compteur du simulateur
 

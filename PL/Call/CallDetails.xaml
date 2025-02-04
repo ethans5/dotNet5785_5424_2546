@@ -98,7 +98,8 @@
                                         <TextBlock Text="Type de fin de traitement :" FontWeight="SemiBold" Foreground="#2c3e50" FontSize="16" Margin="0,0,0,5"/>
                                         <ComboBox ItemsSource="{Binding Source={StaticResource TypeOfEndTreatmentEnumProvider}}"
                                                   SelectedItem="{Binding TypeOfEndTreatment, Mode=TwoWay}" Background="#ecf0f1"
-                                                  HorizontalAlignment="Stretch" Height="35"/>
+                                                  HorizontalAlignment="Stretch" Height="35"
+                                                  SelectionChanged="ComboBox_SelectionChanged"/>
                                     </StackPanel>
                                 </Grid>
                             </Border>

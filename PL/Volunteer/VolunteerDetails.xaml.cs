@@ -14,8 +14,9 @@ namespace PL.Volunteer
         private int _myID; // ID de l'utilisateur connecté
         static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
 
+        private volatile bool _observerWorking = false;
 
-        public VolunteerDetails(int myID,int? volunteerId = null)
+        public VolunteerDetails(int myID, int? volunteerId = null)
         {
             InitializeComponent();
             _myID = myID; // Stocke l'ID de l'utilisateur connecté
@@ -81,10 +82,14 @@ namespace PL.Volunteer
                 MessageBox.Show($"Erreur lors de l'enregistrement : {ex.Message}", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+     
 
         private void LoadVolunteerDetails(int volunteerId)
         {
-            try
+            if (!_observerWorking) {
+                _observerWorking = true;
+                _ = Dispatcher.BeginInvoke(() =>
+
             {
                 var volunteer = s_bl.Volunteer.ReadVolunteer(volunteerId); // Récupérer les données du volontaire
 
@@ -103,14 +108,13 @@ namespace PL.Volunteer
                 // Sélectionner les options dans les ComboBox
                 DistanceTypeComboBox.SelectedIndex = (int)volunteer.DistanceType;
                 JobTypeComboBox.SelectedIndex = (int)volunteer.Job;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Erreur lors du chargement des détails du volontaire : {ex.Message}",
-                                "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
-                Close();
-            }
-        }
+
+                _observerWorking = false;
+
+            });
+
+
+            } }
 
         private void LoadVolunteer()
         {

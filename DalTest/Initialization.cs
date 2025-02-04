@@ -60,7 +60,7 @@ public static class Initialization
 
         for (int i = 0; i < 50; i++)
         {
-           
+
             Array values = Enum.GetValues(typeof(callType));
             callType type = (callType)values.GetValue(s_rand.Next(values.Length))!;
             string address = "address" + s_rand.Next(1000);
@@ -81,7 +81,7 @@ public static class Initialization
 
             s_dal.Call!.Create(new Call
             {
-                
+
                 CallType = type,
                 Address = address,
                 Latitude = latitude,
@@ -94,83 +94,80 @@ public static class Initialization
 
     }
 
-
     private static void createVolunteer()
     {
         int[] ids = {
-        346915424, 339762723, 358113614, 340485311, 206371723,
-        224008181, 263061435, 339366513, 342943374, 360309029,
-        232357019, 353009284, 374360423, 392492475, 255402454
-    };
+            346915424, 339762723, 358113614, 340485311, 206371723,
+            224008181, 263061435, 339366513, 342943374, 360309029,
+            232357019, 353009284, 374360423, 392492475, 255402454,
+            340993344 // Ajout de l'ID manquant
+        };
 
         string[] names =
         {
-        "Bensimon Ruben", "Sarfati Ethan", "Martin Lucas", "Dubois Léa", "Lefevre Antoine",
-        "Garnier Camille", "Morel Julien", "Mercier Clara", "Dupont Arthur", "Laurent Inès",
-        "Simon Hugo", "Caron Emma", "Richard Thomas", "Rousseau Alice", "Girard Louis"
-    };
+            "Bensimon Ruben", "Sarfati Ethan", "Martin Lucas", "Dubois Léa", "Lefevre Antoine",
+            "Garnier Camille", "Morel Julien", "Mercier Clara", "Dupont Arthur", "Laurent Inès",
+            "Simon Hugo", "Caron Emma", "Richard Thomas", "Rousseau Alice", "Girard Louis",
+            "Marine Le Pen" // Ajout d'un nom générique pour l'ID 340993344
+        };
 
         string[] mails =
         {
-        "rubenaar@g.jct.ac.il", "sarfati@g.jct.ac.il", "martin.lucas@email.com", "dubois.lea@email.com",
-        "lefevre.antoine@email.com", "garnier.camille@email.com", "morel.julien@email.com",
-        "mercier.clara@email.com", "dupont.arthur@email.com", "laurent.ines@email.com",
-        "simon.hugo@email.com", "caron.emma@email.com", "richard.thomas@email.com",
-        "rousseau.alice@email.com", "girard.louis@email.com"
-    };
+            "rubenaar@g.jct.ac.il", "sarfati@g.jct.ac.il", "rubenaar@g.jct.ac.il", "rubenaar@g.jct.ac.il",
+            "rubenaar@g.jct.ac.il", "rubenaar@g.jct.ac.il", "rubenaar@g.jct.ac.il",
+            "rubenaar@g.jct.ac.il", "rubenaar@g.jct.ac.il", "rubenaar@g.jct.ac.il",
+            "sarfati@g.jct.ac.il", "rubenaar@g.jct.ac.il", "rubenaar@g.jct.ac.il",
+            "sarfati@g.jct.ac.il", "sarfati@g.jct.ac.il", "rubenaar@g.jct.ac.il" // Ajout d'un email
+        };
 
         string[] phones =
         {
-        "0534703587", "0584741216", "0501234567", "0549876543", "0522345678",
-        "0587654321", "0503456789", "0548765432", "0524567890", "0586781234",
-        "0505678901", "0547890123", "0526789012", "0581234567", "0508901234"
-    };
+            "0534703587", "0584741216", "0501234567", "0549876543", "0522345678",
+            "0587654321", "0503456789", "0548765432", "0524567890", "0586781234",
+            "0505678901", "0547890123", "0526789012", "0581234567", "0508901234",
+            "0509999999" // Ajout d'un numéro de téléphone
+        };
 
         string[] addresses =
         {
-        "48 King George Street, Jerusalem", "12 Yafo Street, Jerusalem", "25 Ben Yehuda Street, Jerusalem",
-        "17 Agron Street, Jerusalem", "33 Shlomtzion Hamalka Street, Jerusalem", "9 Hillel Street, Jerusalem",
-        "56 Emek Refaim Street, Jerusalem", "22 Azza Street, Jerusalem", "67 Beit Lehem Street, Jerusalem",
-        "41 Hanevi'im Street, Jerusalem", "10 Ramban Street, Jerusalem", "3 Nachlaot Street, Jerusalem",
-        "29 Rachel Imenu Street, Jerusalem", "15 Derech Hevron Street, Jerusalem", "78 Hapalmah Street, Jerusalem"
-    };
+            "48 King George Street, Jerusalem", "12 Yafo Street, Jerusalem", "25 Ben Yehuda Street, Jerusalem",
+            "17 Agron Street, Jerusalem", "33 Shlomtzion Hamalka Street, Jerusalem", "9 Hillel Street, Jerusalem",
+            "56 Emek Refaim Street, Jerusalem", "22 Azza Street, Jerusalem", "67 Beit Lehem Street, Jerusalem",
+            "41 Hanevi'im Street, Jerusalem", "10 Ramban Street, Jerusalem", "3 Nachlaot Street, Jerusalem",
+            "29 Rachel Imenu Street, Jerusalem", "15 Derech Hevron Street, Jerusalem", "78 Hapalmah Street, Jerusalem",
+            "90 New Street, Jerusalem" // Ajout d'une adresse générique
+        };
 
         double[] longitudes = {
-        35.2132, 35.2137, 35.2110, 35.2178, 35.2129,
-        35.2105, 35.2098, 35.2154, 35.2123, 35.2091,
-        35.2187, 35.2165, 35.2140, 35.2158, 35.2170
-    };
+            35.2132, 35.2137, 35.2110, 35.2178, 35.2129,
+            35.2105, 35.2098, 35.2154, 35.2123, 35.2091,
+            35.2187, 35.2165, 35.2140, 35.2158, 35.2170,
+            35.2111 // Longitude fictive pour 340993344
+        };
 
         double[] latitudes = {
-        31.7815, 31.7780, 31.7712, 31.7819, 31.7797,
-        31.7731, 31.7720, 31.7765, 31.7742, 31.7708,
-        31.7800, 31.7755, 31.7735, 31.7775, 31.7790
-    };
+            31.7815, 31.7780, 31.7712, 31.7819, 31.7797,
+            31.7731, 31.7720, 31.7765, 31.7742, 31.7708,
+            31.7800, 31.7755, 31.7735, 31.7775, 31.7790,
+            31.7725 // Latitude fictive pour 340993344
+        };
 
-        for (int i = 0; i < 15; i++)
+        for (int i = 0; i < ids.Length; i++)
         {
             Array values = Enum.GetValues(typeof(jobType));
             jobType type = (jobType)values.GetValue(s_rand.Next(values.Length))!;
-            bool isActive = s_rand.Next(2) == 0;
-            values = Enum.GetValues(typeof(distanceType));
-            distanceType distanceType = (distanceType)values.GetValue(s_rand.Next(values.Length))!;
-            double? distance = s_rand.NextDouble() * 1000;
+
             string password = "password" + s_rand.Next(1000);
 
-            // Gestion des appels actifs
-            int activeCallId = 0; // Pas d'appel actif par défaut
-            string? callType = null; // Pas de type d'appel par défaut
-            var assign = s_dal!.Assignment.ReadAll();
-            if (isActive)/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            if (ids[i] == 346915424)
             {
-                var callList = s_dal!.Call!.ReadAll().ToList();
-                if (callList.Any())
-                {
-                    // Si le volontaire est actif, on lui attribue un appel au hasard
-                    var activeCall = callList[s_rand.Next(callList.Count)];
-                    activeCallId = activeCall.Id;
-                    callType = activeCall.CallType.ToString(); // Définit le type d'appel
-                }
+                password = "azertyuiop";
+                type = jobType.Director;
+            }
+            else if (ids[i] == 340993344)
+            {
+                password = "QSDFGHJKLM";
+                type = jobType.Volunteer;
             }
 
             s_dal!.Volunteer!.Create(new Volunteer
@@ -180,17 +177,17 @@ public static class Initialization
                 Phone = phones[i],
                 Email = mails[i],
                 JobType = type,
-                isActive = isActive,
-                distanceType = distanceType,
-                MaxDistance = distance,
+                isActive = s_rand.Next(2) == 0,
+                distanceType = (distanceType)values.GetValue(s_rand.Next(values.Length))!,
+                MaxDistance = s_rand.NextDouble() * 1000,
                 Password = password,
                 Address = addresses[i],
                 Latitude = latitudes[i],
                 Longitude = longitudes[i]
-
             });
         }
     }
+
 
 
     private static void createAssignment()
@@ -209,7 +206,7 @@ public static class Initialization
             {
                 DateTime callStartTime = callList.First(c => c.Id == myCallId).CallTime;
                 DateTime? maxEndTime = callList.First(c => c.Id == myCallId).MaxTime;
-                var volunteerList = s_dal.Volunteer!.ReadAll().Where(c=>c.isActive==true).ToList();
+                var volunteerList = s_dal.Volunteer!.ReadAll().Where(c => c.isActive == true).ToList();
                 int volunteerId = volunteerList[s_rand.Next(volunteerList.Count)].Id;
                 DateTime time;
                 typeOfEndTreatment? typeOfEnd = null;
@@ -224,7 +221,7 @@ public static class Initialization
                 {
                     double startOffset = s_rand.NextDouble() * (maxEndTime!.Value).Subtract(callStartTime).TotalMinutes;
                     time = callStartTime.AddMinutes(startOffset);
-                    endOffset= s_rand.Next(10, (int)(maxEndTime.Value.Subtract(time).TotalMinutes));
+                    endOffset = s_rand.Next(10, (int)(maxEndTime.Value.Subtract(time).TotalMinutes));
 
                 }
                 if (s_rand.NextDouble() < 0.5)
