@@ -68,8 +68,9 @@ namespace Helpers
             s_dal.Config.Clock = newClock; // Stage 4
 
             // TO_DO: Add periodic logic here, e.g. student updates
-            if (_periodicTask is null || _periodicTask.IsCompleted)
-                _periodicTask = Task.Run(() => CallManager.CheckCallStatuses(oldClock, newClock));
+            if (_periodicTask is null || _periodicTask.IsCompleted) // Stage 7
+                _periodicTask = Task.Run(() => CallManager.CheckCallStatuses(oldClock,newClock));
+
             // Notify observers
             ClockUpdatedObservers?.Invoke(); // Prepared for stage 5
         }
@@ -85,11 +86,6 @@ namespace Helpers
         /// </summary>
         private static volatile Thread? s_thread;
 
-        public static Thread? getThread()
-        {
-            return s_thread;
-        }
-
         /// <summary>
         /// The interval for clock updating (in minutes per second)
         /// </summary>
@@ -103,22 +99,11 @@ namespace Helpers
         [MethodImpl(MethodImplOptions.Synchronized)] // Stage 7
         public static void ThrowOnSimulatorIsRunning()
         {
-            if (s_thread is not null && Thread.CurrentThread != s_thread)
+            if (s_thread is not null)
                 throw new BO.BLTemporaryNotAvailableException("Cannot perform the operation since Simulator is running");
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)] // Stage 7
-        //internal static void Start(int interval)
-        //{
-        //    if (s_thread is null)
-        //    {
-        //        s_interval = interval;
-        //        s_stop = false;
-        //        s_thread = new(clockRunner) { Name = "ClockRunner" };
-        //        s_thread.Start();
-        //    }
-        //}
-
         internal static void Start(int interval)
         {
             if (s_thread is null)
@@ -126,11 +111,9 @@ namespace Helpers
                 s_interval = interval;
                 s_stop = false;
                 s_thread = new(clockRunner) { Name = "ClockRunner" };
-                Console.WriteLine($"Simulateur démarré avec Thread ID: {s_thread.ManagedThreadId}");
                 s_thread.Start();
             }
         }
-
 
         [MethodImpl(MethodImplOptions.Synchronized)] // Stage 7
         internal static void Stop()

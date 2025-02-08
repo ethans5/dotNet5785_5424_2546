@@ -15,9 +15,6 @@ namespace PL.Call
         private readonly BlApi.IBl _bl = BlApi.Factory.Get();
         private List<BO.CallInList> _calls;
         private List<BO.CallInList> _filteredCalls;
-        private volatile bool _observerWorking = false;
-        private readonly object _lock = new();
-        private int loggedIn;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -42,12 +39,12 @@ namespace PL.Call
                 OnPropertyChanged();
             }
         }
-        public CallInList(int loggedInId)
+
+        public CallInList()
         {
             InitializeComponent();
             DataContext = this;
             CallDataGrid.MouseDoubleClick += CallDataGrid_MouseDoubleClick;
-            loggedIn = loggedInId;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -102,29 +99,13 @@ namespace PL.Call
 
         private void AddCallButton_Click(object sender, RoutedEventArgs e)
         {
-            new CallDetails(loggedIn).ShowDialog();
+            new CallDetails().ShowDialog();
             LoadCalls();
         }
 
         private void RefreshCallList_Click(object sender, RoutedEventArgs e)
         {
-            lock (_lock)
-            {
-                if (_observerWorking) return;
-                _observerWorking = true;
-            }
-
-            try
-            {
-                LoadCalls(SelectedFilter, SelectedFilterValue);
-            }
-            finally
-            {
-                lock (_lock)
-                {
-                    _observerWorking = false;
-                }
-            }
+            LoadCalls();
         }
 
         private void CallDataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -143,7 +124,7 @@ namespace PL.Call
                 : (CallFields?)null;
         }
 
-        private object? ConvertFilterValue(CallFields? filterField, string filterText)
+        private object ConvertFilterValue(CallFields? filterField, string filterText)
         {
             if (filterField == null || string.IsNullOrEmpty(filterText)) return null;
             try

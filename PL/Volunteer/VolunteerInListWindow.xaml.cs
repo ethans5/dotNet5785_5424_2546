@@ -17,10 +17,9 @@ namespace PL.Volunteer
         static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
         private int LoggedInId;
         private VolunteerSortField? _selectedFilter;
-        private volatile bool _observerWorking = false;
 
         // Implémentation de INotifyPropertyChanged
-        public event PropertyChangedEventHandler? PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public VolunteerSortField? SelectedFilter
         {
@@ -82,7 +81,6 @@ namespace PL.Volunteer
 
         private void LoadVolunteers(bool? isActive = null, VolunteerSortField? sortBy = null)
         {
-
             try
             {
                 // Charger les volontaires depuis la couche BL avec les filtres actifs
@@ -101,17 +99,11 @@ namespace PL.Volunteer
         }
 
 
+
         private void VolunteerListObserver()
         {
-            if (!_observerWorking)
-            {
-                _observerWorking = true;
-                _ = Dispatcher.BeginInvoke(() =>
-                {
-                    LoadVolunteers(sortBy: SelectedFilter);
-                    _observerWorking = false;
-                });
-            }
+            // Mettre à jour la liste des volontaires
+            LoadVolunteers(sortBy: SelectedFilter);
         }
         private void FilterButton_Click(object sender, RoutedEventArgs e)
         {
@@ -248,10 +240,6 @@ namespace PL.Volunteer
                 }
             }
         }
-
-        
-
-
 
     }
 }
